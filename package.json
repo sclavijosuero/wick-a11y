@@ -1,0 +1,44 @@
+{
+  "name": "wick-a11y",
+  "version": "1.0.0",
+  "description": "Cypress plugin to perform configurable accessibility tests using AXE. It provides a list of violations and detailed information in the Cypress log, and generates an HTML document that includes screenshots of each violation on the page. The plugin leverages both cypress-axe and axe-core to deliver comprehensive accessibility testing.",
+  "main": "src/index.js",
+  "scripts": {
+    "cy:open": "cypress open --e2e --browser chrome",
+    "cy:run": "cypress run --e2e --browser chrome"
+  },
+  "exports": {
+    ".": "./src/index.js",
+    "./accessibility-tasks": "./src/accessibility-tasks.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sclavijosuero/wick-a11y.git"
+  },
+  "keywords": [
+    "plugin",
+    "cypress",
+    "a11y",
+    "accessibility",
+    "axe",
+    "ada",
+    "wcag",
+    "wick"
+  ],
+  "author": "Sebastian Clavijo Suero",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sclavijosuero/wick-a11y/issues"
+  },
+  "homepage": "https://github.com/sclavijosuero/wick-a11y#readme",
+  "devDependencies": {
+    "cypress": "^13.11.0",
+    "cypress-axe": "^1.5.0",
+    "eslint": "^8.53.0",
+    "eslint-plugin-cypress": "^2.15.1",
+    "eslint-plugin-no-only-tests": "^3.1.0"
+  },
+  "dependencies": {
+    "fs-extra": "^11.1.1"
+  }
+}
