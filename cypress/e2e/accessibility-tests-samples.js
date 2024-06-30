@@ -22,7 +22,7 @@ describe('ACCESSIBILITY TESTS', { tags: ['@accessibility'] }, () => {
         cy.checkAccessibility()
     });
 
-    it.only('Test Sample Page Accessibility - All levels of severity', {defaultCommandTimeout: 15000}, () => {
+    it('Test Sample Page Accessibility - All levels of severity', {defaultCommandTimeout: 15000}, () => {
         cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'] })
     });
 
