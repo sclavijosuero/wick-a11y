@@ -115,8 +115,8 @@ Cypress custom command to check the accessibility of a given context using Axe-c
      ```javascript
      {
           critical: { icon: '🟥', style: 'fill: #DE071B; fill-opacity: 0; stroke: #DE071B; stroke-width: 10;' },
-          serious:  { icon: '🟧', style: 'fill: #DE071B; fill-opacity: 0; stroke: #FFA66A; stroke-width: 10;' },
-          moderate: { icon: '🟨', style: 'fill: #DE071B; fill-opacity: 0; stroke: #ECDE05; stroke-width: 10;' },
+          serious:  { icon: '🟧', style: 'fill: #FFA66A; fill-opacity: 0; stroke: #FFA66A; stroke-width: 10;' },
+          moderate: { icon: '🟨', style: 'fill: #ECDE05; fill-opacity: 0; stroke: #ECDE05; stroke-width: 10;' },
           minor:    { icon: '🟦', style: 'fill: #4598FF; fill-opacity: 0; stroke: #4598FF; stroke-width: 10;' },
           fixme:    { icon: '🛠️'}
      }
@@ -129,7 +129,10 @@ Cypress custom command to check the accessibility of a given context using Axe-c
   - **`interval`**: (optional) *From CYPRESS-AXE* - Number of milliseconds to wait between retries. Default: `1000`.
    
   - **`runOnly`**: (optional) *From AXE-CORE* - List to specify which rules are executed. Default: `['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice']`.
-    > ⚠️ **IMPORTANT:**  You must include all the rules (tags) that you want to execute in your analysis in this list. For example, if you want to run WCAG 2.1AA and all the previous versions of that standard (WCAG 2.0A, WCAG 2.0AA, WCAG 2.1A), you need to list them explicitly. Otherwise, only the rules specific to WCAG 2.1AA will be executed.
+  - 
+    > ⚠️ **IMPORTANT:**  You must include all the rules (tags) that you want to execute in your analysis in this list. 
+    > 
+    > For example, if you want to run WCAG 2.1AA and all the previous versions of that standard (WCAG 2.0A, WCAG 2.0AA, WCAG 2.1A), you need to list them explicitly. Otherwise, only the rules specific to WCAG 2.1AA will be executed.
    
   - **`rules`**: (optional) *From AXE-CORE* - Enable or disable rules using the enabled property.
     E.g. `{ 'color-contrast': { enabled: false }, 'valid-lang': { enabled: false } }`.
@@ -196,7 +199,7 @@ In this basic usage example, the `cy.checkAccessibility()` function is called wi
 - Run the rules for WCAG 2.0 Level A, WCAG 2.0 Level AA, WCAG 2.1 Level A, WCAG 2.1 Level AA, and best practices.
 - Generate an HTML report for the identified violations.
 
-> **Note:** Accessibility analysis can take some time, so it is recommended to increase the **`defaultCommandTimeout`** when running an accessibility test. You can configure this timeout either directly when defining the test or in your `cypress.config.js` file.
+> **Note:** Accessibility analysis can take some time, so it is recommended to increase the **`defaultCommandTimeout`** when running an accessibility test. You can configure this timeout either directly when defining the test or in your **`cypress.config.js`** file.
 >
 > Additionally, before launching the accessibility analysis, ensure that what you want to analyze is fully rendered on the page. Only DOM elements that are visible in the browser viewport will be considered, as per the axe-core plugin (hidden elements will be ignored).
 
@@ -289,11 +292,12 @@ To identify, in the page, which HTML element is affected by an accessibility vio
 
 When the option **`generateReport`** is true (which is the default setting), an HTML report with all the accessibility violation details will be generated. By default, accessibility HTML reports are created in the `cypress/accessibility/` folder. You can customize this location by setting the `accessibilityFolder` parameter in your `cypress.config.js` configuration file.
 
-For each test that checks accessibility using the `cy.checkAccessibility()` command, a directory will be created in the accessibility folder. The directory will be named in the following format:
-**Accessibility Report --- _<testSpecFile>_ --- _<testName>_ (_<reportDate>_)**
+For each test that checks accessibility using the `cy.checkAccessibility()` command, a directory will be created in the accessibility folder.
+
+The directory will be named in the following format:
+**`Accessibility Report --- <testSpecFile> --- <testName> (<reportDate>)`**
 
 ![Accessibility Folder](/images/accessibility-folder.png)
-
 
 Within the newly created test folder, you will find two files:
 
@@ -317,9 +321,11 @@ More details on how to fix each of those violations can be seen by hovering over
 ### Custom Styles Based on Severity (Cypress runner and HTML Report)
 
 Configured custom styles displayed in the Cypress runner:
+
 ![Configured custom styles](images/runner-custom-styles.png)
 
 Same custom styles shown in the HTML report:
+
 ![Custom styles in HTML report](images/report-custom-styles.png)
 
 
