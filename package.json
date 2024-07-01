@@ -31,9 +31,11 @@
     "url": "https://github.com/sclavijosuero/wick-a11y/issues"
   },
   "homepage": "https://github.com/sclavijosuero/wick-a11y#readme",
-  "devDependencies": {
+  "peerDependencies": {
     "cypress": "^13.11.0",
-    "cypress-axe": "^1.5.0",
+    "cypress-axe": "^1.5.0"
+   },
+  "devDependencies": {
     "eslint": "^8.53.0",
     "eslint-plugin-cypress": "^2.15.1",
     "eslint-plugin-no-only-tests": "^3.1.0"
