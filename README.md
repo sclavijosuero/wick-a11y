@@ -21,7 +21,9 @@ With wick-a11y, you can easily incorporate accessibility checks into your End-to
 
 - **Custom Styling**: Supports custom styling for accessibility issues based on severity level at the test level.
 
-- **Interactive Console**: Hovering over a specific violation in the Cypress log highlights the affected DOM element on the tested page, and clicking it displays detailed information about the issue in the browser console.
+- **Interactive Console**:
+  - Hovering over a specific violation in the Cypress log highlights the affected DOM element on the tested page, and clicking it displays detailed information about the issue in the browser console.
+  - Hovering over a specific DOM element with a violation on the page in the Cypress runner highlights the element graphically and shows a tooltip with the violation information.
 
 - **HTML Reports**: Generates HTML reports with the violations, including screenshots for visual reference.
 
@@ -129,7 +131,7 @@ Cypress custom command to check the accessibility of a given context using Axe-c
   - **`interval`**: (optional) *From CYPRESS-AXE* - Number of milliseconds to wait between retries. Default: `1000`.
    
   - **`runOnly`**: (optional) *From AXE-CORE* - List to specify which rules are executed. Default: `['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice']`.
-  - 
+   
     > ⚠️ **IMPORTANT:**  You must include all the rules (tags) that you want to execute in your analysis in this list. 
     > 
     > For example, if you want to run WCAG 2.1AA and all the previous versions of that standard (WCAG 2.0A, WCAG 2.0AA, WCAG 2.1A), you need to list them explicitly. Otherwise, only the rules specific to WCAG 2.1AA will be executed.
@@ -282,11 +284,17 @@ If there are any violations for the selected rules used in the analysis, the tes
 
 ![Runner Results](/images/runner-results.png)
 
-### Violation Details in Browser Console
+### Violation Details in Browser Console from Cypress Log
 
 To identify, in the page, which HTML element is affected by an accessibility violation, mouseover the specific violation in the Cypress log, and that element will be highlighted on the page. To know the details about the accessibility issue, click on the violation in the Cypress log and those details will be shown in the browser console.
 
 ![Runner Console](/images/runner-console.png)
+
+### Violation Details in Tooltip when Hovering over a DOM Element on the Page
+
+When hovering over a specific DOM element with a violation on the page in the Cypress runner, the element will be highlighted graphically, and a tooltip will appear showing the violation information. This feature allows you to quickly identify and understand accessibility issues directly on the page, providing an immediate and intuitive way to address them.
+
+![Runner Screen](/images/runner-screen.png)
 
 ### HTML Report
 
@@ -335,6 +343,15 @@ MIT License. See the [LICENSE](LICENSE) file for more details.
 
 
 ## Changelog
+
+### v1.1.0
+
+- Implemented tooltip with violations details when hovering over DOM Element in the Cypress runner
+- Change color highlighted DOM elements from the Cypress log to match color used when hovering.
+  
+### v1.0.1
+
+- Fix typo in README.md
 
 ### v1.0.0
 

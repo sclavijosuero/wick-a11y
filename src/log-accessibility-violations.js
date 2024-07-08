@@ -69,7 +69,7 @@ const impactPriority = ['critical', 'serious', 'moderate', 'minor'];
 
 /**
  * Object representing the dewfault impact styling for accessibility violations based in the severity level.
- * @typedef {Object} ImpactStyling
+ * @typedef {Object} defaultImpactStyling
  * 
  * @property {Object} critical - The critical impact indicator.
  * @property {string} critical.icon - The icon for the critical impact indicator.
@@ -158,14 +158,18 @@ const sortValidationsBySeverity = (a, b) => {
  */
 const recordViolations_CypressLog = (violations) => {
     cy.document().then(doc => {
+        createViolationCssStyles(doc)
+
+        const fixmeIcon = impactStyling.fixme.icon
+
         // Log violations in Cypress Log
         violations.forEach(violation => {
-            const nodes = Cypress.$(violation.nodes.map((node) => node.target).join(','))
-
             const impact = violation.impact
             const impactIcon = impactStyling[impact].icon
-            const fixmeIcon = impactStyling.fixme.icon
 
+            // nodes variable will store CSS selector for all the violation nodes (to highlight all of them when clicked the violation on the Cypress Log)
+            const nodes = Cypress.$(violation.nodes.map((node) => node.target).join(',')) 
+ 
             // Log accessbility violation (impact) - Type of violation
             Cypress.log({
                 name: `[${impactIcon}${impact.toUpperCase()}]`,
@@ -176,14 +180,8 @@ const recordViolations_CypressLog = (violations) => {
 
             // Log all the individual violations (target) - Elements to fix
             violation.nodes.forEach(node => {
-                const style = impactStyling[impact].style
-                const priority = impactPriority.indexOf(impact) + 1
-
-                const target = node.target
+                const target = node.target // CSS selector (to highlight all of them when clicked the violation on the Cypress Log)
                 const $elem = Cypress.$(target.join(','))
-
-                // Highlight the element with the violation in Cypress runner page
-                highlightViolation(doc, $elem[0], style, priority, impact)
 
                 // Log accessbility violation (for each HTML element
                 Cypress.log({
@@ -192,6 +190,9 @@ const recordViolations_CypressLog = (violations) => {
                     message: target,
                     consoleProps: () => node,
                 })
+
+                // Flag the element with the violation in Cypress runner page
+                flagViolationOnPage(doc, $elem[0], violation, node)
             })
         })
     })
@@ -261,7 +262,7 @@ const recordViolations_Report = (violations) => {
 }
 
 /**
- * Takes screenshots of accessibility violations and moves them to the accessibility results folder.
+ * Takes screenshot of accessibility violations and moves them to the accessibility results folder.
  *
  * @param {string} reportId - The ID of the accessibility report.
  * @param {string} reportFolder - The folder where the screenshots will be moved to.
@@ -316,6 +317,10 @@ const buildHtmlReportBody = (violations, { testSpec, testName, url, reportGenera
                 font-size: 0.95em;
             }
 
+            .header {
+                font-size: 2.3em;
+            }
+
             /* Summary bubbles */
             .summary {
                 font-size: 1.2em;
@@ -368,6 +373,13 @@ const buildHtmlReportBody = (violations, { testSpec, testName, url, reportGenera
                 position: relative;
                 display: inline-block;
                 border-bottom: 1px dotted black; /* If you want dots under the hoverable text */
+            }
+
+            .tooltip:hover {
+                /*position: relative;
+                display: inline-block;*/
+                border-bottom: 1px dotted #0000FF; /* If you want dots under the hoverable text */
+                color: #0000FF;
             }
 
             /* Tooltip text */
@@ -440,7 +452,7 @@ const buildHtmlReportBody = (violations, { testSpec, testName, url, reportGenera
     </head>
     <body>
         <div role="main">
-            <h1>Accessibility Report (AXE-Core)</h1>
+            <h1 class="header">Accessibility Report (AXE-Core)</h1>
             <hr/>
 
             <div class="row" role="region" aria-label="Main Summary">
@@ -506,7 +518,7 @@ const buildHtmlReportBody = (violations, { testSpec, testName, url, reportGenera
                         <li>
                             (${impactStyling.fixme.icon}Fixme)▶ 
                             <div aria="tooltip" class="tooltip">${node.target}
-                                <span class="tooltiptext">${getFailureSummaryTooltip(node.failureSummary)}</span>
+                                <span class="tooltiptext">${getFailureSummaryTooltipHtml(node.failureSummary)}</span>
                             </div>
                         </li>`
                         ).join("")}
@@ -550,12 +562,12 @@ const escapeHTML = (str = '') =>
     )
 
 /**
- * Returns a formatted tooltip for the failure summary.
+ * Returns a formatted tooltip for the failure summary on the Report.
  *
  * @param {string} summary - The summary string to format.
  * @returns {string} The formatted tooltip string.
  */
-const getFailureSummaryTooltip = (summary) => {
+const getFailureSummaryTooltipHtml = (summary) => {
     // return summary.split('\n').join('<br>&nbsp;&nbsp;&nbsp;- ')
 
     return summary.split('\n').map((line, index) => {
@@ -564,6 +576,23 @@ const getFailureSummaryTooltip = (summary) => {
         }
         return `&nbsp;&nbsp;&nbsp;- ${line}`
     }).join('<br>')
+}
+
+/**
+ * Returns a formatted tooltip for the failure summary on the Screen.
+ *
+ * @param {string} summary - The summary string to format.
+ * @returns {string} The formatted tooltip string.
+ */
+const getFailureSummaryTooltipScreen = (summary) => {
+    // return summary.split('\n').join('<br>&nbsp;&nbsp;&nbsp;- ')
+
+    return summary.split('\n').map((line, index) => {
+        if (/^Fix/.test(line)) {
+            return line;
+        }
+        return `      • ${line}`
+    }).join('\n')
 }
 
 /**
@@ -630,28 +659,31 @@ const getTotalIssues = (violations, impact) => {
  *
  * @param {Document} doc - The document object.
  * @param {Element} elem - The element to highlight.
- * @param {string} style - CSS style to use in highlighting that element.
- * @param {number} priority - The priority of the violation.
- * @param {string} impact - The impact of the violation.
+ * @param {Object} violation - The accessibility violation.
+ * @param {Object} node - The node being processed for the violation.
  * @returns {HTMLDivElement} - The created div element.
  */
-const highlightViolation = (doc, elem, style, priority, impact) => {
-    const zIndex = 2147483647 - priority * 10
-
-    const namespaceURI = 'http://www.w3.org/2000/svg'
+const flagViolationOnPage = (doc, elem, violation, node) => {
+    const { impact, description, help } = violation
+    const { failureSummary, html, target } = node
    
     // Get the bounding rectangle of the element
     const boundingRect = elem.getBoundingClientRect() 
 
+    // SVG Namespace
+    const namespaceURI = 'http://www.w3.org/2000/svg'
+
+    console.log(target)
+    console.log(target.includes('html'))
     // DIV (wrapper to show in the right place the highlighted element when click in CY Log)
     const div = document.createElement(`div`)
+    div.className = `${impact} severity${target.includes('html') ? ' send-back' : ''}`
+    console.log(div.className)
     div.setAttribute('data-impact', impact)
-    div.setAttribute('style', `z-index: ${zIndex}; width: ${boundingRect.width}px; height: ${boundingRect.height}px; position: absolute; top: ${boundingRect.y}px; left: ${boundingRect.x}px; margin: 0px;padding: 0px`)
+    div.setAttribute('style', `width: ${boundingRect.width}px; height: ${boundingRect.height}px; top: ${boundingRect.y}px; left: ${boundingRect.x}px;`)
 
     // SVG
     const svg = document.createElementNS(namespaceURI, 'svg')
-    svg.setAttribute('width', '100%')
-    svg.setAttribute('height', '100%')
 
     // RECT
     const rect = document.createElementNS(namespaceURI, 'rect');
@@ -659,14 +691,56 @@ const highlightViolation = (doc, elem, style, priority, impact) => {
     rect.setAttribute('y', '0')
     rect.setAttribute('rx', '10')
     rect.setAttribute('ry', '10')
-    rect.setAttribute('style', `width: 100%; height: 100%; ${style}`)
+    //rect.classList.add('violation-tooltip')
 
+    // TOOLTIP
+    const tooltipInfo = {
+        impact,  // E.g. 'serious'
+        description,
+        help,
+        failureSummary,
+        html,
+        fixme:target,
+        impactIcon: impactStyling[impact].icon
+    }
+
+    const tooltip = document.createElementNS(namespaceURI, 'title');
+    //tooltip.classList.add('violation-tooltiptext')
+    tooltip.innerHTML = getTooltipViolation(tooltipInfo)
+
+    // Append DOM elements to the document
+    rect.appendChild(tooltip);
     svg.appendChild(rect);
     div.appendChild(svg);
     doc.body.appendChild(div)
 
     return div
 }
+
+
+/**
+ * Generates a tooltip violation message for the screen.
+ *
+ * @param {Object} tooltipInfo - The tooltip violation info.
+ * @param {string} tooltipInfo.impact - The impact of the violation.
+ * @param {string} tooltipInfo.description - The description of the violation.
+ * @param {string} tooltipInfo.help - The help information for the violation.
+ * @param {string} tooltipInfo.failureSummary - The failure summary of the violation.
+ * @param {string} tooltipInfo.html - The HTML code related to the violation.
+ * @param {string} tooltipInfo.fixme - The target information for the violation.
+ * @param {string} tooltipInfo.impactIcon - The icon representing the impact of the violation.
+ * @returns {string} The tooltip violation message.
+ */
+const getTooltipViolation = ({ impact, description, help, failureSummary, html, fixme, impactIcon }) => {
+    return `
+💥 Impact ➜ ${impactIcon} ${impact.toUpperCase()}
+💬 Help ➜ ${escapeHTML(help.toUpperCase())}
+🛠️ Fixme ➜ ${fixme}
+🏷️ Description ➜ ${escapeHTML(description)}
+📃 Failure Summary ➜ ${getFailureSummaryTooltipScreen(failureSummary)}
+`
+}
+
 
 /**
  * Replaces special characters in a file name with underscores.
@@ -677,3 +751,65 @@ const highlightViolation = (doc, elem, style, priority, impact) => {
 const normalizeFileName = (fileName) => {
     return fileName.replace(/\/|\\|\?|\:|\*|\"|\<|\>|\|/g, "_")
 }
+
+
+/**
+ * Creates and appends CSS styles for violation elements based on their impact priority.
+ * @param {Document} doc - The document object where the styles will be appended.
+ */
+const createViolationCssStyles = (doc) => {
+    const styles = document.createElement('style')
+
+    styles.textContent = impactPriority.map((impact, priority) => {
+        const zIndex = 2147483647 - priority * 10
+        const style = impactStyling[impact].style
+
+        return `
+            /* Violation style by severity */
+            .${impact} {
+                z-index: ${zIndex};
+                position: absolute;
+                margin: 0px;
+                padding: 0px;
+            }
+            .${impact} rect {
+                width: 100%;
+                height: 100%;
+                ${style}
+            }
+        `
+    }).join(' ') + `
+        .send-back {
+            z-index: 2147482647 !important;
+        }
+
+        /* SVG everity */
+        .severity svg {
+            width: 100%;
+            height: 100%;
+        }
+        /* Highlight sytyle when mouse over the violation */
+        .severity rect:hover {
+            fill: #FF00FF;
+            fill-opacity: 0.3;
+        }
+
+        /* CYPRESS CSS OVERRIDE - highlight to look same as rect:hover */
+        [data-highlight-el] {
+            z-index: 2147483597 !important;
+            opacity: 0.4 !important;
+        }
+        [data-highlight-el] [data-layer] {
+            z-index: 2147483597 !important;
+            background-color: #FF00FF !important;
+            opacity: 0.3 !important;
+        }
+        [data-highlight-el] [data-layer="Content"] {
+            opacity: 0 !important;
+        }
+    `
+
+    Cypress.$(doc.head).append(styles)
+}
+
+
