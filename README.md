@@ -288,7 +288,7 @@ If there are any violations for the selected rules used in the analysis, the tes
 
 To identify, in the page, which HTML element is affected by an accessibility violation, mouseover the specific violation in the Cypress log, and that element will be highlighted on the page. To know the details about the accessibility issue, click on the violation in the Cypress log and those details will be shown in the browser console.
 
-![Runner Console](/images/runner-console.png)
+![Runner Console](/images/runner-console-new.png)
 
 ### Violation Details in Tooltip when Hovering over a DOM Element on the Page
 
