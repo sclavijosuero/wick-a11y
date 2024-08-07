@@ -7,6 +7,13 @@ let accessibilityOptions
 let impactStyling
 
 //*******************************************************************************
+// FOR MULTIPLE ATTEMPTS CASES
+//*******************************************************************************
+
+let reportIdGlobal = ''
+
+
+//*******************************************************************************
 // PUBLIC FUNCTIONS
 //*******************************************************************************
 
@@ -237,8 +244,19 @@ const recordViolations_Report = (violations) => {
         const testSpec = Cypress.spec.name
         const testName = Cypress._.last(Cypress.currentTest.titlePath)
         
+        // Accessibility folder
         const accessibilityFolder = Cypress.config('accessibilityFolder') || defaultAccessibilityFolder
-        const reportId = normalizeFileName(`Accessibility Report --- ${testSpec} --- ${testName} (${fileDate})`)
+        // const reportId = normalizeFileName(`Accessibility Report --- ${testSpec} --- ${testName} (${fileDate})`)
+
+        // Report Id folder
+        const attempt = Cypress.currentRetry
+        let reportId
+        if (attempt === 0) {
+            reportIdGlobal = normalizeFileName(`Accessibility Report --- ${testSpec} --- ${testName} (${fileDate})`)
+            reportId = reportIdGlobal
+        } else {
+            reportId = `${reportIdGlobal} (attempt ${attempt + 1})`
+        }
 
         const reportFolder = `${accessibilityFolder}${reportId}`
 
@@ -272,19 +290,42 @@ const takeScreenshotsViolations = (reportId, reportFolder) => {
     // reportId - E.g. 'Accessibility Report --- accessibility-tests-samples.js --- Test Sample Page Accessibility (6-23-2024 3_13_03 PM)'
     // reportFolder - E.g. 'cypress/accessibility/Accessibility Report --- accessibility-tests-samples.js --- Test Sample Page Accessibility (6-23-2024 3_13_03 PM)'
 
+    const attempt = Cypress.currentRetry
+    const attemptSuffix = attempt > 0 ? ` (attempt ${attempt + 1})` : ''
+
     const issuesFileNameOrigin = `${reportId} Accessibility Issues Image`
     const issuesFileNameTarget = `Accessibility Issues Image`
 
+    setViolationsHover('disabled')
     cy.screenshot(`${issuesFileNameOrigin}`, { capture: 'fullPage' })
+    setViolationsHover('enabled')
 
-    const originFilePath = `${Cypress.config('screenshotsFolder')}/${issuesFileNameOrigin}.png`
-    const targetFilePath = `${reportFolder}/${issuesFileNameTarget}.png`
+    let subFolder = ''
+    if (!Cypress.config('isInteractive')) {
+        subFolder = `${Cypress.spec.name}/` // If executed in run mode it creates a folder with test name for the screenshots
+    }
+
+    const targetFileName = `${issuesFileNameTarget}${attemptSuffix}.png`
+
+    const originFilePath = `${Cypress.config('screenshotsFolder')}/${subFolder}${issuesFileNameOrigin}${attemptSuffix}.png`
+    const targetFilePath = `${reportFolder}/${targetFileName}`
 
     cy.task('moveScreenshotToFolder', { originFilePath, targetFilePath }).then((result) => {
         console.log(result)
     })
 
-    return `${issuesFileNameTarget}.png`
+    return targetFileName
+}
+
+/**
+ * Sets the hover class for the severity rectangles.
+ *
+ * @param {string} className - The class name to be set: 'enabled', 'disabled'.
+ */
+const setViolationsHover = (className) => {
+    cy.then(() => {
+        Cypress.$('.severity rect').attr('class', className)
+    })
 }
 
 /**
@@ -666,6 +707,7 @@ const getTotalIssues = (violations, impact) => {
 const flagViolationOnPage = (doc, elem, violation, node) => {
     const { impact, description, help } = violation
     const { failureSummary, html, target } = node
+    const impactIcon = impactStyling[impact].icon
    
     // Get the bounding rectangle of the element
     const boundingRect = elem.getBoundingClientRect() 
@@ -673,12 +715,9 @@ const flagViolationOnPage = (doc, elem, violation, node) => {
     // SVG Namespace
     const namespaceURI = 'http://www.w3.org/2000/svg'
 
-    console.log(target)
-    console.log(target.includes('html'))
     // DIV (wrapper to show in the right place the highlighted element when click in CY Log)
     const div = document.createElement(`div`)
     div.className = `${impact} severity${target.includes('html') ? ' send-back' : ''}`
-    console.log(div.className)
     div.setAttribute('data-impact', impact)
     div.setAttribute('style', `width: ${boundingRect.width}px; height: ${boundingRect.height}px; top: ${boundingRect.y}px; left: ${boundingRect.x}px;`)
 
@@ -687,12 +726,12 @@ const flagViolationOnPage = (doc, elem, violation, node) => {
 
     // RECT
     const rect = document.createElementNS(namespaceURI, 'rect');
+    rect.setAttribute('class', `enabled`)
     rect.setAttribute('x', '0')
     rect.setAttribute('y', '0')
     rect.setAttribute('rx', '10')
     rect.setAttribute('ry', '10')
-    //rect.classList.add('violation-tooltip')
-
+    
     // TOOLTIP
     const tooltipInfo = {
         impact,  // E.g. 'serious'
@@ -701,12 +740,13 @@ const flagViolationOnPage = (doc, elem, violation, node) => {
         failureSummary,
         html,
         fixme:target,
-        impactIcon: impactStyling[impact].icon
+        impactIcon
     }
 
     const tooltip = document.createElementNS(namespaceURI, 'title');
-    //tooltip.classList.add('violation-tooltiptext')
-    tooltip.innerHTML = getTooltipViolation(tooltipInfo)
+    const tooltipMessage = getTooltipViolation(tooltipInfo)
+
+    tooltip.innerHTML = tooltipMessage
 
     // Append DOM elements to the document
     rect.appendChild(tooltip);
@@ -716,7 +756,6 @@ const flagViolationOnPage = (doc, elem, violation, node) => {
 
     return div
 }
-
 
 /**
  * Generates a tooltip violation message for the screen.
@@ -735,8 +774,8 @@ const getTooltipViolation = ({ impact, description, help, failureSummary, html, 
     return `
 💥 Impact ➜ ${impactIcon} ${impact.toUpperCase()}
 💬 Help ➜ ${escapeHTML(help.toUpperCase())}
-🛠️ Fixme ➜ ${fixme}
 🏷️ Description ➜ ${escapeHTML(description)}
+🛠️ Fixme ➜ ${fixme}
 📃 Failure Summary ➜ ${getFailureSummaryTooltipScreen(failureSummary)}
 `
 }
@@ -789,9 +828,14 @@ const createViolationCssStyles = (doc) => {
             height: 100%;
         }
         /* Highlight sytyle when mouse over the violation */
-        .severity rect:hover {
+        .severity rect.enabled:hover {
             fill: #FF00FF;
             fill-opacity: 0.3;
+        }
+
+        /* Disable highlight */
+        .severity rect.disabled:hover {
+            fill-opacity: 0;
         }
 
         /* CYPRESS CSS OVERRIDE - highlight to look same as rect:hover */

@@ -7,6 +7,11 @@ module.exports = defineConfig({
   viewportWidth: 1920,
   viewportHeight: 1080,
 
+  retries: {
+    openMode: 0,
+    runMode: 1,
+  },
+
   // Increase the defualt command timeout to 15 seconds because AXE analysis can spend quire some time.
   // Could be done in cypress.config.js or for each tests, specially if some AXE analysis is exceptionally slow.
   // defaultCommandTimeout: 15000,
