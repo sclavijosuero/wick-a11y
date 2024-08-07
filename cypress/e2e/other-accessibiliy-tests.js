@@ -54,5 +54,5 @@ describe('OTHER ACCESSIBILITY TESTS', { tags: ['@accessibility'] }, () => {
         cy.wait(2000) // Using cy.wait(TIME) is a very bad practice, but it is used for simplicity in this example
 
         cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'] })
-    });});
-    
+    });
+});
