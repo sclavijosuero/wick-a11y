@@ -96,6 +96,7 @@ Cypress custom command to check the accessibility of a given context using Axe-c
   - **`exclude`**: (optional) *From AXE-CORE* - Elements that should not be tested. Format: CSS Selector or Array of CSS selectors.
   
     E.g.1 `'button'` equivalent to `['button']`.
+    
     E.g.2 `'input, .container, [data-cy="submission"]'` equivalent to `['input', '.container', '[data-cy="submission"]']`.
 
   - **`include`**: (optional) *From AXE-CORE* - Elements that should be tested. Format: CSS Selector or Array of CSS selectors.
