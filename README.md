@@ -94,11 +94,13 @@ Cypress custom command to check the accessibility of a given context using Axe-c
   When **context** is an Object, it could have the properties:
   
   - **`exclude`**: (optional) *From AXE-CORE* - Elements that should not be tested. Format: CSS Selector or Array of CSS selectors.
-      E.g.1 `'button'` equivalent to `['button']`.
-      E.g.2 `'input, .container, [data-cy="submission"]'` equivalent to `['input', '.container', '[data-cy="submission"]']`.
+  
+    E.g.1 `'button'` equivalent to `['button']`.
+    E.g.2 `'input, .container, [data-cy="submission"]'` equivalent to `['input', '.container', '[data-cy="submission"]']`.
 
   - **`include`**: (optional) *From AXE-CORE* - Elements that should be tested. Format: CSS Selector or Array of CSS selectors.
-      E.g. `'[data-cy="header"]'`
+  
+    E.g. `'[data-cy="header"]'`
    
   - **`fromFrames`**: (optional) *From AXE-CORE* - An object with a fromFrames property to specify frames that should be tested.
    
@@ -106,7 +108,9 @@ Cypress custom command to check the accessibility of a given context using Axe-c
    
 - **`options`**: (optional) Object with options to configure the accessibility check.
   
-  - **`generateReport`**: (optional) *From WICK-A11Y* - Generate a detailed report. Default: `true`.
+  - **`generateReport`**: (optional) *From WICK-A11Y* - Generate a detailed report.
+  
+    Default: `true`.
 
   - **`impactStyling`**: (optional) *From WICK-A11Y* - An object with an entry for each impact level you would like to override the plugin defaults ('critical', 'serious', 'moderate', 'minor').
   
@@ -124,13 +128,21 @@ Cypress custom command to check the accessibility of a given context using Axe-c
      }
      ```
 
-  - **`includedImpacts`**: (optional) *From CYPRESS-AXE* - List of impact levels to include in the analysis. Possible impact values are 'minor', 'moderate', 'serious', or 'critical'. Default: `['critical', 'serious']`.
+  - **`includedImpacts`**: (optional) *From CYPRESS-AXE* - List of impact levels to include in the analysis. Possible impact values are 'minor', 'moderate', 'serious', or 'critical'.
+  
+    Default: `['critical', 'serious']`.
    
-  - **`retries`**: (optional) *From CYPRESS-AXE* - Number of times to retry the check if there are initial findings. Default: `0`.
+  - **`retries`**: (optional) *From CYPRESS-AXE* - Number of times to retry the check if there are initial findings.
+  
+    Default: `0`.
    
-  - **`interval`**: (optional) *From CYPRESS-AXE* - Number of milliseconds to wait between retries. Default: `1000`.
+  - **`interval`**: (optional) *From CYPRESS-AXE* - Number of milliseconds to wait between retries.
+  
+    Default: `1000`.
    
-  - **`runOnly`**: (optional) *From AXE-CORE* - List to specify which rules are executed. Default: `['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice']`.
+  - **`runOnly`**: (optional) *From AXE-CORE* - List to specify which rules are executed.
+  
+    Default: `['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice']`.
    
     > ⚠️ **IMPORTANT:**  You must include all the rules (tags) that you want to execute in your analysis in this list. 
     > 
@@ -141,30 +153,52 @@ Cypress custom command to check the accessibility of a given context using Axe-c
     E.g. `{ 'color-contrast': { enabled: false }, 'valid-lang': { enabled: false } }`.
    
   - **`reporter`**: (optional) *From AXE-CORE* - Which reporter to use.
-      E.g. `'v2'`.
+    
+    E.g. `'v2'`.
    
   - **`resultTypes`**: (optional) *From AXE-CORE* - Limit which result types are processed and aggregated. This can be useful for improving performance on very large or complicated pages when you are only interested in certain types of results.
-      E.g. `['violations', 'incomplete', 'inapplicable']`.
+    
+    E.g. `['violations', 'incomplete', 'inapplicable']`.
    
-  - **`selectors`**: (optional) *From AXE-CORE* - Return CSS selector for elements, optimized for readability. Default: `true`.
+  - **`selectors`**: (optional) *From AXE-CORE* - Return CSS selector for elements, optimized for readability.
+  
+    Default: `true`.
    
-  - **`ancestry`**: (optional) *From AXE-CORE* - Return CSS selector for elements, with all the element's ancestors. Default: `false`.
+  - **`ancestry`**: (optional) *From AXE-CORE* - Return CSS selector for elements, with all the element's ancestors.
+  
+    Default: `false`.
    
-  - **`xpath`**: (optional) *From AXE-CORE* - Return xpath selectors for elements. Default: `false`.
+  - **`xpath`**: (optional) *From AXE-CORE* - Return xpath selectors for elements.
+  
+    Default: `false`.
    
-  - **`absolutePaths`**: (optional) *From AXE-CORE* - Use absolute paths when creating element selectors. Default: `false`.
+  - **`absolutePaths`**: (optional) *From AXE-CORE* - Use absolute paths when creating element selectors.
+  
+    Default: `false`.
    
-  - **`iframes`**: (optional) *From AXE-CORE* - Tell axe to run inside iframes. Default: `true`.
+  - **`iframes`**: (optional) *From AXE-CORE* - Tell axe to run inside iframes.
+  
+    Default: `true`.
    
-  - **`elementRef`**: (optional) *From AXE-CORE* - Return element references in addition to the target. Default: `false`.
+  - **`elementRef`**: (optional) *From AXE-CORE* - Return element references in addition to the target.
+  
+    Default: `false`.
    
-  - **`frameWaitTime`**: (optional) *From AXE-CORE* - How long (in milliseconds) axe waits for a response from embedded frames before timing out. Default: `60000`.
+  - **`frameWaitTime`**: (optional) *From AXE-CORE* - How long (in milliseconds) axe waits for a response from embedded frames before timing out.
+  
+    Default: `60000`.
    
-  - **`preload`**: (optional) *From AXE-CORE* - Any additional assets to preload before running rules. Default: `true`.
+  - **`preload`**: (optional) *From AXE-CORE* - Any additional assets to preload before running rules.
+  
+    Default: `true`.
    
-  - **`performanceTimer`**: (optional) *From AXE-CORE* - Log rule performance metrics to the console. Default: `false`.
+  - **`performanceTimer`**: (optional) *From AXE-CORE* - Log rule performance metrics to the console.
+  
+    Default: `false`.
    
-  - **`pingWaitTime`**: (optional) *From AXE-CORE* - Time in milliseconds before axe-core considers a frame unresponsive. Default: `500`.
+  - **`pingWaitTime`**: (optional) *From AXE-CORE* - Time in milliseconds before axe-core considers a frame unresponsive.
+  
+    Default: `500`.
 
 
 Example: Disable report, include only critical, serious, and moderate violations, and apply only the standards WCAG 2.0A, WCAG 2.0AA, and Best Practices.
