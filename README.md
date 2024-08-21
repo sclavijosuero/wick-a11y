@@ -1,6 +1,6 @@
 # wick-a11y
 
-wick-a11y is a Cypress plugin designed for performing configurable accessibility tests using AXE. Leveraging both cypress-axe and axe-core, this plugin ensures your web applications meet accessibility standards by detecting violations and providing detailed reports.
+wick-a11y is a Cypress plugin designed for performing configurable accessibility tests using AXE. Leveraging both cypress-axe and axe-core®, this plugin ensures your web applications meet accessibility standards by detecting violations and providing detailed reports.
 
 With wick-a11y, you can easily incorporate accessibility checks into your End-to-End tests, logging detailed information in the Cypress log and generating HTML documents with screenshots of each violation for easier identification and resolution of accessibility issues.
 
@@ -9,7 +9,8 @@ With wick-a11y, you can easily incorporate accessibility checks into your End-to
 
 ## Main Features
 
-- **Comprehensive Accessibility Analysis**: Leverages AXE-CORE for thorough accessibility checks.
+- **Comprehensive Accessibility Analysis**: Leverages axe-core® for thorough accessibility checks. Axe-core® <https://github.com/dequelabs/axe-core> is a trademark of Deque
+Systems, Inc <https://www.deque.com/>. in the US and other countries.
   
 - **Cypress Command**: Use the custom command `cy.checkAccessibility()` to run checks smoothly.
 
@@ -29,7 +30,7 @@ With wick-a11y, you can easily incorporate accessibility checks into your End-to
 
 > **Before launching the accessibility analysis, ensure what you want to analyze is fully rendered on the page.**
 > 
-> **The plugin analyzes DOM elements that are visible in the browser viewport as per the axe-core plugin (it will not include hidden elements).**
+> **The plugin analyzes DOM elements that are visible in the browser viewport as per the axe-core® plugin (it will not include hidden elements).**
 
 
 ## Installation
@@ -42,7 +43,7 @@ npm install wick-a11y --save-dev
 ## Compatibility
 
 - Compatible with all versions of Cypress v12.0.0 and greater.
-- Relies on cypress-axe (≥ 1.5.0) and axe-core for accessibility analysis.
+- Relies on cypress-axe (≥ 1.5.0) and axe-core® for accessibility analysis.
 
 
 ## Configuration
@@ -73,13 +74,13 @@ module.exports = defineConfig({
 import 'wick-a11y';
 ```
 
-- ✳️️  Accessibility HTML reports will be generated in the folder **`cypress/accessibility/`** by default. This folder can be changed by including the configuration parameter **`accessibilityFolder`** in **`cypress.config.js`**.
+- ✳️️  Accessibility HTML reports will be generated in the folder **`cypress/accessibility`** by default. This folder can be changed by including the configuration parameter **`accessibilityFolder`** in **`cypress.config.js`**.
 
 ```javascript
 module.exports = defineConfig({
   // ... rest of the configuration
   
-  accessibilityFolder: 'cypress/your-accessibility-reports-folder/'
+  accessibilityFolder: 'cypress/your-accessibility-reports-folder'
 });
 ```
 
@@ -88,24 +89,24 @@ module.exports = defineConfig({
 
 ### cy.checkAccessibility(context, options)
 
-Cypress custom command to check the accessibility of a given context using Axe-core. Only considers DOM elements that are visible on the screen. For details on parameters and options, refer to [AXE-Core Documentation](https://www.deque.com/axe/core-documentation/api-documentation/), [Axe-Core GitHub](https://github.com/dequelabs/axe-core), and [cypress-axe NPM](https://www.npmjs.com/package/cypress-axe).
+Cypress custom command to check the accessibility of a given context using axe-core®. Only considers DOM elements that are visible on the screen. For details on parameters and options, refer to [Axe-core® Documentation](https://www.deque.com/axe/core-documentation/api-documentation/), [Axe-core® GitHub](https://github.com/dequelabs/axe-core), and [cypress-axe NPM](https://www.npmjs.com/package/cypress-axe).
 
 - **`context`**: (optional) Defines the scope of the analysis. Can be a CSS Selector, a DOM Element, or an Object.
   When **context** is an Object, it could have the properties:
   
-  - **`exclude`**: (optional) *From AXE-CORE* - Elements that should not be tested. Format: CSS Selector or Array of CSS selectors.
+  - **`exclude`**: (optional) *From axe-core®* - Elements that should not be tested. Format: CSS Selector or Array of CSS selectors.
   
     E.g.1 `'button'` equivalent to `['button']`.
     
     E.g.2 `'input, .container, [data-cy="submission"]'` equivalent to `['input', '.container', '[data-cy="submission"]']`.
 
-  - **`include`**: (optional) *From AXE-CORE* - Elements that should be tested. Format: CSS Selector or Array of CSS selectors.
+  - **`include`**: (optional) *From axe-core®* - Elements that should be tested. Format: CSS Selector or Array of CSS selectors.
   
     E.g. `'[data-cy="header"]'`
    
-  - **`fromFrames`**: (optional) *From AXE-CORE* - An object with a fromFrames property to specify frames that should be tested.
+  - **`fromFrames`**: (optional) *From axe-core®* - An object with a fromFrames property to specify frames that should be tested.
    
-  - **`fromShadowDom`**: (optional) *From AXE-CORE* - An object with a fromShadowDom property to specify shadow DOM elements that should be tested.
+  - **`fromShadowDom`**: (optional) *From axe-core®* - An object with a fromShadowDom property to specify shadow DOM elements that should be tested.
    
 - **`options`**: (optional) Object with options to configure the accessibility check.
   
@@ -141,7 +142,7 @@ Cypress custom command to check the accessibility of a given context using Axe-c
   
     Default: `1000`.
    
-  - **`runOnly`**: (optional) *From AXE-CORE* - List to specify which rules are executed.
+  - **`runOnly`**: (optional) *From axe-core®* - List to specify which rules are executed.
   
     Default: `['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice']`.
    
@@ -149,55 +150,55 @@ Cypress custom command to check the accessibility of a given context using Axe-c
     > 
     > For example, if you want to run WCAG 2.1AA and all the previous versions of that standard (WCAG 2.0A, WCAG 2.0AA, WCAG 2.1A), you need to list them explicitly. Otherwise, only the rules specific to WCAG 2.1AA will be executed.
    
-  - **`rules`**: (optional) *From AXE-CORE* - Enable or disable rules using the enabled property.
+  - **`rules`**: (optional) *From axe-core®* - Enable or disable rules using the enabled property.
 
     E.g. `{ 'color-contrast': { enabled: false }, 'valid-lang': { enabled: false } }`.
    
-  - **`reporter`**: (optional) *From AXE-CORE* - Which reporter to use.
+  - **`reporter`**: (optional) *From axe-core®* - Which reporter to use.
     
     E.g. `'v2'`.
    
-  - **`resultTypes`**: (optional) *From AXE-CORE* - Limit which result types are processed and aggregated. This can be useful for improving performance on very large or complicated pages when you are only interested in certain types of results.
+  - **`resultTypes`**: (optional) *From axe-core®* - Limit which result types are processed and aggregated. This can be useful for improving performance on very large or complicated pages when you are only interested in certain types of results.
     
     E.g. `['violations', 'incomplete', 'inapplicable']`.
    
-  - **`selectors`**: (optional) *From AXE-CORE* - Return CSS selector for elements, optimized for readability.
+  - **`selectors`**: (optional) *From axe-core®* - Return CSS selector for elements, optimized for readability.
   
     Default: `true`.
    
-  - **`ancestry`**: (optional) *From AXE-CORE* - Return CSS selector for elements, with all the element's ancestors.
+  - **`ancestry`**: (optional) *From axe-core®* - Return CSS selector for elements, with all the element's ancestors.
   
     Default: `false`.
    
-  - **`xpath`**: (optional) *From AXE-CORE* - Return xpath selectors for elements.
+  - **`xpath`**: (optional) *From axe-core®* - Return xpath selectors for elements.
   
     Default: `false`.
    
-  - **`absolutePaths`**: (optional) *From AXE-CORE* - Use absolute paths when creating element selectors.
+  - **`absolutePaths`**: (optional) *From axe-core®* - Use absolute paths when creating element selectors.
   
     Default: `false`.
    
-  - **`iframes`**: (optional) *From AXE-CORE* - Tell axe to run inside iframes.
+  - **`iframes`**: (optional) *From axe-core®* - Tell axe to run inside iframes.
   
     Default: `true`.
    
-  - **`elementRef`**: (optional) *From AXE-CORE* - Return element references in addition to the target.
+  - **`elementRef`**: (optional) *From axe-core®* - Return element references in addition to the target.
   
     Default: `false`.
    
-  - **`frameWaitTime`**: (optional) *From AXE-CORE* - How long (in milliseconds) axe waits for a response from embedded frames before timing out.
+  - **`frameWaitTime`**: (optional) *From axe-core®* - How long (in milliseconds) axe waits for a response from embedded frames before timing out.
   
     Default: `60000`.
    
-  - **`preload`**: (optional) *From AXE-CORE* - Any additional assets to preload before running rules.
+  - **`preload`**: (optional) *From axe-core®* - Any additional assets to preload before running rules.
   
     Default: `true`.
    
-  - **`performanceTimer`**: (optional) *From AXE-CORE* - Log rule performance metrics to the console.
+  - **`performanceTimer`**: (optional) *From axe-core®* - Log rule performance metrics to the console.
   
     Default: `false`.
    
-  - **`pingWaitTime`**: (optional) *From AXE-CORE* - Time in milliseconds before axe-core considers a frame unresponsive.
+  - **`pingWaitTime`**: (optional) *From axe-core®* - Time in milliseconds before axe-core® considers a frame unresponsive.
   
     Default: `500`.
 
@@ -239,7 +240,7 @@ In this basic usage example, the `cy.checkAccessibility()` function is called wi
 
 > ⚠️ **Note:** Accessibility analysis can take some time, so it is recommended to increase the **`defaultCommandTimeout`** when running an accessibility test. You can configure this timeout either directly when defining the test or in your **`cypress.config.js`** file.
 >
-> **Also, before launching the accessibility analysis, ensure that what you want to analyze is fully rendered on the page. Only DOM elements that are visible in the browser viewport will be considered, as per the axe-core plugin (hidden elements will be ignored).**
+> **Also, before launching the accessibility analysis, ensure that what you want to analyze is fully rendered on the page. Only DOM elements that are visible in the browser viewport will be considered, as per the axe-core® plugin (hidden elements will be ignored).**
 
 ```javascript
 describe('Accessibility Test', () => {
@@ -336,7 +337,7 @@ When hovering over a specific DOM element with a violation on the page in the Cy
 
 ### HTML Report
 
-When the option **`generateReport`** is true (which is the default setting), an HTML report with all the accessibility violation details will be generated. By default, accessibility HTML reports are created in the `cypress/accessibility/` folder. You can customize this location by setting the `accessibilityFolder` parameter in your `cypress.config.js` configuration file.
+When the option **`generateReport`** is true (which is the default setting), an HTML report with all the accessibility violation details will be generated. By default, accessibility HTML reports are created in the `cypress/accessibility` folder. You can customize this location by setting the `accessibilityFolder` parameter in your `cypress.config.js` configuration file.
 
 For each test that checks accessibility using the `cy.checkAccessibility()` command, a directory will be created in the accessibility folder.
 
@@ -382,6 +383,12 @@ MIT License. See the [LICENSE](LICENSE) file for more details.
 
 
 ## Changelog
+
+### v1.1.2
+
+- Fix issue with `accessibilityFolder` cofiguration parameter when missing char `/` at the end
+- Add axe-core® to the sorce code and documentation to be compliant with Deque trademark
+- Created `.gitignore`
 
 ### v1.1.1
 
