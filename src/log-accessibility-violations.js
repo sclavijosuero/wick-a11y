@@ -575,8 +575,8 @@ const buildHtmlReportBody = (violations, { testSpec, testName, url, reportGenera
             </div>
             <hr/>
 
-            <p class="footer">🎓 As per the axe-core® library: it can find on average 57% of WCAG issues automatically; it also only analyzes DOM elements that are visible in the browser viewport. Axe-core <https://github.com/dequelabs/axe-core> is a trademark of Deque
-Systems, Inc <https://www.deque.com/>. in the US and other countries.</p>
+            <p class="footer">🎓 As per the axe-core® library: it can find on average 57% of WCAG issues automatically; it also only analyzes DOM elements that are visible in the browser viewport. 
+Axe-core® <https://github.com/dequelabs/axe-core> is a trademark of Deque Systems, Inc <https://www.deque.com/>. in the US and other countries.</p>
         </div>
     </body>
     </html>
