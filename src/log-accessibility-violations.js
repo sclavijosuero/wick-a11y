@@ -63,7 +63,7 @@ export const logViolationsAndGenerateReport = (violations) => {
  * The default folder path for storing accessibility reports.
  * @type {string}
  */
-const defaultAccessibilityFolder =  'cypress/accessibility/'
+const defaultAccessibilityFolder =  'cypress/accessibility'
 
 /**
  * Array representing the priority levels of accessibility violations,
@@ -258,7 +258,7 @@ const recordViolations_Report = (violations) => {
             reportId = `${reportIdGlobal} (attempt ${attempt + 1})`
         }
 
-        const reportFolder = `${accessibilityFolder}${reportId}`
+        const reportFolder = `${accessibilityFolder}/${reportId}`
 
         // Generate the HTML report with the violations detected, including screenshot of the page with the elements vith violations highlighted in different colors based on severity
         cy.task('createFolderIfNotExist', `${reportFolder}`).then(() => {
@@ -347,7 +347,7 @@ const buildHtmlReportBody = (violations, { testSpec, testName, url, reportGenera
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Accessibility Report (AXE-Core)</title>
+        <title>Accessibility Report (Axe-core®)</title>
         <style>
             * {
                 box-sizing: border-box;
@@ -493,7 +493,7 @@ const buildHtmlReportBody = (violations, { testSpec, testName, url, reportGenera
     </head>
     <body>
         <div role="main">
-            <h1 class="header">Accessibility Report (AXE-Core)</h1>
+            <h1 class="header">Accessibility Report (Axe-core®)</h1>
             <hr/>
 
             <div class="row" role="region" aria-label="Main Summary">
@@ -575,7 +575,8 @@ const buildHtmlReportBody = (violations, { testSpec, testName, url, reportGenera
             </div>
             <hr/>
 
-            <p class="footer">🎓 As per the Axe-Core library: it covers around 55% of the accessibility assessments usually performed during manual ADA testing, without any false positives; it also only analyzes DOM elements that are visible in the browser viewport -  Powered by WICK-A11Y.</p>
+            <p class="footer">🎓 As per the axe-core® library: it can find on average 57% of WCAG issues automatically; it also only analyzes DOM elements that are visible in the browser viewport. 
+Axe-core® <https://github.com/dequelabs/axe-core> is a trademark of Deque Systems, Inc <https://www.deque.com/>. in the US and other countries.</p>
         </div>
     </body>
     </html>
