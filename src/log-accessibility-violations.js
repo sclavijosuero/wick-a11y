@@ -24,22 +24,10 @@ let reportIdGlobal = ''
  * @returns {Array} - The sorted array of accessibility violations.
  */
 export const logViolations = (violations) => {
-
-    accessibilityContext = Cypress.env('accessibilityContext')
-    accessibilityOptions = Cypress.env('accessibilityOptions') || {}
-    impactStyling = Cypress._.merge({}, defaultImpactStyling, accessibilityOptions.impactStyling)
-
-    // Sort the violations by severity
-    const violationsSorted = violations.sort(sortValidationsBySeverity)
-
-    // Log in the Cypress Log the accessibility violations
-    recordViolations_CypressLog(violationsSorted)
-
-    // Log in the Browser console the accessibility violations
-    recordViolations_Console(violationsSorted)
-
-    return violationsSorted
+    // Log the accessibility violations in Cypress Log and the Browser Console
+    recordViolations(violations, true)
 }
+
 
 /**
  * Logs the accessibility violations in Cypress Log and Browser Console and generates an HTML report with them.
@@ -48,10 +36,13 @@ export const logViolations = (violations) => {
  */
 export const logViolationsAndGenerateReport = (violations) => {
     // Log the accessibility violations in Cypress Log and the Browser Console
-    const violationsSorted = logViolations(violations)
+    const violationsSorted = recordViolations(violations, false)
 
-    // Get url of the page analysed to include in the report and create HTMLreport with the accessibility violations
+    // Log the accessibility violations in the HTML report
     recordViolations_Report(violationsSorted)
+
+    // Log summary of violations at the end of the Cypress log if we are generating a report
+    recordViolationsSummaryTotals_CypressLog(violationsSorted)
 }
 
 
@@ -157,6 +148,61 @@ const sortValidationsBySeverity = (a, b) => {
     return 0;
 }
 
+/**
+ * Logs the accessibility violations in Cypress Log and Browser Console.
+ *
+ * @param {Array} violations - The array of accessibility violations.
+ * @param {boolean} [logSummary=true] - Whether to log the summary of violations in Cypress log.
+ * @returns {Array} - The sorted array of accessibility violations.
+ */
+const recordViolations = (violations, logSummary = true) => {
+    // Retrieve the accessibility context and options
+    accessibilityContext = Cypress.env('accessibilityContext')
+    accessibilityOptions = Cypress.env('accessibilityOptions') || {}
+    impactStyling = Cypress._.merge({}, defaultImpactStyling, accessibilityOptions.impactStyling)
+
+    // Sort the violations by severity
+    const violationsSorted = violations.sort(sortValidationsBySeverity)
+
+    // Log in the Cypress Log the accessibility violations
+    recordViolations_CypressLog(violationsSorted)
+
+    // Log in the Browser console the accessibility violations as a table
+    recordViolations_Console(violationsSorted)
+
+    // Log summary of violations at the end of the Cypress log if we are not generating a report
+    if (logSummary) {
+        recordViolationsSummaryTotals_CypressLog(violationsSorted)
+    }
+
+    return violationsSorted
+}
+
+/**
+ * Records a summary of the accessibility violations by severity in the Cypress log.
+ *
+ * @param {Array} violations - An array of accessibility violations.
+ */
+const recordViolationsSummaryTotals_CypressLog = (violations) => {
+    cy.then(() => {
+        // Total number of violations per impact level
+        impactPriority.forEach((impact) => {
+            const totalPerImpact = getTotalIssuesForImpact(violations, impact)
+            if (totalPerImpact !== 'n/a') {
+                Cypress.log({
+                    name: `• ${impact.toUpperCase()} VIOLATIONS ${impactStyling[impact].icon}:`,
+                    message: `${totalPerImpact}`,
+                    consoleProps: () => {
+                        return {
+                            total: totalPerImpact,
+                            violations: violations.filter(v => v.impact === impact),
+                        }
+                    }
+                })
+            }
+        })
+    })
+}
 
 /**
  * Records accessibility violations in the Cypress log.
@@ -507,10 +553,7 @@ const buildHtmlReportBody = (violations, { testSpec, testName, url, reportGenera
                 </div>
                 <div class="column" style="background-color:#cce6ff; height: 100%;" aria-label="Violations Summary by Severity">
                     ${impactPriority.map((impact) => {
-                        let totalIssues = 'n/a'
-                        if (accessibilityOptions.includedImpacts.includes(impact)) {
-                            totalIssues = getTotalIssues(violations, impact)
-                        }
+                        const totalIssues = getTotalIssuesForImpact(violations, impact)
                         return `<p class="summary">${impactStyling[impact].icon} <strong>
                             <span aria="tooltip" class="tooltip">${impact.toUpperCase()}
                                 <span class="tooltiptext">${impactSeverityDescription[impact]}</span>
@@ -684,14 +727,8 @@ const isNodeList = (obj) => {
  * @param {string} impact - The impact level to filter the violations.
  * @returns {number} - The total number of issues with the specified impact level.
  */
-const getTotalIssues = (violations, impact) => {
-    let count = 0
-    violations.forEach((violation) => {
-        if (violation.impact == impact) {
-            count++
-        }
-    })
-    return count
+const getTotalIssuesForImpact = (violations, impact) => {
+    return accessibilityOptions.includedImpacts.includes(impact) ? violations.filter(v => v.impact === impact).length : 'n/a'
 }
 
 /**
