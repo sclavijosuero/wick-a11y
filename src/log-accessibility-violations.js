@@ -5,6 +5,8 @@ const path = require('path');
 let accessibilityContext
 let accessibilityOptions
 let impactStyling
+let violationsSummaryTotals
+
 
 //*******************************************************************************
 // FOR MULTIPLE ATTEMPTS CASES
@@ -161,6 +163,9 @@ const recordViolations = (violations, logSummary = true) => {
     accessibilityOptions = Cypress.env('accessibilityOptions') || {}
     impactStyling = Cypress._.merge({}, defaultImpactStyling, accessibilityOptions.impactStyling)
 
+    // Calculate the summary totals of violations by severity
+    violationsSummaryTotals = calculateViolationsSummaryBySeverity(violations)
+
     // Sort the violations by severity
     const violationsSorted = violations.sort(sortValidationsBySeverity)
 
@@ -178,6 +183,23 @@ const recordViolations = (violations, logSummary = true) => {
     return violationsSorted
 }
 
+
+/**
+ * Calculates the summary of accessibility violations by severity.
+ * 
+ * @param {Array} violations - The array of accessibility violations.
+ * @returns {Object} - The object containing the summary of violations by severity.
+ */
+const calculateViolationsSummaryBySeverity = (violations) => {
+    let totals = {}
+    impactPriority.forEach((impact) => {
+        if (accessibilityOptions.includedImpacts.includes(impact)) {
+            totals[impact] = violations.filter(v => v.impact === impact).length
+        }
+    })
+    return totals
+}
+
 /**
  * Records a summary of the accessibility violations by severity in the Cypress log.
  *
@@ -185,22 +207,16 @@ const recordViolations = (violations, logSummary = true) => {
  */
 const recordViolationsSummaryTotals_CypressLog = (violations) => {
     cy.then(() => {
-        // Total number of violations per impact level
-        impactPriority.forEach((impact) => {
-            const totalPerImpact = getTotalIssuesForImpact(violations, impact)
-            if (totalPerImpact !== 'n/a') {
-                Cypress.log({
-                    name: `• ${impact.toUpperCase()} VIOLATIONS ${impactStyling[impact].icon}:`,
-                    message: `${totalPerImpact}`,
-                    consoleProps: () => {
-                        return {
-                            total: totalPerImpact,
-                            violations: violations.filter(v => v.impact === impact),
-                        }
-                    }
+        for (const [impact, totalPerImpact] of Object.entries(violationsSummaryTotals)) {
+            Cypress.log({
+                name: `• ${impact.toUpperCase()} VIOLATIONS ${impactStyling[impact].icon}:`,
+                message: `${totalPerImpact}`,
+                consoleProps: () => ({
+                    total: totalPerImpact,
+                    violations: violations.filter(v => v.impact === impact),
                 })
-            }
-        })
+            })
+        }
     })
 }
 
@@ -258,13 +274,17 @@ const recordViolations_CypressLog = (violations) => {
  */
 const recordViolations_Console = (violations) => {
     // Log in the console summary of violations
-    const violationsSummary = `\n${'TEST RESULTS'} - Accessibility violations detected: ${violations.length}\n`
+    let violationsSummary = `\n************************ ACCESSIBILITY RESULTS FOR TEST "${Cypress.currentTest.title}"\n\n`
+    for (const [impact, totalPerImpact] of Object.entries(violationsSummaryTotals)) {
+        violationsSummary += `${impact.toUpperCase()} VIOLATIONS: ${totalPerImpact}\n`
+
+    }
     cy.task('logViolationsSummary', violationsSummary)
 
     // Log in the console all the violations data
     const violationData = violations.map(({ id, impact, tags, description, nodes, help, helpUrl }) => ({
         //TOTAL: nodes.length,
-        IMPACT: `${impactStyling[impact].icon} ${impact.toUpperCase()}`,
+        IMPACT: `${impact.toUpperCase()}`,
         RULEID: `${id} (${help})`,
         TAGS: `${tags.join(", ")}`,
         SELECTORS: `${nodes.map((node) => node.target).join(', ')}`,
@@ -553,7 +573,7 @@ const buildHtmlReportBody = (violations, { testSpec, testName, url, reportGenera
                 </div>
                 <div class="column" style="background-color:#cce6ff; height: 100%;" aria-label="Violations Summary by Severity">
                     ${impactPriority.map((impact) => {
-                        const totalIssues = getTotalIssuesForImpact(violations, impact)
+                        const totalIssues = violationsSummaryTotals[impact] !== undefined ? violationsSummaryTotals[impact] : 'n/a'
                         return `<p class="summary">${impactStyling[impact].icon} <strong>
                             <span aria="tooltip" class="tooltip">${impact.toUpperCase()}
                                 <span class="tooltiptext">${impactSeverityDescription[impact]}</span>
