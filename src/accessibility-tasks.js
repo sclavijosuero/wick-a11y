@@ -8,7 +8,37 @@ const path = require('path');
 //*******************************************************************************
 
 const addAccessibilityTasks = (on) => {
+    let suiteResults = {}
+
+    
+    on('before:run', (spec) => {
+        suiteResults = {}
+    })
+
+
     on('task', {
+        emptySuiteResults() {
+            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> emptySuiteResults')
+            suiteResults = {}
+            return null
+        },
+
+        getSuiteResults() {
+            console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& getSuiteResults')
+            return suiteResults || {}
+        },
+
+        saveTestResults(testResults) {
+            console.log('********************************************************* saveTestResults')
+            console.log('**** Test Results:')
+            console.log(testResults)
+            suiteResults[testResults.testTitle] = testResults
+            console.log('**** Suite Results:')
+            console.log(suiteResults)
+
+            return null
+        },
+
         /**
          * Logs the violations summary.
          *
@@ -100,6 +130,8 @@ const addAccessibilityTasks = (on) => {
             })
         }
     })
+
+    
 }
 
 module.exports = addAccessibilityTasks

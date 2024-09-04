@@ -1,11 +1,12 @@
-/// <reference types="Cypress" />
+/// <reference types="cypress" />
 
 const path = require('path');
 
 let accessibilityContext
 let accessibilityOptions
 let impactStyling
-let violationsSummaryTotals
+
+let testResults
 
 
 //*******************************************************************************
@@ -13,6 +14,13 @@ let violationsSummaryTotals
 //*******************************************************************************
 
 let reportIdGlobal = ''
+
+
+//*******************************************************************************
+// FOR SPEECH SYNTHESIS
+//*******************************************************************************
+
+const wickVoice = window.speechSynthesis;
 
 
 //*******************************************************************************
@@ -56,7 +64,7 @@ export const logViolationsAndGenerateReport = (violations) => {
  * The default folder path for storing accessibility reports.
  * @type {string}
  */
-const defaultAccessibilityFolder =  'cypress/accessibility'
+const defaultAccessibilityFolder = 'cypress/accessibility'
 
 /**
  * Array representing the priority levels of accessibility violations,
@@ -88,10 +96,10 @@ const impactPriority = ['critical', 'serious', 'moderate', 'minor'];
  */
 const defaultImpactStyling = {
     critical: { icon: '🟥', style: 'fill: #DE071B; fill-opacity: 0; stroke: #DE071B; stroke-width: 10;' },
-    serious:  { icon: '🟧', style: 'fill: #FFA66A; fill-opacity: 0; stroke: #FFA66A; stroke-width: 10;' },
+    serious: { icon: '🟧', style: 'fill: #FFA66A; fill-opacity: 0; stroke: #FFA66A; stroke-width: 10;' },
     moderate: { icon: '🟨', style: 'fill: #ECDE05; fill-opacity: 0; stroke: #ECDE05; stroke-width: 10;' },
-    minor:    { icon: '🟦', style: 'fill: #4598FF; fill-opacity: 0; stroke: #4598FF; stroke-width: 10;' },
-    fixme:    { icon: '🛠️'}
+    minor: { icon: '🟦', style: 'fill: #4598FF; fill-opacity: 0; stroke: #4598FF; stroke-width: 10;' },
+    fixme: { icon: '🛠️' }
 }
 
 
@@ -100,7 +108,7 @@ const impactSeverityDescription = {
                from accessing core functionality or content.<br>For example, images must have alternate text (alt text) to
                ensure that visually impaired users can understand the content of the images through screen readers.
                Missing alt text on critical images can be a substantial obstacle to accessibility.`,
-    serious:  `A 'serious' accessibility violation significantly degrades the user experience for individuals with disabilities
+    serious: `A 'serious' accessibility violation significantly degrades the user experience for individuals with disabilities
                but does not completely block access.<br>For instance, elements must meet minimum color contrast ratio thresholds.
                If text and background colors do not have sufficient contrast, users with visual impairments or color blindness may
                find it difficult to read the content.`,
@@ -108,7 +116,7 @@ const impactSeverityDescription = {
                These issues can cause some confusion or inconvenience.<br>For example, all page content should be contained by landmarks.
                Properly defining landmarks (like header, main, nav) helps screen reader users to navigate and understand the structure
                of the page better.`,
-    minor:    `A 'minor' accessibility violation has a minimal impact on accessibility. These issues are typically more related to best
+    minor: `A 'minor' accessibility violation has a minimal impact on accessibility. These issues are typically more related to best
                practices and can slightly inconvenience users.<br>For instance, the ARIA role should be appropriate for the element means
                that ARIA roles assigned to elements should match their purpose to avoid confusion for screen reader users, though it does
                not significantly hinder access if not perfectly used.`
@@ -164,7 +172,10 @@ const recordViolations = (violations, logSummary = true) => {
     impactStyling = Cypress._.merge({}, defaultImpactStyling, accessibilityOptions.impactStyling)
 
     // Calculate the summary totals of violations by severity
-    violationsSummaryTotals = calculateViolationsSummaryBySeverity(violations)
+    testResults = {
+        testSummary: calculateViolationsSummaryBySeverity(violations),
+        violations
+    }
 
     // Sort the violations by severity
     const violationsSorted = violations.sort(sortValidationsBySeverity)
@@ -182,7 +193,6 @@ const recordViolations = (violations, logSummary = true) => {
 
     return violationsSorted
 }
-
 
 /**
  * Calculates the summary of accessibility violations by severity.
@@ -207,7 +217,7 @@ const calculateViolationsSummaryBySeverity = (violations) => {
  */
 const recordViolationsSummaryTotals_CypressLog = (violations) => {
     cy.then(() => {
-        for (const [impact, totalPerImpact] of Object.entries(violationsSummaryTotals)) {
+        for (const [impact, totalPerImpact] of Object.entries(testResults.testSummary)) {
             Cypress.log({
                 name: `• ${impact.toUpperCase()} VIOLATIONS ${impactStyling[impact].icon}:`,
                 message: `${totalPerImpact}`,
@@ -237,8 +247,8 @@ const recordViolations_CypressLog = (violations) => {
             const impactIcon = impactStyling[impact].icon
 
             // nodes variable will store CSS selector for all the violation nodes (to highlight all of them when clicked the violation on the Cypress Log)
-            const nodes = Cypress.$(violation.nodes.map((node) => node.target).join(',')) 
- 
+            const nodes = Cypress.$(violation.nodes.map((node) => node.target).join(','))
+
             // Log accessbility violation (impact) - Type of violation
             Cypress.log({
                 name: `[${impactIcon}${impact.toUpperCase()}]`,
@@ -275,7 +285,7 @@ const recordViolations_CypressLog = (violations) => {
 const recordViolations_Console = (violations) => {
     // Log in the console summary of violations
     let violationsSummary = `\n************************ ACCESSIBILITY RESULTS FOR TEST "${Cypress.currentTest.title}"\n\n`
-    for (const [impact, totalPerImpact] of Object.entries(violationsSummaryTotals)) {
+    for (const [impact, totalPerImpact] of Object.entries(testResults.testSummary)) {
         violationsSummary += `${impact.toUpperCase()} VIOLATIONS: ${totalPerImpact}\n`
 
     }
@@ -304,12 +314,12 @@ const recordViolations_Report = (violations) => {
 
     cy.url({ log: false }).then(url => {
         const day = new Date()
-        const reportGeneratedOn  = day.toString()
+        const reportGeneratedOn = day.toString()
         const fileDate = day.toLocaleString({ timezone: "short" }).replace(/\//g, '-').replace(/:/g, '_').replace(/,/g, '')
 
         const testSpec = Cypress.spec.name
         const testName = Cypress._.last(Cypress.currentTest.titlePath)
-        
+
         // Accessibility folder
         const accessibilityFolder = Cypress.config('accessibilityFolder') || defaultAccessibilityFolder
         // const reportId = normalizeFileName(`Accessibility Report --- ${testSpec} --- ${testName} (${fileDate})`)
@@ -333,7 +343,7 @@ const recordViolations_Report = (violations) => {
             const issuesScreenshotFilePath = takeScreenshotsViolations(reportId, reportFolder)
 
             // Build the content of the HTML report
-            const fileBody = buildHtmlReportBody(violations, { testSpec, testName, url, reportGeneratedOn , issuesScreenshotFilePath })
+            const fileBody = buildHtmlReportBody(violations, { testSpec, testName, url, reportGeneratedOn, issuesScreenshotFilePath })
 
             // Generate the HTML report
             const file = { folderPath: reportFolder, fileName: 'Accessibility Report.html', fileBody }
@@ -573,13 +583,13 @@ const buildHtmlReportBody = (violations, { testSpec, testName, url, reportGenera
                 </div>
                 <div class="column" style="background-color:#cce6ff; height: 100%;" aria-label="Violations Summary by Severity">
                     ${impactPriority.map((impact) => {
-                        const totalIssues = violationsSummaryTotals[impact] !== undefined ? violationsSummaryTotals[impact] : 'n/a'
-                        return `<p class="summary">${impactStyling[impact].icon} <strong>
+        const totalIssues = testResults.testSummary[impact] !== undefined ? testResults.testSummary[impact] : 'n/a'
+        return `<p class="summary">${impactStyling[impact].icon} <strong>
                             <span aria="tooltip" class="tooltip">${impact.toUpperCase()}
                                 <span class="tooltiptext">${impactSeverityDescription[impact]}</span>
                             </span>: </strong>${totalIssues}
                         </p>`
-                    }).join('')}
+    }).join('')}
                 </div>
             </div>
             <div class="single_column column" style="background-color:#e6f3ff; height: 100%;" role="region" aria-label="Analysis Conditions Summary">
@@ -598,20 +608,20 @@ const buildHtmlReportBody = (violations, { testSpec, testName, url, reportGenera
                 </p>
 
                 <!-- Rules -->
-                ${accessibilityOptions.rules ?  
-                    `<p class="summary"><strong>
+                ${accessibilityOptions.rules ?
+            `<p class="summary"><strong>
                         <span aria="tooltip" class="tooltip">Rules
                             <span class="tooltiptext">${rulesHelp}</span>
                         </span>: </strong>${getHumanReadableFormat(accessibilityOptions.rules)}
                     </p>` : ''
-                }
+        }
             </div>
             <hr/>
             <h2 role="heading" >Accessibility Violations Details</h2>
             <ul>
                 ${violations
-                        .map(
-                            (violation) => `
+            .map(
+                (violation) => `
                 <li>
                     <strong>[${impactStyling[violation.impact].icon}${violation.impact.toUpperCase()}]: ${escapeHTML(violation.help.toUpperCase())}<i> (Rule ID: ${escapeHTML(violation.id)})</i></strong>
                     <a href="${violation.helpUrl}" target="_blank">More info</a>
@@ -625,10 +635,10 @@ const buildHtmlReportBody = (violations, { testSpec, testName, url, reportGenera
                                 <span class="tooltiptext">${getFailureSummaryTooltipHtml(node.failureSummary)}</span>
                             </div>
                         </li>`
-                        ).join("")}
+                ).join("")}
                     </ul>
                 </li>`
-                ).join("")}
+            ).join("")}
             </ul>
             <hr/>
 
@@ -653,7 +663,7 @@ Axe-core® <https://github.com/dequelabs/axe-core> is a trademark of Deque Syste
  * @param {string} str - The string to escape.
  * @returns {string} The escaped string.
  */
-const escapeHTML = (str = '') => 
+const escapeHTML = (str = '') =>
     str.replace(
         /[&<>'"]/g,
         tag =>
@@ -766,9 +776,9 @@ const flagViolationOnPage = (doc, elem, violation, node) => {
     const { impact, description, help } = violation
     const { failureSummary, html, target } = node
     const impactIcon = impactStyling[impact].icon
-   
+
     // Get the bounding rectangle of the element
-    const boundingRect = elem.getBoundingClientRect() 
+    const boundingRect = elem.getBoundingClientRect()
 
     // SVG Namespace
     const namespaceURI = 'http://www.w3.org/2000/svg'
@@ -789,7 +799,7 @@ const flagViolationOnPage = (doc, elem, violation, node) => {
     rect.setAttribute('y', '0')
     rect.setAttribute('rx', '10')
     rect.setAttribute('ry', '10')
-    
+
     // TOOLTIP
     const tooltipInfo = {
         impact,  // E.g. 'serious'
@@ -797,7 +807,7 @@ const flagViolationOnPage = (doc, elem, violation, node) => {
         help,
         failureSummary,
         html,
-        fixme:target,
+        fixme: target,
         impactIcon
     }
 
@@ -915,3 +925,434 @@ const createViolationCssStyles = (doc) => {
 }
 
 
+//*******************************************************************************
+// DATA FOR ACCESSIBILITY VIOLATIONS VOICE MESSAGES
+//*******************************************************************************
+
+// before(() => {
+//     // Initialize the suiteResults object to store the results of each test
+
+//     // This is cleaning up after the 3rd test!!!! (actually called multiple times), because of the contexts!!!!!!!!!
+//     cy.task('emptySuiteResults')
+// })
+
+after(() => {
+    // Note: when it runs 2 tests that implies render UI, Cypress.env('suiteResults') is emptied (when start running the second one)
+
+    cy.task('getSuiteResults').then((suiteResults) => {
+        console.log('############################################### SUITE RESULTS after()')
+        console.log(suiteResults)
+
+        for (const [testTitle, testResults] of Object.entries(suiteResults)) {
+            // console.log('------------------')
+            // console.log(testTitle)
+            // console.log(testResults)
+
+            createVoiceControlsInCypressLog(testResults)
+        }
+    })
+})
+
+Cypress.on('test:before:run', () => {
+    wickVoice.cancel()
+    testResults = {}
+})
+
+/**
+ * Generates a voice message obtaining summaries and details of the accessibility violations for last test after its run is completed (passed/failed/pending/etc.).
+ *
+ * @param {Object} test - Test atributes.
+ * @param {Object} test - Runnable test.
+ * @returns {string} - The voice message summarizing the test results.
+ */
+Cypress.on('test:after:run', (testAttr, test) => {
+    // This is called after afterEach()!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+    if (Cypress.config('isInteractive')) {
+        // Only for interactive mode (Cypress Runner)
+        console.log('---------')
+        console.log(test)
+
+        // Create CSS styles for the voice messages
+        // createVoiceCssStyles()
+
+        // Complete the testResults object obtaining the information needed for voice messages
+        // testResults.testOrder = test.order
+        // testResults.testTitle = test.title
+        // testResults.testState = test.state
+        // testResults.testSummaryVoice = obtainTestSummaryVoiceMessage(test)
+        // testResults.violationsResults = obtainViolationsResultsVoiceMessage(testResults.violations)
+
+        // Create controls in the Cypress Log to play the voice messages
+        // createVoiceControlsInCypressLog(testResults)
+
+        // cy.task('saveTestResults', Cypress._.cloneDeep(testResults))
+
+    }
+})
+
+afterEach(() => {
+    console.log('AFTER EACH >>>>>>>>>>>>>>>>>>>>>>')
+    createVoiceCssStyles()
+
+    const test = cy.state('test')
+    console.log(test.title)
+
+    testResults.testTitle = test.title  // That's OK
+    testResults.testState = test.state
+    testResults.testSummaryVoice = obtainTestSummaryVoiceMessage(test)
+    testResults.violationsResults = obtainViolationsResultsVoiceMessage(testResults.violations)
+
+    console.log(testResults)
+    cy.task('saveTestResults', Cypress._.cloneDeep(testResults))
+})
+
+/**
+ * Generates a voice message summarizing the test results at the Test level (passed/failed/pending/etc.).
+ *
+ * @param {Object} test - The test object containing the test results.
+ * @returns {string} - The voice message summarizing the test results.
+ */
+const obtainTestSummaryVoiceMessage = (test) => {
+    // const obtainTestSummaryVoiceMessage = (testCurrentRetry) => {
+    // console.log(test.retries())
+
+    const attempts = test._currentRetry > 0 ? ` after ${test._currentRetry + 1} attempts` : ''
+    // const attempts = testCurrentRetry > 0 ? ` after ${testCurrentRetry + 1} attempts` : ''
+    // console.log(currentRetry)
+
+    const title = testResults.testTitle
+    if (testResults.testState === 'passed') {
+        // Passed
+        return `The test with name. ${title}, passed ${attempts} with no accessibility violations or any other errors.`
+    } else if (testResults.testState === 'pending') {
+        // Pending
+        return `The test with name, ${title}, was pending.`
+    } else if (testResults.testState === 'skipped') {
+        // Skipped
+        return `The test with name. ${title}, was skipped because some error occurred.`
+    } else if (testResults.testState === 'failed') {
+        // Failed
+        const numViolations = testResults.violations ? testResults.violations.length : 0
+        if (numViolations === 0) {
+            // Other then accessibility
+            return `The test with name, ${title}, failed ${attempts} for reasons other than accessibility violations. Failure cause: ${test.err.message}`
+            // return `The test with name, ${title}, failed ${attempts} for reasons other than accessibility violations.`
+        } else {
+            // Accessibility
+            let error = `The test with name, ${title}, failed ${attempts} because ${numViolations} accessibility violations ${pluralizedWord('was', numViolations)} detected: `
+            for (const [impact, totalPerImpact] of Object.entries(testResults.testSummary)) {
+                error += `${totalPerImpact} ${impact} ${pluralizedWord('violation', totalPerImpact)}!`
+            }
+            return error
+        }
+    } else {
+        // Some other error
+        return `The test with name, ${title}, failed ${attempts} for some reason.`
+    }
+}
+
+/**
+ * Generate a voice message with the accessibility violations summary at the Violation level, calling also function to do at the DOM Element level.
+ * 
+ * @param {Array} violations - An array of accessibility violations.
+ * @returns {Object} - The results of the accessibility violations.
+ */
+const obtainViolationsResultsVoiceMessage = (violations = []) => {
+    let violationsResults = {}
+
+    violations.forEach((violation) => {
+        const impact = violation.impact
+        const help = violation.help
+        const description = violation.description
+
+        const violationName = `${impact} violation: ${help}`
+        const numNodes = violation.nodes.length
+
+        violationsResults[violationName.toUpperCase()] = {
+            violationImpact: impact,
+            violationHelp: help,
+            violationSummary: { numNodes },
+            violationSummaryVoice:
+                `${numNodes} Document Object Model ${pluralizedWord('element', numNodes)} ${pluralizedWord('was', numNodes)} found with the critical violation: ` +
+                `${help}. ${description}.`,
+            nodes: obtainNodesResultsVoiceMessage(violation.nodes, impact, help, description)
+        }
+    })
+
+    return violationsResults
+}
+
+/**
+ * Generate a voice message with the accessibility violations details for each node.
+ *
+ * @param {Array} nodes - The array of nodes to process.
+ * @param {string} impact - The impact of the violation.
+ * @param {string} help - The help message for the violation.
+ * @param {string} description - The description of the violation.
+ * @returns {Object} - An object containing the results of accessibility violations for each node.
+ */
+const obtainNodesResultsVoiceMessage = (nodes, impact, help, description) => {
+    let nodesResults = {}
+
+    nodes.forEach((node, index) => {
+        const target = node.target[0]
+        const failureSummary = node.failureSummary
+
+        nodesResults[target] = {
+            nodeName: target,
+            nodeSummaryVoice:
+                `The Document Object Model element with selector, "${target}", was found with the ${impact} violation: ${help}. ` +
+                `${description}. ${failureSummary}.`,
+        }
+    })
+
+    return nodesResults
+}
+
+
+/**
+ * Returns the plural form of a word based on the count.
+ *
+ * @param {string} word - The word to be pluralized.
+ * @param {number} count - The count to determine the plural form.
+ * @returns {string} The plural form of the word.
+ */
+const pluralizedWord = (word, count) => {
+    if (word === 'violation') {
+        return count === 1 ? 'violation' : 'violations'
+    } else if (word === 'was') {
+        return count === 1 ? 'was' : 'were'
+    } else if (word === 'element') {
+        return count === 1 ? 'element' : 'elements'
+    }
+}
+
+
+//*******************************************************************************
+// CONTROLS IN CYPRESS LOG TO PLAY VOICE MESSAGES
+//*******************************************************************************
+
+const createVoiceControlsInCypressLog = (testResults) => {
+    // Get test information
+    const testTitle = testResults.testTitle;
+    const testSummaryVoice = testResults.testSummaryVoice;
+
+    // Find test within Cypress Log
+    const $testElement = findTestElement(testTitle);
+
+    if ($testElement.length === 1) {// This is a '.runnable-title' element (immediate sibilings are '.runnable-controls')
+        // Create voice buttons for Test
+        createVoiceButtons($testElement, '.runnable-controls', testSummaryVoice)
+
+        // Process all the Violations for each test
+        for (const [violationName, violationInfo] of Object.entries(testResults.violationsResults)) {
+            // Get violation information
+            const violationSummaryVoice = violationInfo.violationSummaryVoice
+            const numNodes = violationInfo.violationSummary.numNodes
+            const nodes = violationInfo.nodes
+
+            // Find violation for the test within the Cypress Log
+            const $violationElement = findViolationElement($testElement, violationInfo.violationImpact, violationInfo.violationHelp)
+
+            if ($violationElement.length === 1) {  // This is a '.command-info' element (immediate sibilings are '.command-controls')
+                // Create voice buttons for Test
+                createVoiceButtons($violationElement, '.command-controls', violationSummaryVoice)
+
+                // Process all the Nodes affected (DOM Elements) for each violation
+                let $nodeLI = $violationElement.closest('li') // <li> for the violation
+                for (let i = 0; i < numNodes; i++) {
+                    $nodeLI = $nodeLI.next() // <li> for the node
+
+                    // Find node for the violation within the Cypress Log
+                    const $nodeElement = findNodeElement($nodeLI)
+                    if ($nodeElement.length === 1) {  // This is a '.command-info' element (immediate sibilings are '.command-controls')
+                        const selector = $nodeElement.find('.command-message-text').text()
+                        const violationSummaryVoice = nodes[selector].nodeSummaryVoice
+
+                        createVoiceButtons($nodeElement, '.command-controls', violationSummaryVoice)
+                    }
+                }
+            }
+        }
+    }
+}
+
+const findTestElement = (testTitle) => {
+    // Returns a jquery object for an element of type test that has a class '.runnable-title' (the immediate sibilings are '.runnable-controls')
+    return Cypress.$(`.test.runnable .runnable-title span:contains("${testTitle}")`, window.top?.document).filter((index, elem) => {
+        // Test title name must exact match
+        return Cypress.$(elem).text() === testTitle ? true : false;
+    }).parent()
+}
+
+const findViolationElement = ($testElement, impact, help) => {
+    // Returns a jquery object for an element of type violation that has a class '.command-info' (the immediate sibilings are '.command-controls')
+    return $testElement.closest('li').find(`li span.command-info`).filter((index, elem) => {
+        const $elem = Cypress.$(elem);
+        return $elem.find(`.command-method span:contains("${impact.toUpperCase()}")`).length === 1 &&
+            $elem.find(`.command-message-text:contains("${help.toUpperCase()}")`).length === 1
+            ? true : false;
+    })
+}
+
+const findNodeElement = ($nodeLI) => {
+    // Returns a object element of type node for an element with class '.command-info' (the immediate sibilings are '.command-controls')
+    return $nodeLI.find(`span.command-info`)
+}
+
+const createVoiceButtons = ($element, controlsSelector, testSummaryVoice) => {
+    // Obtain place holder for controls and create if does not exist
+    let $controls = $element.siblings(controlsSelector)
+    if ($controls.length === 0) {
+        // Create controls
+        $controls = Cypress.$(`<span class="${controlsSelector.replace('.', '')}"></div>`)
+        $element.after($controls)
+    }
+
+    const voiceGroupId = Cypress._.uniqueId()
+    const playButton = `<span data-voice-group="${voiceGroupId}" class="voice-button voice-play" role="button" title="Play violations"><span>${playSvg}</span></span>`
+    const pauseButton = `<span data-voice-group="${voiceGroupId}" class="voice-button voice-pause voice-hidden" role="button" title="Pause violations"><span>${pauseSvg}</span></span>`
+    const resumeButton = `<span data-voice-group="${voiceGroupId}" class="voice-button voice-resume voice-hidden" role="button" title="Resume violations"><span>${resumeSvg}</span></span>`
+    const stopButton = `<span data-voice-group="${voiceGroupId}" class="voice-button voice-stop voice-hidden" role="button" title="Stop violations"><span>${stopSvg}</span></span>`
+
+    const doc = window.top?.document
+
+    const $play = Cypress.$(playButton).on('click', (e) => { playVoiceMessage(e, doc, voiceGroupId, testSummaryVoice) })
+    const $pause = Cypress.$(pauseButton).on('click', (e) => { pauseVoiceMessage(e, doc, voiceGroupId) })
+    const $resume = Cypress.$(resumeButton).on('click', (e) => { resumeVoiceMessage(e, doc, voiceGroupId) })
+    const $stop = Cypress.$(stopButton).on('click', (e) => { stopVoiceMessage(e, doc, voiceGroupId) })
+
+    $controls.append($play, $pause, $resume, $stop)
+}
+
+const playSvg = `<svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M21.4086 9.35258C23.5305 10.5065 23.5305 13.4935 21.4086 14.6474L8.59662 21.6145C6.53435 22.736 4 21.2763 4 18.9671L4 5.0329C4 2.72368 6.53435 1.26402 8.59661 2.38548L21.4086 9.35258Z" fill="#51ac10"/>
+</svg>`
+
+const pauseSvg = `<svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M2 6C2 4.11438 2 3.17157 2.58579 2.58579C3.17157 2 4.11438 2 6 2C7.88562 2 8.82843 2 9.41421 2.58579C10 3.17157 10 4.11438 10 6V18C10 19.8856 10 20.8284 9.41421 21.4142C8.82843 22 7.88562 22 6 22C4.11438 22 3.17157 22 2.58579 21.4142C2 20.8284 2 19.8856 2 18V6Z" fill="#ebf635"/>
+<path d="M14 6C14 4.11438 14 3.17157 14.5858 2.58579C15.1716 2 16.1144 2 18 2C19.8856 2 20.8284 2 21.4142 2.58579C22 3.17157 22 4.11438 22 6V18C22 19.8856 22 20.8284 21.4142 21.4142C20.8284 22 19.8856 22 18 22C16.1144 22 15.1716 22 14.5858 21.4142C14 20.8284 14 19.8856 14 18V6Z" fill="#ebf635"/>
+</svg>`
+
+const resumeSvg = `<svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M10.2929 1.29289C10.6834 0.902369 11.3166 0.902369 11.7071 1.29289L14.7071 4.29289C14.8946 4.48043 15 4.73478 15 5C15 5.26522 14.8946 5.51957 14.7071 5.70711L11.7071 8.70711C11.3166 9.09763 10.6834 9.09763 10.2929 8.70711C9.90237 8.31658 9.90237 7.68342 10.2929 7.29289L11.573 6.01281C7.90584 6.23349 5 9.2774 5 13C5 16.866 8.13401 20 12 20C15.866 20 19 16.866 19 13C19 12.4477 19.4477 12 20 12C20.5523 12 21 12.4477 21 13C21 17.9706 16.9706 22 12 22C7.02944 22 3 17.9706 3 13C3 8.16524 6.81226 4.22089 11.5947 4.00896L10.2929 2.70711C9.90237 2.31658 9.90237 1.68342 10.2929 1.29289Z" fill="#278fee"/>
+</svg>`
+
+const stopSvg = `<svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z" fill="#dddddd"/>
+</svg>`
+
+
+/**
+ * Resets the voice controls based on the provided parameters.
+ * 
+ * @param {Document} doc - The document object.
+ * @param {string} voiceGroupId - The ID of the voice group.
+ * @param {string} enabledSelector - The selector for voice controls to enable.
+ */
+const resetVoiceControls = (doc, voiceGroupId, enabledSelector) => {
+    const $voiceGroup = Cypress.$(`[data-voice-group="${voiceGroupId}"]`, doc)
+    // Hide all voice buttons
+    $voiceGroup.addClass('voice-hidden')
+    // Show the voice buttons that must be enabled
+    $voiceGroup.filter(enabledSelector).removeClass('voice-hidden')
+}
+
+const playVoiceMessage = (e, doc, voiceGroupId, voiceMessage) => {
+    // Prevent the event from bubbling up the DOM tree
+    e.stopPropagation()
+
+    // Hide any other voice buttons that is not Play from other voice groups
+    // (this is for the case when a voice message is playing and the user clicks play on a different voice message)
+    Cypress.$(`.voice-play`, doc).removeClass('voice-hidden')
+    Cypress.$(`.voice-pause, .voice-resume, .voice-stop`, doc).addClass('voice-hidden')
+
+    // Reset the controls to show the Pause and Stop buttons
+    resetVoiceControls(doc, voiceGroupId, `.voice-pause, .voice-stop`)
+
+    // Cancel any previous voice message
+    wickVoice.cancel()
+
+    // Create a new voice message
+    const speechMessage = new SpeechSynthesisUtterance(voiceMessage)
+    speechMessage.onend = (event) => {
+        // When the voice message ends, reset the controls to show the Play button
+        resetVoiceControls(doc, voiceGroupId, `.voice-play`)
+    }
+
+    // Play the voice message
+    wickVoice.speak(speechMessage)
+}
+
+const pauseVoiceMessage = (e, doc, voiceGroupId) => {
+    // Prevent the event from bubbling up the DOM tree
+    e.stopPropagation()
+
+    // Reset the controls to show the Resume and Stop buttons
+    resetVoiceControls(doc, voiceGroupId, `.voice-resume, .voice-stop`)
+
+    // Pause the voice message
+    wickVoice.pause()
+}
+
+const resumeVoiceMessage = (e, doc, voiceGroupId) => {
+    // Prevent the event from bubbling up the DOM tree
+    e.stopPropagation()
+
+    // Reset the controls to show the Pause and Stop buttons
+    resetVoiceControls(doc, voiceGroupId, `.voice-pause, .voice-stop`)
+
+    // Resume the voice message
+    wickVoice.resume()
+}
+
+/**
+ * Stops the voice message and resets the controls.
+ * 
+ * @param {Event} e - The event object.
+ * @param {Document} doc - The document object.
+ * @param {string} voiceGroupId - The ID of the voice group.
+ */
+const stopVoiceMessage = (e, doc, voiceGroupId) => {
+    // Prevent the event from bubbling up the DOM tree
+    e.stopPropagation()
+
+    // Reset the controls to show the Play button
+    resetVoiceControls(doc, voiceGroupId, `.voice-play`)
+
+    // Stop the voice message
+    wickVoice.cancel()
+}
+
+
+/**
+ * Creates and appends CSS styles for voice buttons.
+ */
+const createVoiceCssStyles = () => {
+    const styles = `
+        .voice-button {
+            margin-left: 12px;
+        }
+        
+        .voice-play {}
+
+        .voice-pause {}
+
+        .voice-resume {}
+
+        .voice-stop {}
+        
+        .voice-hidden {
+            display: none !important;
+        }
+    `
+
+    // Append the styles to the document head only once
+    const $head = Cypress.$(window.top?.document.head)
+    const hasVoiceStyles = $head.find("#voiceStyles");
+    if (!hasVoiceStyles.length) {
+        const $voiceStyles = Cypress.$(`<style id="voiceStyles">${styles}</style>`)
+        $head.append($voiceStyles)
+    }
+}
