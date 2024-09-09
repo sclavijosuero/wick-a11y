@@ -8,33 +8,55 @@ const path = require('path');
 //*******************************************************************************
 
 const addAccessibilityTasks = (on) => {
-    let suiteResults = {}
+    const newSpecResults = () => {
+        return {
+            specName: '',
+            specSummary: {
+                tests: 0,
+                passed:0,
+                failedAccessibility: 0,
+                failed: 0,
+                pending: 0,
+                skipped: 0
+            },
+            specSummaryVoice: ``,
+            testsResults: {}
+        }
+    }
 
+    let specResults = newSpecResults() 
     
-    on('before:run', (spec) => {
-        suiteResults = {}
-    })
-
-
     on('task', {
-        emptySuiteResults() {
-            console.log('>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> emptySuiteResults')
-            suiteResults = {}
+        /**
+         * Clears the spec results.
+         * @returns {null}
+         */
+        emptySpecResults() {
+            specResults = newSpecResults()
             return null
         },
 
-        getSuiteResults() {
-            console.log('&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&& getSuiteResults')
-            return suiteResults || {}
+        /**
+         * Retrieves the spec results.
+         * @returns {Object} The spec results object.
+         */
+        getSpecResults() {
+            return specResults || {}
         },
 
+        /**
+         * Saves the test results in spec results.
+         *
+         * @param {Object} testResults - The test results object.
+         * @returns {null} - Returns null.
+         */
         saveTestResults(testResults) {
-            console.log('********************************************************* saveTestResults')
-            console.log('**** Test Results:')
-            console.log(testResults)
-            suiteResults[testResults.testTitle] = testResults
-            console.log('**** Suite Results:')
-            console.log(suiteResults)
+            const testState = testResults.testState === 'failed' && testResults.violations ?
+                'failedAccessibility' : `${testResults.testState}`
+
+            specResults.testsResults[testResults.testTitle] = testResults
+            specResults.specSummary.tests++
+            specResults.specSummary[testState]++
 
             return null
         },

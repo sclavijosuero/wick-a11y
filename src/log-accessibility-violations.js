@@ -6,7 +6,11 @@ let accessibilityContext
 let accessibilityOptions
 let impactStyling
 
+
+// Global variable to store the current test results
 let testResults
+// Global variable to store the current suite results after all te4sts are completed
+let specResults
 
 
 //*******************************************************************************
@@ -929,83 +933,171 @@ const createViolationCssStyles = (doc) => {
 // DATA FOR ACCESSIBILITY VIOLATIONS VOICE MESSAGES
 //*******************************************************************************
 
-// before(() => {
-//     // Initialize the suiteResults object to store the results of each test
+before(() => {
+    // Delete spec summary voice buttons for the previous run
+    Cypress.$('.spec-summary-voice-control', window.top?.document).remove()
 
-//     // This is cleaning up after the 3rd test!!!! (actually called multiple times), because of the contexts!!!!!!!!!
-//     cy.task('emptySuiteResults')
-// })
-
-after(() => {
-    // Note: when it runs 2 tests that implies render UI, Cypress.env('suiteResults') is emptied (when start running the second one)
-
-    cy.task('getSuiteResults').then((suiteResults) => {
-        console.log('############################################### SUITE RESULTS after()')
-        console.log(suiteResults)
-
-        for (const [testTitle, testResults] of Object.entries(suiteResults)) {
-            // console.log('------------------')
-            // console.log(testTitle)
-            // console.log(testResults)
-
-            createVoiceControlsInCypressLog(testResults)
-        }
-    })
-})
-
-Cypress.on('test:before:run', () => {
-    wickVoice.cancel()
-    testResults = {}
-})
-
-/**
- * Generates a voice message obtaining summaries and details of the accessibility violations for last test after its run is completed (passed/failed/pending/etc.).
- *
- * @param {Object} test - Test atributes.
- * @param {Object} test - Runnable test.
- * @returns {string} - The voice message summarizing the test results.
- */
-Cypress.on('test:after:run', (testAttr, test) => {
-    // This is called after afterEach()!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-    if (Cypress.config('isInteractive')) {
-        // Only for interactive mode (Cypress Runner)
-        console.log('---------')
-        console.log(test)
-
-        // Create CSS styles for the voice messages
-        // createVoiceCssStyles()
-
-        // Complete the testResults object obtaining the information needed for voice messages
-        // testResults.testOrder = test.order
-        // testResults.testTitle = test.title
-        // testResults.testState = test.state
-        // testResults.testSummaryVoice = obtainTestSummaryVoiceMessage(test)
-        // testResults.violationsResults = obtainViolationsResultsVoiceMessage(testResults.violations)
-
-        // Create controls in the Cypress Log to play the voice messages
-        // createVoiceControlsInCypressLog(testResults)
-
-        // cy.task('saveTestResults', Cypress._.cloneDeep(testResults))
-
+    // Empty stored results in the forst test of the suite
+    if (cy.state().test.order === 1) {
+        cy.task('emptySpecResults')
     }
 })
 
-afterEach(() => {
-    console.log('AFTER EACH >>>>>>>>>>>>>>>>>>>>>>')
-    createVoiceCssStyles()
-
-    const test = cy.state('test')
-    console.log(test.title)
-
-    testResults.testTitle = test.title  // That's OK
-    testResults.testState = test.state
-    testResults.testSummaryVoice = obtainTestSummaryVoiceMessage(test)
-    testResults.violationsResults = obtainViolationsResultsVoiceMessage(testResults.violations)
-
-    console.log(testResults)
-    cy.task('saveTestResults', Cypress._.cloneDeep(testResults))
+/**
+ * Before each test start to run it cancels any voice message that might still being played and resets the test results for the next test to run.
+ */
+Cypress.on('test:before:run', (testAttr, test) => {
+    if (mustEnableVoice()) {
+        wickVoice.cancel()
+        testResults = {}
+    }
 })
+
+Cypress.on('test:after:run', (testAttr, test) => {
+    if (mustEnableVoice()) {
+        const lastTest = test.order === Cypress.$('.test', window.top?.document).length
+        if (lastTest) {
+            // Last test in the suite
+
+            // Figure out number of pending tests (last piece missing) and complete the total count
+            const pendingTests = Cypress.$('.runnable-pending', window.top?.document).length
+            specResults.specSummary.pending = pendingTests
+            specResults.specSummary.tests += pendingTests
+
+            createTestVoiceControlsInCypressLog()
+            captureEventsForCollapsibleElements()
+        }
+    }
+})
+
+/**
+ * After each test case if run create the voice messages for that test and save results for later use.
+ */
+afterEach(() => {
+    if (mustEnableVoice()) {
+        const test = cy.state().test
+
+        testResults.testTitle = test.title
+        testResults.testState = test.state
+        testResults.testSummaryVoice = obtainTestSummaryVoiceMessage(test)
+        testResults.violationsResults = obtainViolationsResultsVoiceMessage(testResults.violations)
+
+        cy.task('saveTestResults', Cypress._.cloneDeep(testResults))
+    }
+})
+
+/**
+ * After all tests are run create the voice messages, add the voice buttons styles to the page and create the voice buttons in the Cypress log.
+ */
+after(() => {
+    if (mustEnableVoice()) {
+        createVoiceCssStyles()
+
+        cy.task('getSpecResults').then((theSpecResults) => {
+            specResults = theSpecResults
+        })
+    }
+})
+
+const captureEventsForCollapsibleElements = () => {
+    Cypress.$('main .collapsible-header', window.top?.document).each((index, collapsible) => {
+
+        // Get the original click handler
+        const originalClickHandler = collapsible.onclick;
+        
+        collapsible.onclick = function (event) {
+            // console.log('====== collapsible.onclick')
+            if (originalClickHandler) {
+                // Call the original click handler if existed
+                originalClickHandler(event);
+            }
+
+            if (collapsible.getAttribute('aria-expanded') === 'false') {
+                // console.log('====== a')
+                // Action of expand (before expanding is false, and at this point is not fully expanded yet)
+
+                setTimeout(() => {
+                    // Get tests in case the collapsible is a describe or context block
+                    let $tests = Cypress.$(collapsible).parent().next().find(' .runnable-title>span:nth-child(1)')
+
+                    if ($tests.length === 0) {
+                        // Is already a test or another collapsible without tests
+                        // console.log('---1')
+
+                        const $test = Cypress.$(collapsible).find(' .runnable-title>span:nth-child(1)')
+                        const testTitle = $test.text()
+                        const skipVoiceForTestHeader = testTitle ? true : false // We are expanding already a test so skip the voice buttons for the test header
+
+                        createTestVoiceControlsInCypressLog(testTitle, skipVoiceForTestHeader)
+                    } else {
+                        // It is a describe or context block with tests inside
+                        $tests.each((index, test) => {
+                            // console.log('---2')
+                            const testTitle = Cypress.$(test).text()
+                            createTestVoiceControlsInCypressLog(testTitle)
+                        })
+                    }
+                }, 250); // Give some time to the UI component to create and render the childern elements (childern contexts and tests)
+            } else {
+                // console.log('====== b')
+                // Action of colapse (before colapsing, it  is true, and at this point is not fully ecollapsed yet)
+
+                const doc = window.top?.document
+
+                // Cancel any previous voice message
+                wickVoice.cancel()
+
+                // Hide any other voice buttons that is not Play from other voice groups
+                // (this is for the case when a voice message is playing and the user clicks play on a different voice message)
+                Cypress.$(`.voice-play`, doc).removeClass('voice-hidden')
+                Cypress.$(`.voice-pause, .voice-resume, .voice-stop`, doc).addClass('voice-hidden')
+            }
+        }
+    })
+}
+
+
+
+const obtainSpecSummaryVoiceMessage = () => {
+    const summary = specResults.specSummary
+ 
+    return `
+        The spec with name ${specResults.specName} ran ${summary.tests} ${pluralizedWord('test', summary.tests)} in total:
+        ${summary.passed} ${pluralizedWord('test', summary.tests)} passed,
+        ${summary.failedAccessibility} ${pluralizedWord('test', summary.tests)} failed due accessibility violations,
+        ${summary.failed} ${pluralizedWord('test', summary.tests)} failed for other reasons,
+        ${summary.pending + summary.skipped} ${pluralizedWord('test', summary.tests)} skipped or pending,
+    `
+}
+
+const createTestVoiceControlsInCypressLog = (testTitle, skipVoiceForTestHeader = false) => {
+
+    if (!testTitle) {
+        // First time after test run completed
+
+        // Spec Name
+        specResults.specName = Cypress.spec.name
+
+        // Get spec summary voice message
+        specResults.specSummaryVoice = obtainSpecSummaryVoiceMessage()
+
+        const $specElement = findSpecElement();
+        createVoiceButtons($specElement, '.spec-summary-voice-control', specResults.specSummaryVoice)
+
+        for (const [testTitle, testResults] of Object.entries(specResults.testsResults)) {
+            createVoiceControlsForTest(testResults)
+        }
+    } else {
+        // After an expand/collapse event
+        const testResults = specResults.testsResults[testTitle]
+
+        if (testResults) {
+            // console.log('skipVoiceForTestHeader', skipVoiceForTestHeader)
+            createVoiceControlsForTest(testResults, skipVoiceForTestHeader)
+        }
+
+    }
+}
 
 /**
  * Generates a voice message summarizing the test results at the Test level (passed/failed/pending/etc.).
@@ -1014,20 +1106,12 @@ afterEach(() => {
  * @returns {string} - The voice message summarizing the test results.
  */
 const obtainTestSummaryVoiceMessage = (test) => {
-    // const obtainTestSummaryVoiceMessage = (testCurrentRetry) => {
-    // console.log(test.retries())
-
     const attempts = test._currentRetry > 0 ? ` after ${test._currentRetry + 1} attempts` : ''
-    // const attempts = testCurrentRetry > 0 ? ` after ${testCurrentRetry + 1} attempts` : ''
-    // console.log(currentRetry)
 
     const title = testResults.testTitle
     if (testResults.testState === 'passed') {
         // Passed
         return `The test with name. ${title}, passed ${attempts} with no accessibility violations or any other errors.`
-    } else if (testResults.testState === 'pending') {
-        // Pending
-        return `The test with name, ${title}, was pending.`
     } else if (testResults.testState === 'skipped') {
         // Skipped
         return `The test with name. ${title}, was skipped because some error occurred.`
@@ -1074,7 +1158,7 @@ const obtainViolationsResultsVoiceMessage = (violations = []) => {
             violationHelp: help,
             violationSummary: { numNodes },
             violationSummaryVoice:
-                `${numNodes} Document Object Model ${pluralizedWord('element', numNodes)} ${pluralizedWord('was', numNodes)} found with the critical violation: ` +
+                `${numNodes} Document Object Model ${pluralizedWord('element', numNodes)} ${pluralizedWord('was', numNodes)} found with the ${impact} violation: ` +
                 `${help}. ${description}.`,
             nodes: obtainNodesResultsVoiceMessage(violation.nodes, impact, help, description)
         }
@@ -1109,31 +1193,22 @@ const obtainNodesResultsVoiceMessage = (nodes, impact, help, description) => {
 
     return nodesResults
 }
-
-
 /**
- * Returns the plural form of a word based on the count.
- *
- * @param {string} word - The word to be pluralized.
- * @param {number} count - The count to determine the plural form.
- * @returns {string} The plural form of the word.
+ * Creates voice controls in Cypress log based on the provided test results.
+ * 
+ * @param {Object} testResults - The test results object.
+ * @param {string} testResults.testTitle - The title of the test.
+ * @param {string} testResults.testSummaryVoice - The voice summary of the test.
+ * @param {Object} testResults.violationsResults - The violations results object.
+ * @param {string} testResults.violationsResults.violationName - The name of the violation.
+ * @param {Object} testResults.violationsResults.violationInfo - The information about the violation.
+ * @param {string} testResults.violationsResults.violationInfo.violationSummaryVoice - The voice summary of the violation.
+ * @param {number} testResults.violationsResults.violationInfo.violationSummary.numNodes - The number of nodes affected by the violation.
+ * @param {Object} testResults.violationsResults.violationInfo.nodes - The nodes affected by the violation.
+ * @param {Object} testResults.violationsResults.violationInfo.nodes.nodeName - The selector for the node affected by the violation.
+ * @param {Object} testResults.violationsResults.violationInfo.nodes.nodeSumaryVoice - The accessibility summary for the node affected by the violation.
  */
-const pluralizedWord = (word, count) => {
-    if (word === 'violation') {
-        return count === 1 ? 'violation' : 'violations'
-    } else if (word === 'was') {
-        return count === 1 ? 'was' : 'were'
-    } else if (word === 'element') {
-        return count === 1 ? 'element' : 'elements'
-    }
-}
-
-
-//*******************************************************************************
-// CONTROLS IN CYPRESS LOG TO PLAY VOICE MESSAGES
-//*******************************************************************************
-
-const createVoiceControlsInCypressLog = (testResults) => {
+const createVoiceControlsForTest = (testResults, skipVoiceForTestHeader = false) => {
     // Get test information
     const testTitle = testResults.testTitle;
     const testSummaryVoice = testResults.testSummaryVoice;
@@ -1143,7 +1218,9 @@ const createVoiceControlsInCypressLog = (testResults) => {
 
     if ($testElement.length === 1) {// This is a '.runnable-title' element (immediate sibilings are '.runnable-controls')
         // Create voice buttons for Test
-        createVoiceButtons($testElement, '.runnable-controls', testSummaryVoice)
+        if (!skipVoiceForTestHeader) {
+            createVoiceButtons($testElement, '.runnable-controls', testSummaryVoice)
+        }
 
         // Process all the Violations for each test
         for (const [violationName, violationInfo] of Object.entries(testResults.violationsResults)) {
@@ -1178,6 +1255,17 @@ const createVoiceControlsInCypressLog = (testResults) => {
     }
 }
 
+
+const findSpecElement = () => {
+    return Cypress.$('.runnable-header .duration', window.top?.document)
+}
+
+/**
+ * Finds a test In the Cypress log based on the provided test title.
+ * 
+ * @param {string} testTitle - The title of the test to search for.
+ * @returns {jQuery} - A jQuery object representing the found DOM element for that test in the Cypress log.
+ */
 const findTestElement = (testTitle) => {
     // Returns a jquery object for an element of type test that has a class '.runnable-title' (the immediate sibilings are '.runnable-controls')
     return Cypress.$(`.test.runnable .runnable-title span:contains("${testTitle}")`, window.top?.document).filter((index, elem) => {
@@ -1186,6 +1274,14 @@ const findTestElement = (testTitle) => {
     }).parent()
 }
 
+/**
+ * Finds a violation element based on the provided parameters.
+ *
+ * @param {jQuery} $testElement - The jQuery object representing the DOM element for the test.
+ * @param {string} impact - The impact of the violation.
+ * @param {string} help - The help message of the violation.
+ * @returns {jQuery} - A jQuery object representing the found DOM element for that violation in the Cypress log.
+ */
 const findViolationElement = ($testElement, impact, help) => {
     // Returns a jquery object for an element of type violation that has a class '.command-info' (the immediate sibilings are '.command-controls')
     return $testElement.closest('li').find(`li span.command-info`).filter((index, elem) => {
@@ -1196,25 +1292,60 @@ const findViolationElement = ($testElement, impact, help) => {
     })
 }
 
+/**
+ * Finds a violation element based on the provided parameters.
+ *
+ * @param {jQuery} $nodeLI - The jQuery object representing the DOM element for the <li> tag with the list of nodes affected by the current processed violation.
+ * @returns {jQuery} - A jQuery object representing the found DOM element for that node in the Cypress log.
+ */
 const findNodeElement = ($nodeLI) => {
     // Returns a object element of type node for an element with class '.command-info' (the immediate sibilings are '.command-controls')
     return $nodeLI.find(`span.command-info`)
 }
 
+
+
+/**
+ * Represents the SVGs for the Play, Pause, Resume and Stop voice buttons.
+ *
+ * @type {string}
+ */
+const playSvg = `<svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M21.4086 9.35258C23.5305 10.5065 23.5305 13.4935 21.4086 14.6474L8.59662 21.6145C6.53435 22.736 4 21.2763 4 18.9671L4 5.0329C4 2.72368 6.53435 1.26402 8.59661 2.38548L21.4086 9.35258Z" fill="#51ac10"/>
+</svg>`
+const pauseSvg = `<svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M2 6C2 4.11438 2 3.17157 2.58579 2.58579C3.17157 2 4.11438 2 6 2C7.88562 2 8.82843 2 9.41421 2.58579C10 3.17157 10 4.11438 10 6V18C10 19.8856 10 20.8284 9.41421 21.4142C8.82843 22 7.88562 22 6 22C4.11438 22 3.17157 22 2.58579 21.4142C2 20.8284 2 19.8856 2 18V6Z" fill="#ebf635"/>
+<path d="M14 6C14 4.11438 14 3.17157 14.5858 2.58579C15.1716 2 16.1144 2 18 2C19.8856 2 20.8284 2 21.4142 2.58579C22 3.17157 22 4.11438 22 6V18C22 19.8856 22 20.8284 21.4142 21.4142C20.8284 22 19.8856 22 18 22C16.1144 22 15.1716 22 14.5858 21.4142C14 20.8284 14 19.8856 14 18V6Z" fill="#ebf635"/>
+</svg>`
+const resumeSvg = `<svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path fill-rule="evenodd" clip-rule="evenodd" d="M10.2929 1.29289C10.6834 0.902369 11.3166 0.902369 11.7071 1.29289L14.7071 4.29289C14.8946 4.48043 15 4.73478 15 5C15 5.26522 14.8946 5.51957 14.7071 5.70711L11.7071 8.70711C11.3166 9.09763 10.6834 9.09763 10.2929 8.70711C9.90237 8.31658 9.90237 7.68342 10.2929 7.29289L11.573 6.01281C7.90584 6.23349 5 9.2774 5 13C5 16.866 8.13401 20 12 20C15.866 20 19 16.866 19 13C19 12.4477 19.4477 12 20 12C20.5523 12 21 12.4477 21 13C21 17.9706 16.9706 22 12 22C7.02944 22 3 17.9706 3 13C3 8.16524 6.81226 4.22089 11.5947 4.00896L10.2929 2.70711C9.90237 2.31658 9.90237 1.68342 10.2929 1.29289Z" fill="#278fee"/>
+</svg>`
+const stopSvg = `<svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z" fill="#dddddd"/>
+</svg>`
+
+
+/**
+ * Creates voice buttons for controlling voice messages.
+ * 
+ * @param {jQuery} $element - The element to which the voice buttons will be appended.
+ * @param {string} controlsSelector - The selector for finding the placeholder for controls.
+ * @param {string} testSummaryVoice - The voice message to be played.
+ */
 const createVoiceButtons = ($element, controlsSelector, testSummaryVoice) => {
     // Obtain place holder for controls and create if does not exist
     let $controls = $element.siblings(controlsSelector)
     if ($controls.length === 0) {
         // Create controls
-        $controls = Cypress.$(`<span class="${controlsSelector.replace('.', '')}"></div>`)
+        $controls = Cypress.$(`<span class="${controlsSelector.replace('.', '')}"></span>`)
         $element.after($controls)
     }
 
     const voiceGroupId = Cypress._.uniqueId()
-    const playButton = `<span data-voice-group="${voiceGroupId}" class="voice-button voice-play" role="button" title="Play violations"><span>${playSvg}</span></span>`
-    const pauseButton = `<span data-voice-group="${voiceGroupId}" class="voice-button voice-pause voice-hidden" role="button" title="Pause violations"><span>${pauseSvg}</span></span>`
-    const resumeButton = `<span data-voice-group="${voiceGroupId}" class="voice-button voice-resume voice-hidden" role="button" title="Resume violations"><span>${resumeSvg}</span></span>`
-    const stopButton = `<span data-voice-group="${voiceGroupId}" class="voice-button voice-stop voice-hidden" role="button" title="Stop violations"><span>${stopSvg}</span></span>`
+    const playButton = `<span data-voice-group="${voiceGroupId}" class="voice-button voice-play" role="button" title="Play result"><span>${playSvg}</span></span>`
+    const pauseButton = `<span data-voice-group="${voiceGroupId}" class="voice-button voice-pause voice-hidden" role="button" title="Pause result"><span>${pauseSvg}</span></span>`
+    const resumeButton = `<span data-voice-group="${voiceGroupId}" class="voice-button voice-resume voice-hidden" role="button" title="Resume result"><span>${resumeSvg}</span></span>`
+    const stopButton = `<span data-voice-group="${voiceGroupId}" class="voice-button voice-stop voice-hidden" role="button" title="Stop result"><span>${stopSvg}</span></span>`
 
     const doc = window.top?.document
 
@@ -1225,23 +1356,6 @@ const createVoiceButtons = ($element, controlsSelector, testSummaryVoice) => {
 
     $controls.append($play, $pause, $resume, $stop)
 }
-
-const playSvg = `<svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M21.4086 9.35258C23.5305 10.5065 23.5305 13.4935 21.4086 14.6474L8.59662 21.6145C6.53435 22.736 4 21.2763 4 18.9671L4 5.0329C4 2.72368 6.53435 1.26402 8.59661 2.38548L21.4086 9.35258Z" fill="#51ac10"/>
-</svg>`
-
-const pauseSvg = `<svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M2 6C2 4.11438 2 3.17157 2.58579 2.58579C3.17157 2 4.11438 2 6 2C7.88562 2 8.82843 2 9.41421 2.58579C10 3.17157 10 4.11438 10 6V18C10 19.8856 10 20.8284 9.41421 21.4142C8.82843 22 7.88562 22 6 22C4.11438 22 3.17157 22 2.58579 21.4142C2 20.8284 2 19.8856 2 18V6Z" fill="#ebf635"/>
-<path d="M14 6C14 4.11438 14 3.17157 14.5858 2.58579C15.1716 2 16.1144 2 18 2C19.8856 2 20.8284 2 21.4142 2.58579C22 3.17157 22 4.11438 22 6V18C22 19.8856 22 20.8284 21.4142 21.4142C20.8284 22 19.8856 22 18 22C16.1144 22 15.1716 22 14.5858 21.4142C14 20.8284 14 19.8856 14 18V6Z" fill="#ebf635"/>
-</svg>`
-
-const resumeSvg = `<svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path fill-rule="evenodd" clip-rule="evenodd" d="M10.2929 1.29289C10.6834 0.902369 11.3166 0.902369 11.7071 1.29289L14.7071 4.29289C14.8946 4.48043 15 4.73478 15 5C15 5.26522 14.8946 5.51957 14.7071 5.70711L11.7071 8.70711C11.3166 9.09763 10.6834 9.09763 10.2929 8.70711C9.90237 8.31658 9.90237 7.68342 10.2929 7.29289L11.573 6.01281C7.90584 6.23349 5 9.2774 5 13C5 16.866 8.13401 20 12 20C15.866 20 19 16.866 19 13C19 12.4477 19.4477 12 20 12C20.5523 12 21 12.4477 21 13C21 17.9706 16.9706 22 12 22C7.02944 22 3 17.9706 3 13C3 8.16524 6.81226 4.22089 11.5947 4.00896L10.2929 2.70711C9.90237 2.31658 9.90237 1.68342 10.2929 1.29289Z" fill="#278fee"/>
-</svg>`
-
-const stopSvg = `<svg width="16px" height="16px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M2 12C2 7.28595 2 4.92893 3.46447 3.46447C4.92893 2 7.28595 2 12 2C16.714 2 19.0711 2 20.5355 3.46447C22 4.92893 22 7.28595 22 12C22 16.714 22 19.0711 20.5355 20.5355C19.0711 22 16.714 22 12 22C7.28595 22 4.92893 22 3.46447 20.5355C2 19.0711 2 16.714 2 12Z" fill="#dddddd"/>
-</svg>`
 
 
 /**
@@ -1259,9 +1373,20 @@ const resetVoiceControls = (doc, voiceGroupId, enabledSelector) => {
     $voiceGroup.filter(enabledSelector).removeClass('voice-hidden')
 }
 
+/**
+ * Play the voice message and resets the controls accordingly.
+ * 
+ * @param {Event} e - The event object.
+ * @param {Document} doc - The document object.
+ * @param {string} voiceGroupId - The ID of the voice group.
+ * @param {string} voiceMessage - Voice message to play.
+ */
 const playVoiceMessage = (e, doc, voiceGroupId, voiceMessage) => {
     // Prevent the event from bubbling up the DOM tree
     e.stopPropagation()
+
+    // Cancel any previous voice message
+    wickVoice.cancel()
 
     // Hide any other voice buttons that is not Play from other voice groups
     // (this is for the case when a voice message is playing and the user clicks play on a different voice message)
@@ -1270,9 +1395,6 @@ const playVoiceMessage = (e, doc, voiceGroupId, voiceMessage) => {
 
     // Reset the controls to show the Pause and Stop buttons
     resetVoiceControls(doc, voiceGroupId, `.voice-pause, .voice-stop`)
-
-    // Cancel any previous voice message
-    wickVoice.cancel()
 
     // Create a new voice message
     const speechMessage = new SpeechSynthesisUtterance(voiceMessage)
@@ -1285,6 +1407,13 @@ const playVoiceMessage = (e, doc, voiceGroupId, voiceMessage) => {
     wickVoice.speak(speechMessage)
 }
 
+/**
+ * Pause the voice message and resets the controls accordingly.
+ * 
+ * @param {Event} e - The event object.
+ * @param {Document} doc - The document object.
+ * @param {string} voiceGroupId - The ID of the voice group.
+ */
 const pauseVoiceMessage = (e, doc, voiceGroupId) => {
     // Prevent the event from bubbling up the DOM tree
     e.stopPropagation()
@@ -1296,6 +1425,13 @@ const pauseVoiceMessage = (e, doc, voiceGroupId) => {
     wickVoice.pause()
 }
 
+/**
+ * Resume the voice message and resets the controls accordingly.
+ * 
+ * @param {Event} e - The event object.
+ * @param {Document} doc - The document object.
+ * @param {string} voiceGroupId - The ID of the voice group.
+ */
 const resumeVoiceMessage = (e, doc, voiceGroupId) => {
     // Prevent the event from bubbling up the DOM tree
     e.stopPropagation()
@@ -1308,7 +1444,7 @@ const resumeVoiceMessage = (e, doc, voiceGroupId) => {
 }
 
 /**
- * Stops the voice message and resets the controls.
+ * Stops the voice message and resets the controls accordingly.
  * 
  * @param {Event} e - The event object.
  * @param {Document} doc - The document object.
@@ -1327,21 +1463,48 @@ const stopVoiceMessage = (e, doc, voiceGroupId) => {
 
 
 /**
+ * Determines if voice accessibility should be enabled.
+ * @returns {boolean} - True if voice accessibility should be enabled, false otherwise.
+ */
+const mustEnableVoice = () => {
+    return Cypress.config('isInteractive') && Cypress.env('enableAccessibilityVoice')
+}
+
+
+/**
+ * Returns the plural form of a word based on the count.
+ *
+ * @param {string} word - The word to be pluralized.
+ * @param {number} count - The count to determine the plural form.
+ * @returns {string} The plural form of the word.
+ */
+const pluralizedWord = (word, count) => {
+    if (word === 'violation') {
+        return count === 1 ? 'violation' : 'violations'
+    } else if (word === 'was') {
+        return count === 1 ? 'was' : 'were'
+    } else if (word === 'element') {
+        return count === 1 ? 'element' : 'elements'
+    } else if (word === 'test') {
+        return count === 1 ? 'test' : 'tests'
+    }
+}
+
+
+/**
  * Creates and appends CSS styles for voice buttons.
  */
 const createVoiceCssStyles = () => {
     const styles = `
+        .spec-summary-voice-control {
+            float: right;
+            line-height: 16px;
+            padding: 2px 6px;
+        }
+
         .voice-button {
             margin-left: 12px;
         }
-        
-        .voice-play {}
-
-        .voice-pause {}
-
-        .voice-resume {}
-
-        .voice-stop {}
         
         .voice-hidden {
             display: none !important;
@@ -1356,3 +1519,5 @@ const createVoiceCssStyles = () => {
         $head.append($voiceStyles)
     }
 }
+
+
