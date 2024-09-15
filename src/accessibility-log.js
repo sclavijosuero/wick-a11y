@@ -518,8 +518,9 @@ Cypress.on('test:after:run', (testAttr, test) => {
  */
 afterEach(() => {
     const test = cy.state().test
+    const maxRetries = Cypress.config('retries').openMode || 0
 
-    if (mustEnableVoice() && (test.state !== 'failed' || test.state === 'failed' && test._currentRetry === test._maxRetries)) {
+    if (mustEnableVoice() && (test.state !== 'failed' || test.state === 'failed' && test._currentRetry === maxRetries)) {
         testResults.testTitle = test.title
         testResults.testState = test.state
         testResults.testSummaryVoice = accessibilityVoice.obtainTestSummaryVoiceMessage(testResults, test)

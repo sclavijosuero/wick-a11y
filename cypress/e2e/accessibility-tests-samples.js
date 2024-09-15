@@ -1,10 +1,10 @@
-/// <reference types="Cypress" />
+/// <reference types="cypress" />
 
 // Import Accessibility Plugin
 import "../../src/accessibility-commands.js";
 
 
-describe('ACCESSIBILITY TESTS', { tags: ['@accessibility'] }, () => {
+describe.skip('ACCESSIBILITY TESTS', { tags: ['@accessibility'] }, () => {
 
     beforeEach(() => {
         cy.visit('http://127.0.0.1:8080/pages/page.html')

@@ -354,11 +354,17 @@ For each test, it shows a summary of the accessibility violations categorized by
 
 ![Violations Summary](/images/violations-summary.png)
 
+By clicking on one of the severity groups in the summary, the details for all the violations of that severity type will be shown in the browser console.
+
+![Summary Details per Severity Type](/images/summary-details-severity.png)
+
+
 ### Violation Details in Browser Console from Cypress Log
 
 To identify, in the page, which HTML element is affected by an accessibility violation, mouseover the specific violation in the Cypress log, and that element will be highlighted on the page. To know the details about the accessibility issue, click on the violation in the Cypress log and those details will be shown in the browser console.
 
 ![Runner Console](/images/runner-console-new.png)
+
 
 ### Violation Details in Tooltip when Hovering over a DOM Element on the Page
 
@@ -507,6 +513,10 @@ MIT License. See the [LICENSE](LICENSE) file for more details.
 
 
 ## Changelog
+
+### v1.2.1
+
+- Fix issue with voice buttons not showing for a test when retries.openMode:0 in cypress.config.js
 
 ### v1.2.0
 

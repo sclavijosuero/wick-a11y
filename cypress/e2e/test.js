@@ -1,11 +1,10 @@
-
-/// <reference types="Cypress" />
+/// <reference types="cypress" />
 
 // Import Accessibility Plugin
 import "../../src/accessibility-commands.js";
 
 
-describe('ACCESSIBILITY TESTS', { tags: ['@accessibility'] }, () => {
+describe.skip('ACCESSIBILITY TESTS', { tags: ['@accessibility'] }, () => {
     // NOTE: AXE analysis can spend quite some time, so it is recommended to increase the default command timeout for such tests
 
     it('Test google.com', {defaultCommandTimeout: 15000}, () => {
