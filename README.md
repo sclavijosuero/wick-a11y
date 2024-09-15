@@ -379,6 +379,7 @@ The analysis at a specific level in the Cypress Log can be heard by clicking the
 
 ![Voice Buttons](/images/voice-buttons.png)
 
+
 ### Accessibility Voice for Analysis at Suite Level in Log
 
 The accessibility voice feature at the suite level in the Cypress Log provides audible feedback that summarizes the accessibility analysis for the entire test suite. This includes:
@@ -393,10 +394,8 @@ The accessibility voice feature at the suite level in the Cypress Log provides a
 
 Video accessibility voice at Suite level in Cypress Log:
 
-<video controls>
-  <source src="/videos/voice-suite.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+[Watch the video](/videos/voice-suite.mp4)
+
 
 ### Accessibility Voice for Analysis at Test Level in Log
 
@@ -410,12 +409,8 @@ The accessibility voice feature at the test level in the Cypress Log provides au
 
 ![Voice Test Level](/images/voice-test.png)
 
-Video accessibility voice at Test level in Cypress Log:
+[Watch the video](/videos/voice-test-with-violations.mp4)
 
-<video controls>
-  <source src="/videos/voice-test-with-violations.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
 
 ### Accessibility Voice for Analysis at Violation Type Level in Log
 
@@ -427,12 +422,8 @@ The accessibility voice feature at the violation type level in the Cypress Log p
 
 ![Voice Violation Type Level](/images/voice-violation.png)
 
-Video accessibility voice at Violation Type level in Cypress Log:
+[Watch the video](/videos/voice-violation.mp4)
 
-<video controls>
-  <source src="/videos/voice-violation.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
 
 ### Accessibility Voice for Analysis at DOM Element Level in Log
 
@@ -445,12 +436,8 @@ The accessibility voice feature at the DOM element level in the Cypress Log prov
 
 ![Voice DOM Element Level](/images/voice-dom-element.png)
 
-Video accessibility voice at DOM element level in Cypress Log:
+[Watch the video](/videos/voice-dom-element.mp4)
 
-<video controls>
-  <source src="/videos/voice-dom-element.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
 
 ### Accessibility Voice for Analysis at DOM Element Level in the Web Page
 
@@ -463,12 +450,7 @@ The wick-a11y plugin also provides accessibility voice for a DOM element by clic
 
 ![Voice DOM Element Web Page](/images/voice-dom-element-page.png)
 
-Video accessibility voice at DOM element level in Web Page:
-
-<video controls>
-  <source src="/videos/voice-dom-element-page.mp4" type="video/mp4">
-  Your browser does not support the video tag.
-</video>
+[Watch the video](/videos/voice-dom-element-page.mp4)
 
 
 ### HTML Report
