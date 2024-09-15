@@ -508,6 +508,10 @@ MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ## Changelog
 
+### v1.2.1
+
+- Fix issue with voice buttons not showing for a test when retries.openMode:0 in cypress.config.js
+
 ### v1.2.0
 
 - Added support for voice in the Cypress Log and when clicking on DOM elements with violations on the page
