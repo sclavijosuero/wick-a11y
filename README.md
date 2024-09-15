@@ -1,7 +1,5 @@
 # wick-a11y
 
-# wick-a11y
-
 **wick-a11y** is a Cypress plugin designed for performing configurable accessibility tests. It allows you to easily incorporate accessibility checks into your End-to-End tests, log detailed information in the Cypress log, and generate HTML documents with screenshots of each violation for easier identification and resolution of accessibility issues, all out-of-the-box
 
 ![wick-a11y Overview](/images/overview.png)
