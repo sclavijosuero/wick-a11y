@@ -380,7 +380,7 @@ The analysis at a specific level in the Cypress Log can be heard by clicking the
 ![Voice Buttons](/images/voice-buttons.png)
 
 
-### Accessibility Voice for Analysis at Suite Level in Log
+### Accessibility Voice for Analysis at Suite Level in Cypress Log
 
 The accessibility voice feature at the suite level in the Cypress Log provides audible feedback that summarizes the accessibility analysis for the entire test suite. This includes:
 
@@ -394,10 +394,10 @@ The accessibility voice feature at the suite level in the Cypress Log provides a
 
 Video accessibility voice at Suite level in Cypress Log:
 
-[Watch the video](/videos/voice-suite.mp4)
+[Watch the video](/videos/README.md#accessibility-voice-for-analysis-at-suite-level-in-cypress-log "Accessibility Voice for Analysis at Suite Level in Cypress Log")
 
 
-### Accessibility Voice for Analysis at Test Level in Log
+### Accessibility Voice for Analysis at Test Level in Cypress Log
 
 The accessibility voice feature at the test level in the Cypress Log provides audible feedback that summarizes the accessibility analysis for each individual test. This includes:
 
@@ -409,10 +409,10 @@ The accessibility voice feature at the test level in the Cypress Log provides au
 
 ![Voice Test Level](/images/voice-test.png)
 
-[Watch the video](/videos/voice-test-with-violations.mp4)
+[Watch the video](/videos/README.md#accessibility-voice-for-analysis-at-test-level-in-cypress-log "Accessibility Voice for Analysis at Test Level in Cypress Log")
 
 
-### Accessibility Voice for Analysis at Violation Type Level in Log
+### Accessibility Voice for Analysis at Violation Type Level in Cypress Log
 
 The accessibility voice feature at the violation type level in the Cypress Log provides audible feedback that includes:
 
@@ -422,10 +422,10 @@ The accessibility voice feature at the violation type level in the Cypress Log p
 
 ![Voice Violation Type Level](/images/voice-violation.png)
 
-[Watch the video](/videos/voice-violation.mp4)
+[Watch the video](/videos/README.md#accessibility-voice-for-analysis-at-violation-type-level-in-cypress-log "Accessibility Voice for Analysis at Violation Type Level in Cypress Log")
 
 
-### Accessibility Voice for Analysis at DOM Element Level in Log
+### Accessibility Voice for Analysis at DOM Element Level in Cypress Log
 
 The accessibility voice feature at the DOM element level in the Cypress Log provides audible feedback that includes:
 
@@ -436,7 +436,7 @@ The accessibility voice feature at the DOM element level in the Cypress Log prov
 
 ![Voice DOM Element Level](/images/voice-dom-element.png)
 
-[Watch the video](/videos/voice-dom-element.mp4)
+[Watch the video](/videos/README.md#accessibility-voice-for-analysis-at-dom-element-level-in-cypress-log "Accessibility Voice for Analysis at DOM Element Level in Cypress Log")
 
 
 ### Accessibility Voice for Analysis at DOM Element Level in the Web Page
@@ -450,7 +450,7 @@ The wick-a11y plugin also provides accessibility voice for a DOM element by clic
 
 ![Voice DOM Element Web Page](/images/voice-dom-element-page.png)
 
-[Watch the video](/videos/voice-dom-element-page.mp4)
+[Watch the video](/videos/README.md#accessibility-voice-for-analysis-at-dom-element-level-in-the-web-page "Accessibility Voice for Analysis at DOM Element Level in the Web Page")
 
 
 ### HTML Report
