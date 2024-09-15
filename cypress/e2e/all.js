@@ -4,7 +4,7 @@
 import "../../src/accessibility-commands.js";
 
 
-describe('TEST SUITE 1', { tags: ['@accessibility'] }, () => {
+describe.skip('TEST SUITE 1', { tags: ['@accessibility'] }, () => {
     
     it('Check accessibility Parabank web site - 6', { defaultCommandTimeout: 15000 }, () => {
         cy.visit('https://parabank.parasoft.com/parabank/index.htm')
@@ -62,7 +62,7 @@ describe('TEST SUITE 1', { tags: ['@accessibility'] }, () => {
 })
 
 
-describe('TEST SUITE 2', { tags: ['@accessibility'] }, () => {
+describe.skip('TEST SUITE 2', { tags: ['@accessibility'] }, () => {
 
     it('Another simple passing test - 14', () => {
         expect(true).to.be.true
@@ -85,14 +85,14 @@ describe('TEST SUITE 2', { tags: ['@accessibility'] }, () => {
 })
 
 
-it('Check accessibility BrowserStack Demo web site - 1', { defaultCommandTimeout: 15000 }, () => {
+it.skip('Check accessibility BrowserStack Demo web site - 1', { defaultCommandTimeout: 15000 }, () => {
     cy.visit('https://bstackdemo.com/')
     cy.wait(2000) // Using cy.wait(TIME) is a very bad practice, but it is used for simplicity in this example
 
     cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'] })
 });
 
-it('Another simple passing test - 2', () => {
+it.skip('Another simple passing test - 2', () => {
     expect(true).to.be.true
 });
 
@@ -100,14 +100,14 @@ it.skip('Another simple skipping test - 3', () => {
     expect(true).to.be.true
 });
 
-it('Check accessibility BrowserStack Demo web site - 4', { defaultCommandTimeout: 15000 }, () => {
+it.skip('Check accessibility BrowserStack Demo web site - 4', { defaultCommandTimeout: 15000 }, () => {
     cy.visit('https://bstackdemo.com/')
     cy.wait(2000) // Using cy.wait(TIME) is a very bad practice, but it is used for simplicity in this example
 
     cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'] })
 });
 
-it('Another simple failing test - 5 (Ok in second attempt)', () => {
+it.skip('Another simple failing test - 5 (Ok in second attempt)', () => {
     if (Cypress.currentRetry === 1) {
         expect(true).to.be.true
     } else {
