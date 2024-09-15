@@ -8,7 +8,59 @@ const path = require('path');
 //*******************************************************************************
 
 const addAccessibilityTasks = (on) => {
+    const newSpecResults = () => {
+        return {
+            specName: '',
+            specSummary: {
+                tests: 0,
+                passed:0,
+                failedAccessibility: 0,
+                failed: 0,
+                pending: 0,
+                skipped: 0
+            },
+            specSummaryVoice: ``,
+            testsResults: {}
+        }
+    }
+
+    let specResults = newSpecResults() 
+    
     on('task', {
+        /**
+         * Clears the spec results.
+         * @returns {null}
+         */
+        emptySpecResults() {
+            specResults = newSpecResults()
+            return null
+        },
+
+        /**
+         * Retrieves the spec results.
+         * @returns {Object} The spec results object.
+         */
+        getSpecResults() {
+            return specResults || {}
+        },
+
+        /**
+         * Saves the test results in spec results.
+         *
+         * @param {Object} testResults - The test results object.
+         * @returns {null} - Returns null.
+         */
+        saveTestResults(testResults) {
+            const testState = testResults.testState === 'failed' && testResults.violations ?
+                'failedAccessibility' : `${testResults.testState}`
+
+            specResults.testsResults[testResults.testTitle] = testResults
+            specResults.specSummary.tests++
+            specResults.specSummary[testState]++
+
+            return null
+        },
+
         /**
          * Logs the violations summary.
          *
@@ -100,6 +152,8 @@ const addAccessibilityTasks = (on) => {
             })
         }
     })
+
+    
 }
 
 module.exports = addAccessibilityTasks
