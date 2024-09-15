@@ -392,8 +392,6 @@ The accessibility voice feature at the suite level in the Cypress Log provides a
 
 ![Voice Suite Level](/images/voice-suite.png)
 
-Video accessibility voice at Suite level in Cypress Log:
-
 [Watch the video](/videos/README.md#accessibility-voice-for-analysis-at-suite-level-in-cypress-log "Accessibility Voice for Analysis at Suite Level in Cypress Log")
 
 
