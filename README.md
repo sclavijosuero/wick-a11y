@@ -101,7 +101,7 @@ module.exports = defineConfig({
     
     ```json
     {
-          enableAccessibilityVoice: true
+          "enableAccessibilityVoice": true
     }
     ```
     3. Providing it as a command line argument `--env` in the terminal when opening the Cypress runner.
