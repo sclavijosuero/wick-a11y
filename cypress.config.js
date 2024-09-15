@@ -8,8 +8,8 @@ module.exports = defineConfig({
   viewportHeight: 1080,
 
   retries: {
-    openMode: 0,
-    // openMode: 2,
+    // openMode: 0,
+    openMode: 1,
     runMode: 1,
   },
 

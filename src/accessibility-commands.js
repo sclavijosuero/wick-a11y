@@ -2,7 +2,7 @@
 
 
 import 'cypress-axe'
-import { logViolations, logViolationsAndGenerateReport } from './log-accessibility-violations'
+import { logViolations, logViolationsAndGenerateReport } from './accessibility-log'
 
 
 /**
@@ -76,15 +76,3 @@ const checkAccessibility = (context, options) => {
 }
 Cypress.Commands.add('checkAccessibility', checkAccessibility)
 
-
-// TODO!
-// 1- Add support of new impactStyling option (will need some protocol to pass the violations functions the all the selected context and options). If we pass impactStyling, we can just override the default styling for the severity levels
-// 2- If we pass options, we can just hide the severity levels in the report we don't want to show in the report (those not selected in includedImpacts)
-// 3- if we pass options, we can show in the report runOnly tags
-// 4- Maybe we can show include and exclude in the report as well
-// Note: Or maybe show 3 and 4 in a tooltip in the report (or show in the area for the impact level legend.
-// - Update README.md with the new options in API Reference section and add examples
-// - Include more test samples o cypress/e2e/stormcenter-tests.js for impactStyling
-// - Redo all the screenshots (runner and html)
-// - Test with other pages (specially the report screenshot)
-// - Fix the report screenshot (messewd up at least in SC: https://qa.kubra.io/stormcenter/views/40144b5d-88e3-45fb-90d4-3b8127b46e5e): In oncor page with critical and serious seems OK.

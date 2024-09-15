@@ -1,36 +1,39 @@
 # wick-a11y
 
-wick-a11y is a Cypress plugin designed for performing configurable accessibility tests using AXE. Leveraging both cypress-axe and axe-core®, this plugin ensures your web applications meet accessibility standards by detecting violations and providing detailed reports.
+# wick-a11y
 
-With wick-a11y, you can easily incorporate accessibility checks into your End-to-End tests, logging detailed information in the Cypress log and generating HTML documents with screenshots of each violation for easier identification and resolution of accessibility issues.
+**wick-a11y** is a Cypress plugin designed for performing configurable accessibility tests. It allows you to easily incorporate accessibility checks into your End-to-End tests, log detailed information in the Cypress log, and generate HTML documents with screenshots of each violation for easier identification and resolution of accessibility issues, all out-of-the-box
 
 ![wick-a11y Overview](/images/overview.png)
 
 
 ## Main Features
 
-- **Comprehensive Accessibility Analysis**: Leverages axe-core® for thorough accessibility checks. Axe-core® <https://github.com/dequelabs/axe-core> is a trademark of Deque
-Systems, Inc <https://www.deque.com/>. in the US and other countries.
+- **Comprehensive Accessibility Analysis**: Leverages cypress-axe plugin and axe-core®  for thorough accessibility checks. Axe-core® <https://github.com/dequelabs/axe-core> is a trademark of Deque Systems, Inc <https://www.deque.com/>. in the US and other countries.
   
 - **Cypress Command**: Use the custom command `cy.checkAccessibility()` to run checks smoothly.
 
 - **Configurable**: Customize to include specific impact levels, rules, and guidelines.
 
+- **Summary of Violations**:  Provides a summary for each test in the Cypress Log, detailing accessibility violations categorized by their severity **(NEW in v1.2.0)**.
+  
 - **Detailed Violation Information**:
-  - Displays violations in the Cypress log and browser console.
+  - Displays violations details in the Cypress log and browser console.
   - Graphically shows affected DOM elements on the page, enclosing them in a colored box based on severity.
 
 - **Custom Styling**: Supports custom styling for accessibility issues based on severity level at the test level.
 
 - **Interactive Console**:
-  - Hovering over a specific violation in the Cypress log highlights the affected DOM element on the tested page, and clicking it displays detailed information about the issue in the browser console.
-  - Hovering over a specific DOM element with a violation on the page in the Cypress runner highlights the element graphically and shows a tooltip with the violation information.
+  - Hovering over a violation in the Cypress Log highlights the affected DOM element on the page, and clicking it shows detailed issue information in the browser console.
+  - Hovering over a DOM element with a violation on the web page in the Cypress runner highlights it graphically and shows a tooltip with the violation information.
 
-- **HTML Reports**: Generates HTML reports with the violations, including screenshots for visual reference.
+- **HTML Reports**: Generates HTML reports with details of the violations and how to fix them, including screenshots for visual reference, all out-of-the-box.
 
-> **Before launching the accessibility analysis, ensure what you want to analyze is fully rendered on the page.**
+- **Voice Support**: Provides audible information for accessibility issues at the suite level, test level, violation type level, and DOM element level, helping users identify issues through voice feedback **(NEW in v1.2.0)**.
+
+> ✔️ **Before launching the accessibility analysis, ensure what you want to analyze is fully rendered on the page.**
 > 
-> **The plugin analyzes DOM elements that are visible in the browser viewport as per the axe-core® plugin (it will not include hidden elements).**
+> ✔️ **The plugin analyzes DOM elements that are visible in the browser viewport as per the axe-core® plugin (it will not include hidden elements).**
 
 
 ## Installation
@@ -74,16 +77,40 @@ module.exports = defineConfig({
 import 'wick-a11y';
 ```
 
-- ✳️️  Accessibility HTML reports will be generated in the folder **`cypress/accessibility`** by default. This folder can be changed by including the configuration parameter **`accessibilityFolder`** in **`cypress.config.js`**.
+- 🔶 Accessibility HTML reports will be generated in the folder **`cypress/accessibility`** by default. This folder can be changed by including the configuration parameter **`accessibilityFolder`** in **`cypress.config.js`**.
 
 ```javascript
 module.exports = defineConfig({
-  // ... rest of the configuration
-  
-  accessibilityFolder: 'cypress/your-accessibility-reports-folder'
+  // [...]
+  accessibilityFolder: 'cypress/your-accessibility-reports-folder',
+  // [...]
 });
 ```
 
+- 🔶 By default, the voice feature is disabled. To enable it, set the Cypress environment variable **`enableAccessibilityVoice`** to **`true`**. This will only take effect when you execute tests in the Cypress runner (`npx cypress open`). You can enable the voice feature by setting this environment variable in three different ways:
+    1. Including it within the `env` property in the **`cypress.config.js`** file
+    
+    ```javascript
+    module.exports = defineConfig({
+          // [...]
+          env: {
+                enableAccessibilityVoice: true
+          }
+          // [...]
+    });
+    ```
+    2. Including it in the **`cypress.env.json`** file
+    
+    ```json
+    {
+          enableAccessibilityVoice: true
+    }
+    ```
+    3. Providing it as a command line argument `--env` in the terminal when opening the Cypress runner.
+    
+    ```shell
+    npx cypress open -- env enableAccessibilityVoice=true
+    ```
 
 ## API Reference
 
@@ -323,6 +350,12 @@ If there are any violations for the selected rules used in the analysis, the tes
 
 ![Runner Results](/images/runner-results.png)
 
+### Summary of Violations
+
+For each test, it shows a summary of the accessibility violations categorized by their severity in the Cypress Log at the end of the test.
+
+![Violations Summary](/images/violations-summary.png)
+
 ### Violation Details in Browser Console from Cypress Log
 
 To identify, in the page, which HTML element is affected by an accessibility violation, mouseover the specific violation in the Cypress log, and that element will be highlighted on the page. To know the details about the accessibility issue, click on the violation in the Cypress log and those details will be shown in the browser console.
@@ -334,6 +367,109 @@ To identify, in the page, which HTML element is affected by an accessibility vio
 When hovering over a specific DOM element with a violation on the page in the Cypress runner, the element will be highlighted graphically, and a tooltip will appear showing the violation information. This feature allows you to quickly identify and understand accessibility issues directly on the page, providing an immediate and intuitive way to address them.
 
 ![Runner Screen](/images/runner-screen.png)
+
+
+### Accessibility Voice
+
+The wick-a11y plugin provides users with audible information about the accessibility analysis results executed in the suite. Audible analysis is available at all levels through the Cypress Log and by clicking affected DOM elements directly on the web page in the Cypress runner. Accessibility voice is only available when tests are run in the Cypress runner (`npx cypress open`), and the Cypress environment variable `enableAccessibilityVoice` is set to `true`.
+
+This feature is particularly useful for users who rely on auditory information to enhance their understanding and streamline the process of accessibility testing and remediation.
+
+The analysis at a specific level in the Cypress Log can be heard by clicking the play button beside it. While the voice is playing, the user can pause, resume, and stop the voice analysis using the respective buttons.
+
+![Voice Buttons](/images/voice-buttons.png)
+
+### Accessibility Voice for Analysis at Suite Level in Log
+
+The accessibility voice feature at the suite level in the Cypress Log provides audible feedback that summarizes the accessibility analysis for the entire test suite. This includes:
+
+- Total number of tests run
+- Number of tests passed
+- Number of tests failed due to accessibility violations
+- Number of tests failed for other reasons
+- Number of tests skipped or pending
+
+![Voice Suite Level](/images/voice-suite.png)
+
+Video accessibility voice at Suite level in Cypress Log:
+
+<video controls>
+  <source src="/videos/voice-suite.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+### Accessibility Voice for Analysis at Test Level in Log
+
+The accessibility voice feature at the test level in the Cypress Log provides audible feedback that summarizes the accessibility analysis for each individual test. This includes:
+
+- Total number of accessibility violations
+- Number of critical violations
+- Number of serious violations
+- Number of moderate violations
+- Number of minor violations
+
+![Voice Test Level](/images/voice-test.png)
+
+Video accessibility voice at Test level in Cypress Log:
+
+<video controls>
+  <source src="/videos/voice-test-with-violations.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+### Accessibility Voice for Analysis at Violation Type Level in Log
+
+The accessibility voice feature at the violation type level in the Cypress Log provides audible feedback that includes:
+
+- The number of DOM elements found with that violation
+- The severity of the violation
+- A description of the violation
+
+![Voice Violation Type Level](/images/voice-violation.png)
+
+Video accessibility voice at Violation Type level in Cypress Log:
+
+<video controls>
+  <source src="/videos/voice-violation.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+### Accessibility Voice for Analysis at DOM Element Level in Log
+
+The accessibility voice feature at the DOM element level in the Cypress Log provides audible feedback that includes:
+
+- The selector for the element
+- The severity of the violation
+- A description of the violation
+- A summary of the actions needed to fix the issue
+
+![Voice DOM Element Level](/images/voice-dom-element.png)
+
+Video accessibility voice at DOM element level in Cypress Log:
+
+<video controls>
+  <source src="/videos/voice-dom-element.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
+### Accessibility Voice for Analysis at DOM Element Level in the Web Page
+
+The wick-a11y plugin also provides accessibility voice for a DOM element by clicking directly on the colored box representing the violation in the web page. To cancel the playback, the user can simply click outside the web page area. The audible feedback provides the following information:
+
+- The selector for the element
+- The severity of the violation
+- A description of the violation
+- A summary of the actions needed to fix the issue
+
+![Voice DOM Element Web Page](/images/voice-dom-element-page.png)
+
+Video accessibility voice at DOM element level in Web Page:
+
+<video controls>
+  <source src="/videos/voice-dom-element-page.mp4" type="video/mp4">
+  Your browser does not support the video tag.
+</video>
+
 
 ### HTML Report
 
@@ -365,7 +501,9 @@ More details on how to fix each of those violations can be seen by hovering over
 
 ### Custom Styles Based on Severity (Cypress runner and HTML Report)
 
-Configured custom styles displayed in the Cypress runner:
+It is possible to configure styles for the different types of violation severity beyond the default red, orange, yellow, and blue.
+
+Configured custom styles are displayed in the Cypress runner:
 
 ![Configured custom styles](images/runner-custom-styles.png)
 
@@ -374,12 +512,28 @@ Same custom styles shown in the HTML report:
 ![Custom styles in HTML report](images/report-custom-styles.png)
 
 
+## Known Limitations
+
+- Only allows running one accessibility analysis with the command `cy.checkAccessibility()` per test.
+
+- Only the last test run in the suite allows graphical interaction with the web page.
+
+- When an element is "**Pinned**" in the Cypress Log, the accessibility voice for a DOM element by clicking directly on the colored box representing the violation on the web page is disabled (due to the behavior of the Cypress runner in the interactive page).
+
+- At this moment, it does not flag suspicious violations considered by the AJV validator as inconclusive.
+
+
 ## License
 
 MIT License. See the [LICENSE](LICENSE) file for more details.
 
 
 ## Changelog
+
+### v1.2.0
+
+- Added support for voice in the Cypress Log and when clicking on DOM elements with violations on the page
+- Introduced a new summary for each test in the Cypress Log, detailing accessibility violations categorized by their severity
 
 ### v1.1.2
 
