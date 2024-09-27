@@ -360,8 +360,9 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 </div>
                 <div class="column" style="background-color:#cce6ff; height: 100%;" aria-label="Violations Summary by Severity">
                     ${impactPriority.map((impact) => {
-        const totalIssues = testResults.testSummary[impact] !== undefined ? testResults.testSummary[impact] : 'n/a'
-        return `<p class="summary">${impactStyling[impact].icon} <strong>
+                        const totalIssues = testResults.testSummary[impact] !== undefined ? testResults.testSummary[impact] : 'n/a'
+                        return `
+                        <p class="summary">${impactStyling[impact].icon} <strong>
                             <span aria="tooltip" class="tooltip">${impact.toUpperCase()}
                                 <span class="tooltiptext">${impactSeverityDescription[impact]}</span>
                             </span>: </strong>${totalIssues}
@@ -386,11 +387,11 @@ const buildHtmlReportBody = (reportInfo, options) => {
 
                 <!-- Rules -->
                 ${accessibilityOptions.rules ?
-            `<p class="summary"><strong>
-                        <span aria="tooltip" class="tooltip">Rules
-                            <span class="tooltiptext">${rulesHelp}</span>
-                        </span>: </strong>${getHumanReadableFormat(accessibilityOptions.rules)}
-                    </p>` : ''
+                `<p class="summary"><strong>
+                    <span aria="tooltip" class="tooltip">Rules
+                        <span class="tooltiptext">${rulesHelp}</span>
+                    </span>: </strong>${getHumanReadableFormat(accessibilityOptions.rules)}
+                </p>` : ''
         }
             </div>
             <hr/>
@@ -507,4 +508,15 @@ const getHumanReadableFormat = (context) => {
     } else {
         return context + ''
     }
+}
+
+
+/**
+ * Checks if the given object is a NodeList.
+ *
+ * @param {Object} obj - The object to be checked.
+ * @returns {boolean} - Returns true if the object is a NodeList, false otherwise.
+ */
+const isNodeList = (obj) => {
+    return Object.prototype.toString.call(obj) === '[object NodeList]';
 }
