@@ -514,6 +514,10 @@ MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ## Changelog
 
+### v1.2.2
+
+- Fix issue in creating HTML reports caused by isNodeList() left behind in the refactor into multiple source files
+
 ### v1.2.1
 
 - Fix issue with voice buttons not showing for a test when retries.openMode:0 in cypress.config.js

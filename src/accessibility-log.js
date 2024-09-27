@@ -289,17 +289,6 @@ const isNodeList = (obj) => {
 
 
 /**
- * Calculates the total number of issues for a specific impact level.
- *
- * @param {Array} violations - An array of accessibility violations.
- * @param {string} impact - The impact level to filter the violations.
- * @returns {number} - The total number of issues with the specified impact level.
- */
-const getTotalIssuesForImpact = (violations, impact) => {
-    return accessibilityOptions.includedImpacts.includes(impact) ? violations.filter(v => v.impact === impact).length : 'n/a'
-}
-
-/**
  * Highlights a violation by creating a div element with an SVG rectangle inside it.
  * The div element is positioned at the location of the specified element and is styled
  * with the specified color, and inserted with higher zIndex based on the impact level.
