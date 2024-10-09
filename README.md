@@ -552,3 +552,5 @@ MIT License. See the [LICENSE](LICENSE) file for more details.
 - Initial release with core functionalities.
 - Comprehensive configuration options for AXE analysis.
 - Detailed logging and report generation for accessibility violations.
+
+![WICK-A11Y](/images/wick_ally_red.png)
