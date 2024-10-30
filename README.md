@@ -529,8 +529,8 @@ MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ### v1.1.2
 
-- Fix issue with `accessibilityFolder` cofiguration parameter when missing char `/` at the end
-- Add axe-core® to the sorce code and documentation to be compliant with Deque trademark
+- Fix issue with `accessibilityFolder` configuration parameter when missing char `/` at the end
+- Add axe-core® to the source code and documentation to be compliant with Deque trademark
 - Created `.gitignore`
 
 ### v1.1.1
