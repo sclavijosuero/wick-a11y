@@ -4,10 +4,17 @@
 
 ![wick-a11y Overview](/images/overview.png)
 
+For a detailed guide on setting up and using this plugin to maximize its benefits, please refer to my articles:
+  - ["WICK-A11Y Cypress Plugin: Your Unstoppable Ally for Smashing Accessibility Barriers, Cool as John Wick!"](https://dev.to/sebastianclavijo/wick-a11y-cypress-plugin-your-unstoppable-ally-for-smashing-accessibility-barriers-cool-as-john-wick-280a)
+  - ["WICK-A11Y "Chapter" 1.2.1 - Voice Support: The Accessibility Cypress Plugin that Talks More Than John Wick in His Movies"](https://dev.to/sebastianclavijo/wick-a11y-v121-voice-the-accessibility-cypress-plugin-that-talks-more-than-john-wick-in-his-movies-8c8)
+
+Or the video:
+  - ["WICK-A11Y ACCESSIBILITY PLUGIN VIDEO TUTORIAL"](https://www.youtube.com/watch?v=WpdrXU-6xzc)
+
 
 ## Main Features
 
-- **Comprehensive Accessibility Analysis**: Leverages cypress-axe plugin and axe-core®  for thorough accessibility checks. Axe-core® <https://github.com/dequelabs/axe-core> is a trademark of Deque Systems, Inc <https://www.deque.com/>. in the US and other countries.
+- **Comprehensive Accessibility Analysis**: Leverages cypress-axe plugin and axe-core®  for thorough accessibility checks. Axe-core® <https://github.com/dequelabs/axe-core> is a trademark of Deque Systems, Inc. <https://www.deque.com/> in the US and other countries.
   
 - **Cypress Command**: Use the custom command `cy.checkAccessibility()` to run checks smoothly.
 
@@ -552,5 +559,16 @@ MIT License. See the [LICENSE](LICENSE) file for more details.
 - Initial release with core functionalities.
 - Comprehensive configuration options for AXE analysis.
 - Detailed logging and report generation for accessibility violations.
+
+## External references
+
+- [Joan Esquivel Montero](https://www.linkedin.com/in/joanesquivel/ " Joan Esquivel Montero") - Video: [Cypress Accessibility Testing powered by WICK-A11Y](https://www.youtube.com/watch?v=LVxyJMW6EJw "Cypress Accessibility Testing powered by WICK-A11Y")
+
+- [cypress.io](https://www.cypress.io/ "https://www.cypress.io/") - Blog by Mark Noonan: [Open Source Accessibility Plugins in Cypress](https://www.cypress.io/blog/open-source-accessibility-plugins-in-cypress "Open Source Accessibility Plugins in Cypress")
+
+- [James Wadley](https://www.linkedin.com/in/w4dd325/ "James Wadley") - Blog: [Let's talk about wick-a11y…](https://dev.to/w4dd325/lets-talk-about-wick-a11y-1afa "Let's talk about wick-a11y…")
+
+
+&nbsp;
 
 ![WICK-A11Y](/images/wick_ally_red.png)
