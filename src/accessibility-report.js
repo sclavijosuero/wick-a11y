@@ -211,6 +211,12 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 font-size: 0.95em;
             }
 
+            /* Container for fixed-width layout */
+            .container {
+                max-width: 1920px;
+                margin: 0 auto;
+            }
+
             .header {
                 font-size: 2.3em;
             }
@@ -345,89 +351,91 @@ const buildHtmlReportBody = (reportInfo, options) => {
         </style>
     </head>
     <body>
-        <div role="main">
-            <h1 class="header">Accessibility Report (Axe-core®)</h1>
-            <hr/>
+        <div class="container">
+            <div role="main">
+                <h1 class="header">Accessibility Report (Axe-core®)</h1>
+                <hr/>
 
-            <div class="row" role="region" aria-label="Main Summary">
-                <div class="column" style="background-color:#cce6ff; height: 100%;"  aria-label="Test Summary">
-                    <p class="summary"><strong>Spec: </strong>${escapeHTML(testSpec)}</p>
-                    <p class="summary"><strong>Test: </strong>${escapeHTML(testName)}</p>
-                    <p class="summary"><strong>Page URL: </strong>
-                        <a href="${url}" target="_blank">${escapeHTML(url)}</a>
+                <div class="row" role="region" aria-label="Main Summary">
+                    <div class="column" style="background-color:#cce6ff; height: 100%;"  aria-label="Test Summary">
+                        <p class="summary"><strong>Spec: </strong>${escapeHTML(testSpec)}</p>
+                        <p class="summary"><strong>Test: </strong>${escapeHTML(testName)}</p>
+                        <p class="summary"><strong>Page URL: </strong>
+                            <a href="${url}" target="_blank">${escapeHTML(url)}</a>
+                        </p>
+                        <p class="summary"><strong>Generated on: </strong>${reportGeneratedOn}</p>
+                    </div>
+                    <div class="column" style="background-color:#cce6ff; height: 100%;" aria-label="Violations Summary by Severity">
+                        ${impactPriority.map((impact) => {
+            const totalIssues = testResults.testSummary[impact] !== undefined ? testResults.testSummary[impact] : 'n/a'
+            return `
+                            <p class="summary">${impactStyling[impact].icon} <strong>
+                                <span aria="tooltip" class="tooltip">${impact.toUpperCase()}
+                                    <span class="tooltiptext">${impactSeverityDescription[impact]}</span>
+                                </span>: </strong>${totalIssues}
+                            </p>`
+        }).join('')}
+                    </div>
+                </div>
+                <div class="single_column column" style="background-color:#e6f3ff; height: 100%;" role="region" aria-label="Analysis Conditions Summary">
+                    <!-- Context -->
+                    <p class="summary"><strong>
+                        <span aria="tooltip" class="tooltip">Context
+                            <span class="tooltiptext">${contextHelp}</span>
+                        </span>: </strong>${getHumanReadableFormat(accessibilityContext)}
                     </p>
-                    <p class="summary"><strong>Generated on: </strong>${reportGeneratedOn}</p>
-                </div>
-                <div class="column" style="background-color:#cce6ff; height: 100%;" aria-label="Violations Summary by Severity">
-                    ${impactPriority.map((impact) => {
-                        const totalIssues = testResults.testSummary[impact] !== undefined ? testResults.testSummary[impact] : 'n/a'
-                        return `
-                        <p class="summary">${impactStyling[impact].icon} <strong>
-                            <span aria="tooltip" class="tooltip">${impact.toUpperCase()}
-                                <span class="tooltiptext">${impactSeverityDescription[impact]}</span>
-                            </span>: </strong>${totalIssues}
-                        </p>`
-    }).join('')}
-                </div>
-            </div>
-            <div class="single_column column" style="background-color:#e6f3ff; height: 100%;" role="region" aria-label="Analysis Conditions Summary">
-                <!-- Context -->
-                <p class="summary"><strong>
-                    <span aria="tooltip" class="tooltip">Context
-                        <span class="tooltiptext">${contextHelp}</span>
-                    </span>: </strong>${getHumanReadableFormat(accessibilityContext)}
-                </p>
 
-                <!-- Severity (runOnly) -->
-                <p class="summary"><strong>
-                    <span aria="tooltip" class="tooltip">Tags
-                        <span class="tooltiptext">${runOnlyHelp}</span>
-                    </span>: </strong>${accessibilityOptions.runOnly.join(', ')}
-                </p>
+                    <!-- Severity (runOnly) -->
+                    <p class="summary"><strong>
+                        <span aria="tooltip" class="tooltip">Tags
+                            <span class="tooltiptext">${runOnlyHelp}</span>
+                        </span>: </strong>${accessibilityOptions.runOnly.join(', ')}
+                    </p>
 
-                <!-- Rules -->
-                ${accessibilityOptions.rules ?
+                    <!-- Rules -->
+                    ${accessibilityOptions.rules ?
                 `<p class="summary"><strong>
-                    <span aria="tooltip" class="tooltip">Rules
-                        <span class="tooltiptext">${rulesHelp}</span>
-                    </span>: </strong>${getHumanReadableFormat(accessibilityOptions.rules)}
-                </p>` : ''
-        }
-            </div>
-            <hr/>
-            <h2 role="heading" >Accessibility Violations Details</h2>
-            <ul>
-                ${violations
-            .map(
-                (violation) => `
-                <li>
-                    <strong>[${impactStyling[violation.impact].icon}${violation.impact.toUpperCase()}]: ${escapeHTML(violation.help.toUpperCase())}<i> (Rule ID: ${escapeHTML(violation.id)})</i></strong>
-                    <a href="${violation.helpUrl}" target="_blank">More info</a>
-                    <br>
-                    <strong><p>Tags: ${violation.tags.join(", ")}</p></strong>
-                    <ul>
-                    ${violation.nodes.map((node) => `
-                        <li>
-                            (${impactStyling.fixme.icon}Fixme)▶ 
-                            <div aria="tooltip" class="tooltip">${node.target}
-                                <span class="tooltiptext">${getFailureSummaryTooltipHtml(node.failureSummary)}</span>
-                            </div>
-                        </li>`
+                        <span aria="tooltip" class="tooltip">Rules
+                            <span class="tooltiptext">${rulesHelp}</span>
+                        </span>: </strong>${getHumanReadableFormat(accessibilityOptions.rules)}
+                    </p>` : ''
+            }
+                </div>
+                <hr/>
+                <h2 role="heading" >Accessibility Violations Details</h2>
+                <ul>
+                    ${violations
+                .map(
+                    (violation) => `
+                    <li>
+                        <strong>[${impactStyling[violation.impact].icon}${violation.impact.toUpperCase()}]: ${escapeHTML(violation.help.toUpperCase())}<i> (Rule ID: ${escapeHTML(violation.id)})</i></strong>
+                        <a href="${violation.helpUrl}" target="_blank">More info</a>
+                        <br>
+                        <strong><p>Tags: ${violation.tags.join(", ")}</p></strong>
+                        <ul>
+                        ${violation.nodes.map((node) => `
+                            <li>
+                                (${impactStyling.fixme.icon}Fixme)▶ 
+                                <div aria="tooltip" class="tooltip">${node.target}
+                                    <span class="tooltiptext">${getFailureSummaryTooltipHtml(node.failureSummary)}</span>
+                                </div>
+                            </li>`
+                    ).join("")}
+                        </ul>
+                    </li>`
                 ).join("")}
-                    </ul>
-                </li>`
-            ).join("")}
-            </ul>
-            <hr/>
+                </ul>
+                <hr/>
 
-            <h2 role="heading" id="violations-screenshot">Accessibility Violations Screenshot</h2>
-            <div role="img" aria-labelledby="violations-screenshot" class="imagecontainer">
-                <img width="98%" class="image" src="${issuesScreenshotFilePath}" alt="Accessibility Violations Screenshot Colored by Severity" />
+                <h2 role="heading" id="violations-screenshot">Accessibility Violations Screenshot</h2>
+                <div role="img" aria-labelledby="violations-screenshot" class="imagecontainer">
+                    <img width="98%" class="image" src="${issuesScreenshotFilePath}" alt="Accessibility Violations Screenshot Colored by Severity" />
+                </div>
+                <hr/>
+
+                <p class="footer">🎓 As per the axe-core® library: it can find on average 57% of WCAG issues automatically; it also only analyzes DOM elements that are visible in the browser viewport. 
+    Axe-core® <https://github.com/dequelabs/axe-core> is a trademark of Deque Systems, Inc <https://www.deque.com/>. in the US and other countries.</p>
             </div>
-            <hr/>
-
-            <p class="footer">🎓 As per the axe-core® library: it can find on average 57% of WCAG issues automatically; it also only analyzes DOM elements that are visible in the browser viewport. 
-Axe-core® <https://github.com/dequelabs/axe-core> is a trademark of Deque Systems, Inc <https://www.deque.com/>. in the US and other countries.</p>
         </div>
     </body>
     </html>
