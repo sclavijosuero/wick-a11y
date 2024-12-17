@@ -24,8 +24,8 @@ const addAccessibilityTasks = (on) => {
         }
     }
 
-    let specResults = newSpecResults() 
-    
+    let specResults = newSpecResults()
+
     on('task', {
         /**
          * Clears the spec results.
@@ -102,7 +102,7 @@ const addAccessibilityTasks = (on) => {
                     // Folder must exist in order to create the report
                     if (err) {
                         const msg = `FAILED TO GENERATE ACCESSIBILITY REPORT AT: ${filePath}`
-                        console.error(err);
+                        error(err);
 
                         resolve(`❌❌❌❌ **${msg}**`) // Inform the user that the report was not generated but do not fail the test
                         // return reject(err)  // Fail the test
@@ -141,9 +141,9 @@ const addAccessibilityTasks = (on) => {
          */
         moveScreenshotToFolder({ originFilePath, targetFilePath }) {
             return new Promise((resolve, reject) => {
-                fs.move(path.resolve(originFilePath), path.resolve(targetFilePath), err => {
+                fs.copy(path.resolve(originFilePath), path.resolve(targetFilePath), err => {
                     if (err) {
-                        console.error(err)
+                        error(err)
                         reject(err)
                     } else {
                         resolve(`SUCCESSFULLY MOVED SCREENSHOT TO: ${targetFilePath}`)
@@ -153,7 +153,7 @@ const addAccessibilityTasks = (on) => {
         }
     })
 
-    
+
 }
 
 module.exports = addAccessibilityTasks
