@@ -10,7 +10,7 @@ describe.skip('TEST SUITE 1', { tags: ['@accessibility'] }, () => {
         cy.visit('https://parabank.parasoft.com/parabank/index.htm')
         cy.wait(2000) // Using cy.wait(TIME) is a very bad practice, but it is used for simplicity in this example
 
-        cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'] })
+        cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'], skipFailures: true })
     });
 
     context('Context 1', () => {

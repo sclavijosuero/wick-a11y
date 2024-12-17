@@ -22,7 +22,7 @@ const defaultOptions = {
  * Cypress custom commant to check the accessibility of a given context using Cypress and Axe. Only consider DOM elements that are visible on the screen.
  * For more details regarding parameters and options refer to https://www.deque.com/axe/core-documentation/api-documentation/, https://github.com/dequelabs/axe-core and https://www.npmjs.com/package/cypress-axe.
  * @public
- * 
+ *
  * @param {string | Element | NodeList | Object} [context] - (optional) Axe-core® plugin parameter - Defines the scope of the analysis - the part of the DOM that you would like to analyze. This will typically be a CSS Selector, and DOM Element such as returned by document.getElementById("content"), a NodeList such as returned by document.querySelectorAll, or an Object. By default the analysis will be done for the full document.
  * @param {Object} [context.exclude] - (optional) Axe-core® plugin option - An object with exclude properties to specify elements that should not be tested. E.g. { exclude: ['button'] }.
  * @param {Object} [context.include] - (optional) Axe-core® plugin option - An object with include properties to specify elements that should be tested. E.g. { include: ['button'] }.
@@ -42,6 +42,7 @@ const defaultOptions = {
  * @param {string[]} [options.includedImpacts=['critical', 'serious']] - (optional) CYPRESS-AXE plugin option - Violations to include in the accessibility analysis. Map to impact levels in violations, where possible impact values are "minor", "moderate", "serious", or "critical". By default { includedImpacts: ['critical', 'serious'] }.
  * @param {integer} [options.retries=0] - (optional) CYPRESS-AXE plugin option - Number of times to retry the check if there are initial findings. By default 0.
  * @param {integer} [options.interval=1000] - (optional) CYPRESS-AXE plugin option - Number of milliseconds to wait between retries. By default 1000 (1 second)
+ * @param {boolean} [options.skipFailures=false] - (optional) CYPRESS-AXE plugin option - This enabled you to see violations while allowing your tests to pass. This should be used as a temporary measure while you address accessibility violations.
  * @param {string[]} [options.runOnly=['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice']] - (optional) Axe-core® plugin option - Limit which rules are executed, based on names or tags. By default { runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'] }.
  * @param {Object} [options.rules] - (optional) Axe-core® plugin option - Enable or disable rules using the enabled property. E.g. { rules: { 'color-contrast': { enabled: false }, 'valid-lang': { enabled: false } }}.
  * @param {string} [options.reporter] - (optional) Axe-core® plugin option - Which reporter to use. E.g. { reporter: 'v2'}.
@@ -66,12 +67,13 @@ const checkAccessibility = (context, options) => {
 
     Cypress.env('accessibilityContext', context)
     Cypress.env('accessibilityOptions', options)
-    
+
     cy.injectAxe()
     cy.checkA11y(
         context,
         options,
-        options.generateReport ? logViolationsAndGenerateReport : logViolations
+        options.generateReport ? logViolationsAndGenerateReport : logViolations,
+        options.skipFailures
     )
 }
 Cypress.Commands.add('checkAccessibility', checkAccessibility)
