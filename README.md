@@ -521,6 +521,12 @@ MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ## Changelog
 
+### v1.3.0
+
+- Added types for command checkAccessibility.
+- Limit size of image in HTML report to 1920px width (contribution by James Wadley)
+- Use of Cypress 13.17.0 to run package tests.
+
 ### v1.2.2
 
 - Fix issue in creating HTML reports caused by isNodeList() left behind in the refactor into multiple source files
