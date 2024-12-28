@@ -86,7 +86,7 @@ module.exports = defineConfig({
 import 'wick-a11y';
 ```
 
-3. 🔶 Accessibility HTML reports will be generated in the folder **`cypress/accessibility`** by default. This folder can be changed by including the configuration parameter **`accessibilityFolder`** in **`cypress.config.js`**.
+3. 👉 Accessibility HTML reports will be generated in the folder **`cypress/accessibility`** by default. This folder can be changed by including the configuration parameter **`accessibilityFolder`** in **`cypress.config.js`**.
 
 ```javascript
 module.exports = defineConfig({
@@ -96,7 +96,7 @@ module.exports = defineConfig({
 });
 ```
 
-4. 🔶 By default, the voice feature is disabled. To enable it, set the Cypress environment variable **`enableAccessibilityVoice`** to **`true`**. This will only take effect when you execute tests in the Cypress runner (`npx cypress open`). You can enable the voice feature by setting this environment variable in three different ways:
+4. 👉 By default, the voice feature is disabled. To enable it, set the Cypress environment variable **`enableAccessibilityVoice`** to **`true`**. This will only take effect when you execute tests in the Cypress runner (`npx cypress open`). You can enable the voice feature by setting this environment variable in three different ways:
     - Including it within the `env` property in the **`cypress.config.js`** file
     
       ```javascript
@@ -531,6 +531,11 @@ Configured custom styles are displayed in the Cypress runner:
 Same custom styles shown in the HTML report:
 
 ![Custom styles in HTML report](images/report-custom-styles.png)
+
+
+### Terminal Report
+
+A tabular report containing all accessibility violation details will be generated in the Terminal. This includes a summary of violations and warnings, categorized by severity level.
 
 
 ## Known Limitations

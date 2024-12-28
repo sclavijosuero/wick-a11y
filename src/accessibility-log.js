@@ -131,7 +131,7 @@ const recordViolations = (violations, logSummary = true) => {
     // Log in the Cypress Log the accessibility violations
     recordViolations_CypressLog(violationsSorted)
 
-    // Log in the Browser console the accessibility violations as a table
+    // Log in the Terminal the accessibility violations as a table
     recordViolations_Console(violationsSorted)
 
     // Log summary of violations at the end of the Cypress log if we are not generating a report
@@ -245,7 +245,7 @@ const recordViolations_CypressLog = (violations) => {
 
 
 /**
- * Logs accessibility violations in the console.
+ * Logs accessibility violations in the terminal.
  * 
  * @param {Array} violations - An array of accessibility violations.
  */
