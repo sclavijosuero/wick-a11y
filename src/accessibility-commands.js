@@ -15,6 +15,7 @@ import { logViolations, logViolationsAndGenerateReport } from './accessibility-l
 const defaultOptions = {
     runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'],
     includedImpacts: ['critical', 'serious'],
+    onlyWarnImpacts: [],
     generateReport: true
 }
 
@@ -30,6 +31,22 @@ const defaultOptions = {
  * @param {Object} [context.fromShadowDom] - (optional) Axe-core® plugin option - An object with a fromShadowDom property to specify shadow DOM elements that should be tested.
  * @param {Object} [options] - (optional) Axe-core® plugin parameter - Object with options to configure the accessibility check.
  * @param {boolean} [options.generateReport=true] - (optional) WICK-A11Y plugin option - Whether to generate a report for accessibility violations. By default true.
+ * @param {string[]} [options.includedImpacts=['critical', 'serious']] - (optional) CYPRESS-AXE plugin option - Array with the violations severities to include in the accessibility analysis that would make the analysis to fail. Map to impact levels in violations, where possible impact level values are "critical", "serious", "moderate", or "minor". By default { includedImpacts: ['critical', 'serious'] }.
+ *        Examples:
+ *          - { includedImpacts: ['critical', 'serious'] }
+ *             Analysis will fail with critical or serious violations. No other severities will be considered.
+ *          - { includedImpacts: ['critical', 'serious', 'moderate', 'minor'] }
+ *             Analysis will fail with critical, serious, moderate or minor violations
+ * @param {string[]} [options.onlyWarnImpacts=[]] - (optional) WICK-A11Y plugin option -  Array with the violations severities to include in the accessibility analysis that will provide a warning, but not to fail. Map to impact levels in violations, where possible impact level values are "critical", "serious", "moderate", or "minor". By default { onlyWarnImpacts: [] }.
+ *        Examples:
+ *          - { includedImpacts: ['critical', 'serious'], onlyWarnImpacts: ['moderate', 'minor'] }
+ *             Analysis will fail with critical and serious violations, and will just provide a warning for moderate and minor violations.
+ *          - { includedImpacts: [], onlyWarnImpacts: ['critical', 'serious'] }
+ *             Analysis will provide a warning for critical and serious violations, but will not fail. No other severities will be considered.
+ *          - { includedImpacts: [], onlyWarnImpacts: ['critical', 'serious', 'moderate', 'minor'] }
+ *             Analysis will provide a warning for critical, serious, moderate and minor violations, but will not fail.
+ *          - { includedImpacts: ['critical', 'serious', 'moderate'], onlyWarnImpacts: ['moderate', 'minor'] }
+ *             If there is overlapping between includedImpacts and onlyWarnImpacts, the includedImpacts configuration will have precedence.
  * @param {object} [options.impactStyling] - (optional) WICK-A11Y plugin option - An object with an entry for each impact level you would like to override the plugin defaults ('critical', 'serious', 'moderate', 'minor'). Each impact level entry may have two properties: 'icon', which specifies the icon to use for that type of violation in the Cypress runner, and 'style', which specifies the CSS style to apply to the HTML element bounding box showing the violation on the page. The styles passed in this option will override the default ones used by the plugin.
  *        Default styles:
  *        {
@@ -39,7 +56,6 @@ const defaultOptions = {
  *            minor:    { icon: '🟦', style: 'fill: #4598FF; fill-opacity: 0; stroke: #4598FF; stroke-width: 10;' },
  *            fixme:    { icon: '🛠️'}
  *        }
- * @param {string[]} [options.includedImpacts=['critical', 'serious']] - (optional) CYPRESS-AXE plugin option - Violations to include in the accessibility analysis. Map to impact levels in violations, where possible impact values are "minor", "moderate", "serious", or "critical". By default { includedImpacts: ['critical', 'serious'] }.
  * @param {integer} [options.retries=0] - (optional) CYPRESS-AXE plugin option - Number of times to retry the check if there are initial findings. By default 0.
  * @param {integer} [options.interval=1000] - (optional) CYPRESS-AXE plugin option - Number of milliseconds to wait between retries. By default 1000 (1 second)
  * @param {string[]} [options.runOnly=['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice']] - (optional) Axe-core® plugin option - Limit which rules are executed, based on names or tags. By default { runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'] }.
@@ -63,15 +79,22 @@ const checkAccessibility = (context, options) => {
         ...defaultOptions,
         ...options
     }
+    // If there is overlapping between includedImpacts and onlyWarnImpacts, the includedImpacts configuration will have precedence
+    options.onlyWarnImpacts = options.onlyWarnImpacts.filter(impact => !options.includedImpacts.includes(impact))
 
     Cypress.env('accessibilityContext', context)
     Cypress.env('accessibilityOptions', options)
+
+    // Cypress-axe and axe-core will analyze the impacts for both options (includedImpacts and onlyWarnImpacts)
+    let { includedImpacts, onlyWarnImpacts, ...cypressAxeOptions } = { ...options }
+    cypressAxeOptions.includedImpacts = [...new Set([...includedImpacts, ...onlyWarnImpacts])]
     
     cy.injectAxe()
     cy.checkA11y(
         context,
-        options,
-        options.generateReport ? logViolationsAndGenerateReport : logViolations
+        cypressAxeOptions,
+        options.generateReport ? logViolationsAndGenerateReport : logViolations,
+        true // skipFailures = true (wick-a11y will handle the failures based in the configuration: includedImpacts and onlyWarnImpacts)
     )
 }
 Cypress.Commands.add('checkAccessibility', checkAccessibility)
