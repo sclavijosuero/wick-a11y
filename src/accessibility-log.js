@@ -131,7 +131,7 @@ const recordViolations = (violations, logSummary = true) => {
     // Log in the Cypress Log the accessibility violations
     recordViolations_CypressLog(violationsSorted)
 
-    // Log in the Browser console the accessibility violations as a table
+    // Log in the Terminal the accessibility violations as a table
     recordViolations_Console(violationsSorted)
 
     // Log summary of violations at the end of the Cypress log if we are not generating a report
@@ -151,7 +151,8 @@ const recordViolations = (violations, logSummary = true) => {
 const calculateViolationsSummaryBySeverity = (violations) => {
     let totals = {}
     impactPriority.forEach((impact) => {
-        if (accessibilityOptions.includedImpacts.includes(impact)) {
+        if (accessibilityOptions.includedImpacts && accessibilityOptions.includedImpacts.includes(impact)
+            || accessibilityOptions.onlyWarnImpacts && accessibilityOptions.onlyWarnImpacts.includes(impact)) {
             totals[impact] = violations.filter(v => v.impact === impact).length
         }
     })
@@ -166,8 +167,13 @@ const calculateViolationsSummaryBySeverity = (violations) => {
 const recordViolationsSummaryTotals_CypressLog = (violations) => {
     cy.then(() => {
         for (const [impact, totalPerImpact] of Object.entries(testResults.testSummary)) {
+            let errorType = 'VIOLATIONS'
+            if (accessibilityOptions.onlyWarnImpacts.includes(impact)) {
+                errorType = 'WARNINGS'
+            }
+
             Cypress.log({
-                name: `• ${impact.toUpperCase()} VIOLATIONS ${impactStyling[impact].icon}:`,
+                name: `• ${impact.toUpperCase()} ${errorType} ${impactStyling[impact].icon}:`,
                 message: `${totalPerImpact}`,
                 consoleProps: () => ({
                     total: totalPerImpact,
@@ -175,7 +181,19 @@ const recordViolationsSummaryTotals_CypressLog = (violations) => {
                 })
             })
         }
+        assertTestViolations(violations)
     })
+}
+
+const assertTestViolations = (violations) => {
+    const { includedImpacts } = accessibilityOptions
+
+    // Filter the violations based on the included impacts
+    const includedViolations = violations.filter(v => includedImpacts.includes(v.impact))
+    const numIncludedViolations = includedViolations.length
+
+    assert.equal(numIncludedViolations, 0, `${numIncludedViolations} accessibility violation${violations.length === 1 ? '' : 's' 
+        } ${numIncludedViolations === 1 ? 'was' : 'were'} detected with impact levels: [${includedImpacts.join(', ')}]`)
 }
 
 /**
@@ -227,7 +245,7 @@ const recordViolations_CypressLog = (violations) => {
 
 
 /**
- * Logs accessibility violations in the console.
+ * Logs accessibility violations in the terminal.
  * 
  * @param {Array} violations - An array of accessibility violations.
  */
@@ -235,7 +253,12 @@ const recordViolations_Console = (violations) => {
     // Log in the console summary of violations
     let violationsSummary = `\n************************ ACCESSIBILITY RESULTS FOR TEST "${Cypress.currentTest.title}"\n\n`
     for (const [impact, totalPerImpact] of Object.entries(testResults.testSummary)) {
-        violationsSummary += `${impact.toUpperCase()} VIOLATIONS: ${totalPerImpact}\n`
+        let errorType = 'VIOLATIONS'
+        if (accessibilityOptions.onlyWarnImpacts.includes(impact)) {
+            errorType = 'WARNINGS'
+        }
+
+        violationsSummary += `${impact.toUpperCase()} ${errorType}: ${totalPerImpact}\n`
 
     }
     cy.task('logViolationsSummary', violationsSummary)
@@ -512,7 +535,8 @@ afterEach(() => {
     if (mustEnableVoice() && (test.state !== 'failed' || test.state === 'failed' && test._currentRetry === maxRetries)) {
         testResults.testTitle = test.title
         testResults.testState = test.state
-        testResults.testSummaryVoice = accessibilityVoice.obtainTestSummaryVoiceMessage(testResults, test)
+
+        testResults.testSummaryVoice = accessibilityVoice.obtainTestSummaryVoiceMessage(testResults, test, accessibilityOptions)
         testResults.violationsResults = accessibilityVoice.obtainViolationsResultsVoiceMessage(testResults.violations)
 
         cy.task('saveTestResults', Cypress._.cloneDeep(testResults))

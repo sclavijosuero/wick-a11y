@@ -141,7 +141,7 @@ const addAccessibilityTasks = (on) => {
          */
         moveScreenshotToFolder({ originFilePath, targetFilePath }) {
             return new Promise((resolve, reject) => {
-                fs.move(path.resolve(originFilePath), path.resolve(targetFilePath), err => {
+                fs.copy(path.resolve(originFilePath), path.resolve(targetFilePath), err => {
                     if (err) {
                         console.error(err)
                         reject(err)

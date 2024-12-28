@@ -134,28 +134,58 @@ export const createTestVoiceControlsInCypressLog = (specResults, testTitle, skip
  * @param {Object} test - The test object containing the test results.
  * @returns {string} - The voice message summarizing the test results.
  */
-export const obtainTestSummaryVoiceMessage = (testResults, test) => {
+export const obtainTestSummaryVoiceMessage = (testResults, test, accessibilityOptions) => {
     const attempts = test._currentRetry > 0 ? ` after ${test._currentRetry + 1} attempts` : ''
+
+    let numViolationsIncludedImpacts = 0
+    let numViolationsOnlyWarnImpacts = 0
+
+    if (accessibilityOptions) {
+        numViolationsIncludedImpacts = accessibilityOptions.includedImpacts.reduce((total, impact) => {
+            return total + (testResults.testSummary[impact] || 0);
+        }, 0);
+
+        numViolationsOnlyWarnImpacts = accessibilityOptions.onlyWarnImpacts.reduce((total, impact) => {
+            return total + (testResults.testSummary[impact] || 0);
+        }, 0);
+    }
 
     const title = testResults.testTitle
     if (testResults.testState === 'passed') {
         // Passed
-        return `The test with name. ${title}, passed ${attempts} with no accessibility violations or any other errors.`
+        if (numViolationsOnlyWarnImpacts) {
+            // Passed with accessibility warnings
+            const warningList = listOfWarningSeverities(accessibilityOptions)
+            return `The test with name. ${title}, passed ${attempts} with ${numViolationsOnlyWarnImpacts} accessibility warnings for ${pluralizedWord('severity', warningList.length)}: ${warningList}.`
+        } else {        
+            return `The test with name. ${title}, passed ${attempts} with no accessibility violations or any other errors.` 
+        }
     } else if (testResults.testState === 'skipped') {
         // Skipped
         return `The test with name. ${title}, was skipped because some error occurred.`
     } else if (testResults.testState === 'failed') {
         // Failed
-        const numViolations = testResults.violations ? testResults.violations.length : 0
-        if (numViolations === 0) {
-            // Other then accessibility
-            return `The test with name, ${title}, failed ${attempts} for reasons other than accessibility violations. Failure cause: ${test.err.message}`
-            // return `The test with name, ${title}, failed ${attempts} for reasons other than accessibility violations.`
-        } else {
-            // Accessibility
-            let error = `The test with name, ${title}, failed ${attempts} because ${numViolations} accessibility violations ${pluralizedWord('was', numViolations)} detected: `
+        if ((numViolationsIncludedImpacts === 0)) {
+            // It has no accessibility violations
+            let error = `The test with name, ${title}, failed ${attempts} for reasons other than accessibility violations. Failure cause: ${test.err.message}.`
+            if (numViolationsOnlyWarnImpacts !== 0) {
+                // But it has also accessibility warnings
+                const warningList = listOfWarningSeverities(accessibilityOptions)
+                error += ` Also ${numViolationsOnlyWarnImpacts} accessibility warnings ${pluralizedWord('was', numViolationsOnlyWarnImpacts)} detected for ${pluralizedWord('severity', warningList.length)}: ${warningList}.`
+            }
+            return error
+        } else if ((numViolationsIncludedImpacts !== 0)) {
+            // It has accessibility violations
+            let error = `The test with name, ${title}, failed ${attempts} because ${numViolationsIncludedImpacts} accessibility violations ${pluralizedWord('was', numViolationsIncludedImpacts)} detected: `
             for (const [impact, totalPerImpact] of Object.entries(testResults.testSummary)) {
-                error += `${totalPerImpact} ${impact} ${pluralizedWord('violation', totalPerImpact)}!`
+                if (accessibilityOptions.includedImpacts.includes(impact)) {
+                    error += `${totalPerImpact} ${impact} ${pluralizedWord('violation', totalPerImpact)}!`
+                }
+            }
+            if (numViolationsOnlyWarnImpacts !== 0) {
+                // It has alsoaccessibility warnings
+                const warningList = listOfWarningSeverities(accessibilityOptions)
+                error += ` Also ${numViolationsOnlyWarnImpacts} accessibility warnings ${pluralizedWord('was', numViolationsOnlyWarnImpacts)} detected for ${pluralizedWord('severity', warningList.length)}: ${warningList}.`
             }
             return error
         }
@@ -163,6 +193,17 @@ export const obtainTestSummaryVoiceMessage = (testResults, test) => {
         // Some other error
         return `The test with name, ${title}, failed ${attempts} for some reason.`
     }
+}
+
+/**
+ * Formats the warning severities from the given accessibility options.
+ *
+ * @param {Object} accessibilityOptions - The accessibility options object.
+ * @param {Array<string>} accessibilityOptions.onlyWarnImpacts - An array of warning severities.
+ * @returns {string} A string of warning severities joined by commas, with the last comma replaced by 'or'.
+ */
+const listOfWarningSeverities = (accessibilityOptions) => {
+    return accessibilityOptions.onlyWarnImpacts.join(', ').replace(/, ([^,]*)$/, ' or $1');
 }
 
 /**
@@ -608,6 +649,8 @@ const pluralizedWord = (word, count) => {
         return count === 1 ? 'element' : 'elements'
     } else if (word === 'test') {
         return count === 1 ? 'test' : 'tests'
+    } else if (word === 'severity') {
+        return count === 1 ? 'severity' : 'severities'
     }
 }
 
