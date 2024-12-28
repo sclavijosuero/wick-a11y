@@ -18,7 +18,9 @@ Or the video:
   
 - **Cypress Command**: Use the custom command `cy.checkAccessibility()` to run checks smoothly.
 
-- **Configurable**: Customize to include specific impact levels, rules, and guidelines.
+- **Configurable**:
+  - Customize to include specific impact levels (severities), rules, and guidelines.
+  - You can separately configure impact levels that will cause the test to fail from those that will serve only as a warning, providing detailed information **(NEW in v1.4.0)**.
 
 - **Summary of Violations**:  Provides a summary for each test in the Cypress Log, detailing accessibility violations categorized by their severity **(NEW in v1.2.0)**.
   
@@ -33,6 +35,8 @@ Or the video:
   - Hovering over a DOM element with a violation on the web page in the Cypress runner highlights it graphically and shows a tooltip with the violation information.
 
 - **HTML Reports**: Generates HTML reports with details of the violations and how to fix them, including screenshots for visual reference, all out-of-the-box.
+
+- **Terminal Reports**: Produces terminal reports with details of the violations and how to fix them in tabular form.
 
 - **Voice Support**: Provides audible information for accessibility issues at the suite level, test level, violation type level, and DOM element level, helping users identify issues through voice feedback **(NEW in v1.2.0)**.
 
@@ -56,7 +60,7 @@ npm install wick-a11y --save-dev
 
 ## Configuration
 
-- First, in your **`cypress.config.js`** file import `wick-a11y/accessibility-tasks`, and add the line `addAccessibilityTasks(on)` within the **`setupNodeEvents`** function,  to include the accessibility tasks:
+1. First, in your **`cypress.config.js`** file import `wick-a11y/accessibility-tasks`, and add the line `addAccessibilityTasks(on)` within the **`setupNodeEvents`** function,  to include the accessibility tasks:
 
 ```javascript
 const { defineConfig } = require("cypress");
@@ -76,13 +80,13 @@ module.exports = defineConfig({
 });
 ```
 
-- Then import the custom commands in your **test file** or your **`cypress/support/e2e.js`** file:
+2. Then import the custom commands in your **test file** or your **`cypress/support/e2e.js`** file:
 
 ```javascript
 import 'wick-a11y';
 ```
 
-- 🔶 Accessibility HTML reports will be generated in the folder **`cypress/accessibility`** by default. This folder can be changed by including the configuration parameter **`accessibilityFolder`** in **`cypress.config.js`**.
+3. 👉 Accessibility HTML reports will be generated in the folder **`cypress/accessibility`** by default. This folder can be changed by including the configuration parameter **`accessibilityFolder`** in **`cypress.config.js`**.
 
 ```javascript
 module.exports = defineConfig({
@@ -92,30 +96,30 @@ module.exports = defineConfig({
 });
 ```
 
-- 🔶 By default, the voice feature is disabled. To enable it, set the Cypress environment variable **`enableAccessibilityVoice`** to **`true`**. This will only take effect when you execute tests in the Cypress runner (`npx cypress open`). You can enable the voice feature by setting this environment variable in three different ways:
-    1. Including it within the `env` property in the **`cypress.config.js`** file
+4. 👉 By default, the voice feature is disabled. To enable it, set the Cypress environment variable **`enableAccessibilityVoice`** to **`true`**. This will only take effect when you execute tests in the Cypress runner (`npx cypress open`). You can enable the voice feature by setting this environment variable in three different ways:
+    - Including it within the `env` property in the **`cypress.config.js`** file
     
-    ```javascript
-    module.exports = defineConfig({
-          // [...]
-          env: {
-                enableAccessibilityVoice: true
-          }
-          // [...]
-    });
-    ```
-    2. Including it in the **`cypress.env.json`** file
+      ```javascript
+      module.exports = defineConfig({
+            // [...]
+            env: {
+                  enableAccessibilityVoice: true
+            }
+            // [...]
+      });
+      ```
+    - Including it in the **`cypress.env.json`** file
     
-    ```json
-    {
-          "enableAccessibilityVoice": true
-    }
-    ```
-    3. Providing it as a command line argument `--env` in the terminal when opening the Cypress runner.
+      ```json
+      {
+            "enableAccessibilityVoice": true
+      }
+      ```
+    - Providing it as a command line argument `--env` in the terminal when opening the Cypress runner.
     
-    ```shell
-    npx cypress open --env enableAccessibilityVoice=true
-    ```
+      ```shell
+      npx cypress open --env enableAccessibilityVoice=true
+      ```
 
 ## API Reference
 
@@ -146,12 +150,30 @@ Cypress custom command to check the accessibility of a given context using axe-c
   
     Default: `true`.
 
+  - **`includedImpacts`**: (optional) *From CYPRESS-AXE* - List of impact levels to include in the accessibility analysis that would make the analysis to fail. Map to impact levels in violations, where possible impact level values are "critical", "serious", "moderate", or "minor".
+  
+    Default: `['critical', 'serious']`.
+
+    Examples:
+      - `{ includedImpacts: ['critical', 'serious'] }` - Analysis will fail with critical or serious violations. No other severities will be considered.
+      - `{ includedImpacts: ['critical', 'serious', 'moderate', 'minor'] }` - Analysis will fail with critical, serious, moderate or minor violations.
+
+  - **`onlyWarnImpacts`**: (optional) *From WICK-A11Y* - List of impact levels to include in the accessibility analysis that will provide a warning, but not to fail. Map to impact levels in violations, where possible impact level values are "critical", "serious", "moderate", or "minor".
+  
+    Default: `[]`.
+
+    Examples:
+      - `{ includedImpacts: ['critical', 'serious'], onlyWarnImpacts: ['moderate', 'minor'] }` - Analysis will fail with critical and serious violations, and will just provide a warning for moderate and minor violations.
+      - `{ includedImpacts: [], onlyWarnImpacts: ['critical', 'serious'] }` - Analysis will provide a warning for critical and serious violations, but will not fail. No other severities will be considered.
+      - `{ includedImpacts: [], onlyWarnImpacts: ['critical', 'serious', 'moderate', 'minor'] }` - Analysis will provide a warning for critical, serious, moderate and minor violations, but will not fail.
+      - `{ includedImpacts: ['critical', 'serious', 'moderate'], onlyWarnImpacts: ['moderate', 'minor'] }` - If there is overlapping between includedImpacts and onlyWarnImpacts, the includedImpacts configuration will have precedence, so in this case 'moderate' violations will make the test to fail even when also included in the warning list.
+
   - **`impactStyling`**: (optional) *From WICK-A11Y* - An object with an entry for each impact level you would like to override the plugin defaults ('critical', 'serious', 'moderate', 'minor').
   
     Each impact level entry may have two properties: 'icon', which specifies the icon to use for that type of violation in the Cypress runner, and 'style', which specifies the CSS style to apply to the HTML element bounding box showing the violation on the page.
     The styles passed in this option will override the default ones used by the plugin.
   
-     Default styles:
+    Default styles:
      ```javascript
      {
           critical: { icon: '🟥', style: 'fill: #DE071B; fill-opacity: 0; stroke: #DE071B; stroke-width: 10;' },
@@ -161,10 +183,6 @@ Cypress custom command to check the accessibility of a given context using axe-c
           fixme:    { icon: '🛠️'}
      }
      ```
-
-  - **`includedImpacts`**: (optional) *From CYPRESS-AXE* - List of impact levels to include in the analysis. Possible impact values are 'minor', 'moderate', 'serious', or 'critical'.
-  
-    Default: `['critical', 'serious']`.
    
   - **`retries`**: (optional) *From CYPRESS-AXE* - Number of times to retry the check if there are initial findings.
   
@@ -298,8 +316,16 @@ describe('Accessibility Tests', { tags: ['@accessibility'] }, () => {
     cy.checkAccessibility();
   });
 
-  it('All levels of severity', { defaultCommandTimeout: 15000 }, () => {
+  it('All severity levels make test to fail', { defaultCommandTimeout: 15000 }, () => {
     cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'] });
+  });
+
+  it('Severities "critical" and "serious" fail test and severities "moderate" and "minor" provide warnings', { defaultCommandTimeout: 15000 }, () => {
+    cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious'] , onlyWarnImpacts: ['moderate', 'minor'] });
+  });
+
+  it('All severity levels provide warnings (test not to fail)', { defaultCommandTimeout: 15000 }, () => {
+    cy.checkAccessibility(null, { includedImpacts: [], onlyWarnImpacts: ['critical', 'serious', 'moderate', 'minor'] });
   });
 
   it('Disable rules "contrast" and "valid-lang"', { defaultCommandTimeout: 15000 }, () => {
@@ -360,6 +386,10 @@ If there are any violations for the selected rules used in the analysis, the tes
 For each test, it shows a summary of the accessibility violations categorized by their severity in the Cypress Log at the end of the test.
 
 ![Violations Summary](/images/violations-summary.png)
+
+If the analysis was configured to consider accessibility issues as either a violation (failing the test) or a warning, they will be distinguished as such in the summary.
+
+![Violations Summary with Warnings](/images/violations-summary-warnings.png)
 
 By clicking on one of the severity groups in the summary, the details for all the violations of that severity type will be shown in the browser console.
 
@@ -503,6 +533,11 @@ Same custom styles shown in the HTML report:
 ![Custom styles in HTML report](images/report-custom-styles.png)
 
 
+### Terminal Report
+
+A tabular report containing all accessibility violation details will be generated in the Terminal. This includes a summary of violations and warnings, categorized by severity level.
+
+
 ## Known Limitations
 
 - Only allows running one accessibility analysis with the command `cy.checkAccessibility()` per test.
@@ -520,6 +555,11 @@ MIT License. See the [LICENSE](LICENSE) file for more details.
 
 
 ## Changelog
+
+### v1.4.0
+
+- Added option `onlyWarnImpacts` with list of violations severities to include in the analysis to provide a warning, but not to fail.
+- Copy violations screenshot to html report folder instead of moving (to add compatibility with Allure reporter)
 
 ### v1.3.0
 
