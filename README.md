@@ -12,6 +12,12 @@ Or the videos:
   - ["WICK-A11Y ACCESSIBILITY PLUGIN VIDEO TUTORIAL (English)"](https://www.youtube.com/watch?v=WpdrXU-6xzc)
   - ["Cypress - Accesibilidad con WICK-A11Y (Español) - Playlist"](https://www.youtube.com/playlist?list=PLJZz46d_HRpjDPUPirWAaP2NXRFX-xxGd)
 
+---
+
+If you'd like to support my work, consider buying me a coffee or contributing to a training session, so I can keep learning and sharing cool stuff with all of you. Thank you for your support!
+
+<a href="https://www.buymeacoffee.com/sclavijosuero" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 40px !important;width: 150px !important;" ></a>
+
 ## Main Features
 
 - **Comprehensive Accessibility Analysis**: Leverages cypress-axe plugin and axe-core®  for thorough accessibility checks. Axe-core® <https://github.com/dequelabs/axe-core> is a trademark of Deque Systems, Inc. <https://www.deque.com/> in the US and other countries.
