@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/sclavijosuero/wick-a11y#readme",
   "peerDependencies": {
-    "cypress-axe": "^1.5.0"
+    "cypress-axe": "^1.6.0"
   },
   "devDependencies": {
     "cypress": "^14.0.3",
