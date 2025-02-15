@@ -52,10 +52,23 @@ npm install wick-a11y --save-dev
 ```
 
 
-## Compatibility
+## Compatibility 
+
+### wick-a11y *v*2.0.0 and Greater
+
+- Compatible with all versions of Cypress v14.0.3 and greater
+- Relies on cypress-axe (≥ 1.5.0) and axe-core® for accessibility analysis.
+-  ⚠️ **Not officially supported** compatibility with Cypress *v*14.0.0 to *v*14.0.2.
+
+### wick-a11y *v*1.4.0 and Earlier
 
 - Compatible with all versions of Cypress v12.0.0 and greater.
 - Relies on cypress-axe (≥ 1.5.0) and axe-core® for accessibility analysis.
+-  ⚠️ ** Non compatible** with versions of Cypress v14.0.0 and creater
+-  ⚠️ If you want to install wick-a11y *v*1.4.0 or earlier in a Cypress 14.0.3 project you will need to use the `--force` option:
+   ```sh
+   npm install wick-a11y --save-dev --force
+   ```
 
 
 ## Configuration
@@ -555,6 +568,11 @@ MIT License. See the [LICENSE](LICENSE) file for more details.
 
 
 ## Changelog
+
+### v2.0.0
+
+- wick-a11y plugin migrated to Cypress v14.0.3
+- Resolve dependency tree issues when installing wick-a11y in a Cypress v14.0.3 project 
 
 ### v1.4.0
 
