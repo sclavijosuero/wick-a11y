@@ -146,7 +146,12 @@ const takeScreenshotsViolations = (reportId, reportFolder) => {
 
     let subFolder = ''
     if (!Cypress.config('isInteractive')) {
-        subFolder = `${Cypress.spec.name}/` // If executed in run mode it creates a folder with test name for the screenshots
+        // Using the relative path instead of just spec.name
+        let specRelative = Cypress.spec.relative.replace(/\\/g, '/');
+        // Removing "cypress/e2e/" if the project uses that as a top-level folder
+        specRelative = specRelative.replace(/^cypress\/e2e\//, '');
+        // Append a slash, keeping the entire file name for minimal change
+        subFolder = `${specRelative}/`;
     }
 
     const targetFileName = `${issuesFileNameTarget}${attemptSuffix}.png`
