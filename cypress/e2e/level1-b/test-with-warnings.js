@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 // Import Accessibility Plugin
-import "../../src/accessibility-commands.js";
+import "../../../src/accessibility-commands.js";
 
 
 describe('TEST WITH WARNINGS', { tags: ['@accessibility'] }, () => {

@@ -1,7 +1,7 @@
 /// <reference types="cypress" />
 
 // Import Accessibility Plugin
-import "../../src/accessibility-commands.js";
+import "../../../../src/accessibility-commands.js";
 
 it('Check accessibility google.com web site', { defaultCommandTimeout: 15000 }, () => {
     cy.visit('https://www.google.com')

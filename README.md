@@ -575,6 +575,10 @@ MIT License. See the [LICENSE](LICENSE) file for more details.
 
 ## Changelog
 
+### v2.0.1
+
+- Fix issue of Incorrect Screenshot File Path for Deeply Nested Tests https://github.com/sclavijosuero/wick-a11y/issues/21 (contribution by [Peter M Souza Jr](https://github.com/petermsouzajr "Peter M Souza Jr"))
+
 ### v2.0.0
 
 - wick-a11y plugin migrated to Cypress v14.0.3
@@ -588,7 +592,7 @@ MIT License. See the [LICENSE](LICENSE) file for more details.
 ### v1.3.0
 
 - Added types for command checkAccessibility.
-- Limit size of image in HTML report to 1920px width (contribution by James Wadley)
+- Limit size of image in HTML report to 1920px width (contribution by [James Wadley](https://github.com/w4dd325 "James Wadley"))
 - Use of Cypress 13.17.0 to run package tests.
 
 ### v1.2.2

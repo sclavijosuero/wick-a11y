@@ -1,10 +1,10 @@
 /// <reference types="cypress" />
 
 // Import Accessibility Plugin
-import "../../src/accessibility-commands.js";
+import "../../../../../src/accessibility-commands.js";
 
 
-describe.skip('TEST SUITE 1', { tags: ['@accessibility'] }, () => {
+describe('TEST SUITE 1', { tags: ['@accessibility'] }, () => {
     
     it('Check accessibility Parabank web site - 6', { defaultCommandTimeout: 15000 }, () => {
         cy.visit('https://parabank.parasoft.com/parabank/index.htm')
@@ -62,7 +62,7 @@ describe.skip('TEST SUITE 1', { tags: ['@accessibility'] }, () => {
 })
 
 
-describe.skip('TEST SUITE 2', { tags: ['@accessibility'] }, () => {
+describe('TEST SUITE 2', { tags: ['@accessibility'] }, () => {
 
     it('Another simple passing test - 14', () => {
         expect(true).to.be.true
@@ -85,14 +85,14 @@ describe.skip('TEST SUITE 2', { tags: ['@accessibility'] }, () => {
 })
 
 
-it.skip('Check accessibility BrowserStack Demo web site - 1', { defaultCommandTimeout: 15000 }, () => {
+it('Check accessibility BrowserStack Demo web site - 1', { defaultCommandTimeout: 15000 }, () => {
     cy.visit('https://bstackdemo.com/')
     cy.wait(2000) // Using cy.wait(TIME) is a very bad practice, but it is used for simplicity in this example
 
     cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'] })
 });
 
-it.skip('Another simple passing test - 2', () => {
+it('Another simple passing test - 2', () => {
     expect(true).to.be.true
 });
 
