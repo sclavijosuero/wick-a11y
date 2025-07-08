@@ -140,15 +140,24 @@ const addAccessibilityTasks = (on) => {
          * @returns {Promise<string>} A promise that resolves with a success message if the file is moved successfully, or rejects with an error if there was an issue moving the file.
          */
         moveScreenshotToFolder({ originFilePath, targetFilePath }) {
-            return new Promise((resolve, reject) => {
-                fs.copy(path.resolve(originFilePath), path.resolve(targetFilePath), err => {
-                    if (err) {
-                        console.error(err)
-                        reject(err)
-                    } else {
-                        resolve(`SUCCESSFULLY MOVED SCREENSHOT TO: ${targetFilePath}`)
-                    }
-                })
+            // Get the directory from the full target file path
+            const targetDir = path.dirname(targetFilePath);
+
+            // First, ensure the target directory exists. Then, copy the file.
+            // This returns the promise chain directly.
+            return fs.ensureDir(targetDir).then(() => {
+                // This returns the promise from fs.copy
+                return fs.copy(originFilePath, targetFilePath);
+            }).then(() => {
+                // This is the success case after the copy completes
+                const successMessage = `SUCCESSFULLY MOVED SCREENSHOT TO: ${targetFilePath}`;
+                // console.log(successMessage); // Optional: uncomment for debugging
+                return successMessage;
+            }).catch((err) => {
+                // This single .catch handles errors from both ensureDir and copy
+                console.error(`Error moving screenshot to '${targetFilePath}'`,err);
+                // Re-throw the error to ensure the promise is rejected, failing the task
+                throw err;
             })
         }
     })
