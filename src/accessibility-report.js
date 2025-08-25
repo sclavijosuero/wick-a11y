@@ -139,31 +139,30 @@ const takeScreenshotsViolations = (reportId, reportFolder) => {
 
     const issuesFileNameOrigin = `${reportId} Accessibility Issues Image`
     const issuesFileNameTarget = `Accessibility Issues Image`
+    const targetFileName = `${issuesFileNameTarget}${attemptSuffix}.png`
+    const targetFilePath = `${reportFolder}/${targetFileName}`
+    let originFilePath = ''
 
     setViolationsHover('disabled')
     cy.screenshot(`${issuesFileNameOrigin}`, { capture: 'fullPage' })
     setViolationsHover('enabled')
 
-    let subFolder = ''
-    if (!Cypress.config('isInteractive')) {
-        // Using the relative path instead of just spec.name
-        let specRelative = Cypress.spec.relative.replace(/\\/g, '/');
-        // Removing "cypress/e2e/" if the project uses that as a top-level folder
-        specRelative = specRelative.replace(/^cypress\/e2e\//, '');
-        // Append a slash, keeping the entire file name for minimal change
-        subFolder = `${specRelative}/`;
-    }
-
-    const targetFileName = `${issuesFileNameTarget}${attemptSuffix}.png`
-
-    const originFilePath = `${Cypress.config('screenshotsFolder')}/${subFolder}${issuesFileNameOrigin}${attemptSuffix}.png`
-    const targetFilePath = `${reportFolder}/${targetFileName}`
-
-    cy.task('moveScreenshotToFolder', { originFilePath, targetFilePath }).then((result) => {
-        console.log(result)
+    const restoreScreenshotDefaults = Cypress.Screenshot.defaults({
+        onAfterScreenshot: (_el, details) => { originFilePath = details.path }
     })
+    
+    // After the screenshot, move the file using the *exact* path captured
+    cy.then(() => {
+        // (optional) restore defaults if set globally elsewhere
+        if (typeof restoreScreenshotDefaults === 'function') restoreScreenshotDefaults()
 
-    return targetFileName
+        // Safety: ensure path detected
+        if (originFilePath === '') throw new Error('Could not capture screenshot path from onAfterScreenshot')
+
+        return cy.task('moveScreenshotToFolder', { originFilePath, targetFilePath }).then(console.log)
+    })
+  
+  return targetFileName
 }
 
 /**
