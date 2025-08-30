@@ -139,30 +139,47 @@ const takeScreenshotsViolations = (reportId, reportFolder) => {
 
     const issuesFileNameOrigin = `${reportId} Accessibility Issues Image`
     const issuesFileNameTarget = `Accessibility Issues Image`
+    const targetFileName = `${issuesFileNameTarget}${attemptSuffix}.png`
+    const targetFilePath = `${reportFolder}/${targetFileName}`
+    let originFilePath = ''
 
     setViolationsHover('disabled')
     cy.screenshot(`${issuesFileNameOrigin}`, { capture: 'fullPage' })
     setViolationsHover('enabled')
 
-    let subFolder = ''
-    if (!Cypress.config('isInteractive')) {
-        // Using the relative path instead of just spec.name
-        let specRelative = Cypress.spec.relative.replace(/\\/g, '/');
-        // Removing "cypress/e2e/" if the project uses that as a top-level folder
-        specRelative = specRelative.replace(/^cypress\/e2e\//, '');
-        // Append a slash, keeping the entire file name for minimal change
-        subFolder = `${specRelative}/`;
-    }
-
-    const targetFileName = `${issuesFileNameTarget}${attemptSuffix}.png`
-
-    const originFilePath = `${Cypress.config('screenshotsFolder')}/${subFolder}${issuesFileNameOrigin}${attemptSuffix}.png`
-    const targetFilePath = `${reportFolder}/${targetFileName}`
-
-    cy.task('moveScreenshotToFolder', { originFilePath, targetFilePath }).then((result) => {
-        console.log(result)
+    // To get the *exact path* of the screenshot file, we temporarily override Cypress's global screenshot default configuration.
+    // `onAfterScreenshot` is a callback function that Cypress ran immediately after the screenshot
+    // It provides a `details` object containing metadata, including the actual screenshot `path` which we need to access.
+    const restoreScreenshotDefaults = Cypress.Screenshot.defaults({
+        onAfterScreenshot: (_el, details) => { originFilePath = details.path }
     })
+    
+    cy.then(() => {
+        // It's critical to restore the original Cypress screenshot defaults. If we don't, our
+        // custom `onAfterScreenshot` function would affect every other screenshot path in the entire test suite.
+        if (typeof restoreScreenshotDefaults === 'function') restoreScreenshotDefaults()
 
+        // In case of path error, throw error messages without interrupting users tests
+        if (originFilePath === '') {    
+            Cypress.log({
+                name: 'wick-a11y', // Package name for the command
+                displayName: 'Wick-A11y Screenshot', // What the user sees
+                message: '⚠️ Warning: Could not save screenshot to report folder.',
+                consoleProps: () => ({ // Debugging info in the console
+                    'Plugin': 'wick-a11y',
+                    'Warning': 'Could not capture the screenshot path from onAfterScreenshot.',
+                    'Effect': 'The test will pass, but the screenshot file was not moved to the report folder. It may exist in the default Cypress screenshots directory.',
+                }),
+            });
+            
+            console.warn('Wick-A11y Screenshot Warning: Could not capture screenshot path from onAfterScreenshot.');
+            
+            return; // Exit and allow users test to continue.
+        }
+
+        return cy.task('moveScreenshotToFolder', { originFilePath, targetFilePath }).then(console.log)
+    })
+  
     return targetFileName
 }
 
