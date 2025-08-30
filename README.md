@@ -7,6 +7,7 @@
 For a detailed guide on setting up and using this plugin to maximize its benefits, please refer to my articles:
   - ["WICK-A11Y Cypress Plugin: Your Unstoppable Ally for Smashing Accessibility Barriers, Cool as John Wick!"](https://dev.to/sebastianclavijo/wick-a11y-cypress-plugin-your-unstoppable-ally-for-smashing-accessibility-barriers-cool-as-john-wick-280a)
   - ["WICK-A11Y "Chapter" 1.2.1 - Voice Support: The Accessibility Cypress Plugin that Talks More Than John Wick in His Movies"](https://dev.to/sebastianclavijo/wick-a11y-v121-voice-the-accessibility-cypress-plugin-that-talks-more-than-john-wick-in-his-movies-8c8)
+  - [WICK-A11Y 1.4.0: Not Everything Needs to Fail a Test!"](https://dev.to/sebastianclavijo/wick-a11y-140-not-everything-needs-to-fail-a-test-1pe5)
 
 Or the videos:
   - ["WICK-A11Y ACCESSIBILITY PLUGIN VIDEO TUTORIAL (English)"](https://www.youtube.com/watch?v=WpdrXU-6xzc)
