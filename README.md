@@ -14,11 +14,7 @@ Or the videos:
 
 ---
 
-If you'd like to support my work, consider buying me a coffee or contributing to a training session, so I can keep learning and sharing cool stuff with all of you. Thank you for your support!
-
-<a href="https://www.buymeacoffee.com/sclavijosuero" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 40px !important;width: 150px !important;" ></a>
-
-## Main Features
+## MAIN FEATURES
 
 - **Comprehensive Accessibility Analysis**: Leverages cypress-axe plugin and axe-core®  for thorough accessibility checks. Axe-core® <https://github.com/dequelabs/axe-core> is a trademark of Deque Systems, Inc. <https://www.deque.com/> in the US and other countries.
   
@@ -51,14 +47,45 @@ If you'd like to support my work, consider buying me a coffee or contributing to
 > ✔️ **The plugin analyzes DOM elements that are visible in the browser viewport as per the axe-core® plugin (it will not include hidden elements).**
 
 
-## Installation
+## TABLE OF CONTENTS
+
+- [wick-a11y](#wick-a11y)
+  - [MAIN FEATURES](#main-features)
+  - [TABLE OF CONTENTS](#table-of-contents)
+  - [INSTALATION](#instalation)
+  - [COMPATIBILITY](#compatibility)
+  - [CONFIGURATION](#configuration)
+  - [API REFERENCE](#api-reference)
+    - [cy.checkAccessibility(context, options)](#cycheckaccessibilitycontext-options)
+  - [USAGE EXAMPLES](#usage-examples)
+  - [RESULTS PRESENTATION](#results-presentation)
+    - [Summary of Violations](#summary-of-violations)
+    - [Violation Details in Browser Console from Cypress Log](#violation-details-in-browser-console-from-cypress-log)
+    - [Violation Details in Tooltip when Hovering over a DOM Element on the Page](#violation-details-in-tooltip-when-hovering-over-a-dom-element-on-the-page)
+    - [Accessibility Voice](#accessibility-voice)
+    - [Accessibility Voice for Analysis at Suite Level in Cypress Log](#accessibility-voice-for-analysis-at-suite-level-in-cypress-log)
+    - [Accessibility Voice for Analysis at Test Level in Cypress Log](#accessibility-voice-for-analysis-at-test-level-in-cypress-log)
+    - [Accessibility Voice for Analysis at Violation Type Level in Cypress Log](#accessibility-voice-for-analysis-at-violation-type-level-in-cypress-log)
+    - [Accessibility Voice for Analysis at DOM Element Level in Cypress Log](#accessibility-voice-for-analysis-at-dom-element-level-in-cypress-log)
+    - [Accessibility Voice for Analysis at DOM Element Level in the Web Page](#accessibility-voice-for-analysis-at-dom-element-level-in-the-web-page)
+    - [HTML Report](#html-report)
+    - [Custom Styles Based on Severity (Cypress runner and HTML Report)](#custom-styles-based-on-severity-cypress-runner-and-html-report)
+    - [Terminal Report](#terminal-report)
+  - [KNOWN LIMITATIONS](#known-limitations)
+  - [LICENSE](#license)
+  - [CONTRIBUTING](#contributing)
+  - [CHANGELOG](#changelog)
+  - [EXTERNAL REFERENCES](#external-references)
+
+
+## INSTALATION
 
 ```sh
 npm install wick-a11y --save-dev
 ```
 
 
-## Compatibility 
+## COMPATIBILITY 
 
 ### wick-a11y *v*2.0.0 and Greater
 
@@ -77,7 +104,7 @@ npm install wick-a11y --save-dev
    ```
 
 
-## Configuration
+## CONFIGURATION
 
 1. First, in your **`cypress.config.js`** file import `wick-a11y/accessibility-tasks`, and add the line `addAccessibilityTasks(on)` within the **`setupNodeEvents`** function,  to include the accessibility tasks:
 
@@ -140,7 +167,7 @@ module.exports = defineConfig({
       npx cypress open --env enableAccessibilityVoice=true
       ```
 
-## API Reference
+## API REFERENCE
 
 ### cy.checkAccessibility(context, options)
 
@@ -296,7 +323,7 @@ const customImpactStyling = {
 ```
 
 
-## Usage Examples
+## USAGE EXAMPLES
 
 **Basic Usage**
 
@@ -390,7 +417,7 @@ describe('Accessibility Tests', { tags: ['@accessibility'] }, () => {
 ```
 
 
-## Results
+## RESULTS PRESENTATION
 
 All the accessibility violations are shown in the Cypress log, ordered by severity, and are also graphically highlighted on the page, enclosed in a bounding box colored according to the severity level.
 
@@ -557,7 +584,7 @@ Same custom styles shown in the HTML report:
 A tabular report containing all accessibility violation details will be generated in the Terminal. This includes a summary of violations and warnings, categorized by severity level.
 
 
-## Known Limitations
+## KNOWN LIMITATIONS
 
 - Only allows running one accessibility analysis with the command `cy.checkAccessibility()` per test.
 
@@ -568,12 +595,36 @@ A tabular report containing all accessibility violation details will be generate
 - At this moment, it does not flag suspicious violations considered by the AJV validator as inconclusive.
 
 
-## License
+## LICENSE
 
 MIT License. See the [LICENSE](LICENSE) file for more details.
 
 
-## Changelog
+## CONTRIBUTING
+
+First off, thanks for taking the time to contribute!
+
+To contribute, please follow the best practices promoted by GitHub on the [Contributing to a project](https://docs.github.com/en/get-started/exploring-projects-on-github/contributing-to-a-project "Contributing to a project") page.
+
+And if you like the project but just don't have the time to contribute, that's fine. There are other easy ways to support the project and show your appreciation, which we would also be very happy about:
+- Star the project
+- Promote it on social media
+- Refer this project in your project's readme
+- Mention the project at local meetups and tell your friends/colleagues
+- Buying me a coffee or contributing to a training session, so I can keep learning and sharing cool stuff with all of you.
+
+<a href="https://www.buymeacoffee.com/sclavijosuero" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 40px !important;width: 150px !important;" ></a>
+
+Thank you for your support!
+
+
+## CHANGELOG
+
+### v2.1.0
+
+- Support of Cypress 15
+- Fix issue of Incorrect Screenshot File Path for Deeply Nested Tests and running specific tests suiteds with `--spec` (contribution by [Peter M Souza Jr](https://github.com/petermsouzajr "Peter M Souza Jr"))
+- Fix issue when a test does not include acccessibility checking and it does not fail.
 
 ### v2.0.1
 
@@ -634,13 +685,33 @@ MIT License. See the [LICENSE](LICENSE) file for more details.
 - Comprehensive configuration options for AXE analysis.
 - Detailed logging and report generation for accessibility violations.
 
-## External references
+## EXTERNAL REFERENCES
 
-- [Joan Esquivel Montero](https://www.linkedin.com/in/joanesquivel/ " Joan Esquivel Montero") - Video: [Cypress Accessibility Testing powered by WICK-A11Y](https://www.youtube.com/watch?v=LVxyJMW6EJw "Cypress Accessibility Testing powered by WICK-A11Y")
+- [**W3C Org** — Official Web Accessibility Evaluation Tools List](https://www.w3.org/WAI/test-evaluate/tools/list/ "W3C Org — Official Web Accessibility Evaluation Tools List")
 
-- [cypress.io](https://www.cypress.io/ "https://www.cypress.io/") - Blog by Mark Noonan: [Open Source Accessibility Plugins in Cypress](https://www.cypress.io/blog/open-source-accessibility-plugins-in-cypress "Open Source Accessibility Plugins in Cypress")
+- [**Cypress.io Official Documentation** — Accessibility Testing](https://docs.cypress.io/app/guides/accessibility-testing "Cypress.io Official Documentation — Accessibility Testing")
 
-- [James Wadley](https://www.linkedin.com/in/w4dd325/ "James Wadley") - Blog: [Let's talk about wick-a11y…](https://dev.to/w4dd325/lets-talk-about-wick-a11y-1afa "Let's talk about wick-a11y…")
+- [**Cypress.io Official Blog** — Mark Noonan: Open Source Accessibility Plugins in Cypress](https://www.cypress.io/blog/open-source-accessibility-plugins-in-cypress "Cypress.io Official Blog — Mark Noonan: Open Source Accessibility Plugins in Cypress")
+
+- [**TestGuild Testing Tool Matcher** — Cypress Resource: wick-a11y](https://testguild.com/tools/cypress "TestGuild Testing Tool Matcher — Cypress Resource: wick-a11y")
+
+- [**testdev.tools** — Hand-Picked Software Testing Tools & Resources: wick-a11y](https://testdev.tools/wick-a11y/ "testdev.tools — Hand-Picked Software Testing Tools & Resources: wick-a11y")
+
+- [**digitala11y.com** — Open Source Accessibility Testing Tools Roundup](https://www.digitala11y.com/open-source-accessibility-tools/ "digitala11y.com — Open Source Accessibility Testing Tools Roundup")
+
+- [**Joan Esquivel Montero**](https://www.linkedin.com/in/joanesquivel/ "Joan Esquivel Montero") — Video: [Cypress Accessibility Testing powered by WICK-A11Y](https://www.youtube.com/watch?v=LVxyJMW6EJw "Cypress Accessibility Testing powered by WICK-A11Y"), and [Spanish version](https://www.youtube.com/watch?v=96Sz2QCXE7I "Spanish version")
+
+- [**Ioan Solderea**](https://www.linkedin.com/in/%F0%9F%95%B5ioan-s-b0928516/ "Ioan Solderea") — Video: [European Accessibility Act 2025: Compliance Deadline Nears – How Cypress.io Can Save Your Business](https://www.youtube.com/watch?v=joP3TNdLjF8 "European Accessibility Act 2025: Compliance Deadline Nears – How Cypress.io Can Save Your Business")
+
+- [**Gleb Bahmutov**](https://www.linkedin.com/in/bahmutov/ "Gleb Bahmutov") — Cypress Tips Newsletter: [Sept 2024 - WICK-A11Y plugin with voice support](https://cypresstips.substack.com/i/149058474/wick-ay-plugin-with-voice-support "Sept 2024 - WICK-A11Y plugin with voice support"), and [Dec 2024 - Sebastian Clavijo's WICK-A11Y](https://cypresstips.substack.com/i/153579922/sebastian-clavijo-suero "[Dec 2024 - Sebastian Clavijo's WICK-A11Y") 
+
+- [**Dawid Dylowicz**](https://www.linkedin.com/in/dawid-dylowicz/ "Dawid Dylowicz") — Newsletter: [Software Testing Weekly Issue 235](https://softwaretestingweekly.com/issues/235 "Software Testing Weekly Issue 235 ")
+
+- [**Pritesh Usadadiya**](https://www.linkedin.com/company/software-testing-notes/posts/ "Pritesh Usadadiya") — Newsletter: [Software Testing Notes Issue 141](https://softwaretestingnotes.substack.com/p/issue-141-software-testing-notes "Software Testing Notes Issue 141")
+
+- [**James Wadley**](https://www.linkedin.com/in/w4dd325/ "James Wadley") — Blog: [Let's talk about wick-a11y…](https://dev.to/w4dd325/lets-talk-about-wick-a11y-1afa "Let's talk about wick-a11y…")
+
+- and many more...
 
 
 &nbsp;

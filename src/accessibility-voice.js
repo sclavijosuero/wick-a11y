@@ -140,13 +140,18 @@ export const obtainTestSummaryVoiceMessage = (testResults, test, accessibilityOp
     let numViolationsIncludedImpacts = 0
     let numViolationsOnlyWarnImpacts = 0
 
+    console.log('---------------------------------------')
+    console.log(accessibilityOptions)
+    console.log(testResults)
+    console.log(test)
+
     if (accessibilityOptions) {
         numViolationsIncludedImpacts = accessibilityOptions.includedImpacts.reduce((total, impact) => {
-            return total + (testResults.testSummary[impact] || 0);
+            return total + ((testResults.testSummary && testResults.testSummary[impact] != null) ? testResults.testSummary[impact] : 0);
         }, 0);
 
         numViolationsOnlyWarnImpacts = accessibilityOptions.onlyWarnImpacts.reduce((total, impact) => {
-            return total + (testResults.testSummary[impact] || 0);
+            return total + ((testResults.testSummary && testResults.testSummary[impact] != null) ? testResults.testSummary[impact] : 0);
         }, 0);
     }
 

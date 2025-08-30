@@ -20,12 +20,6 @@ describe('TEST SUITE 1', { tags: ['@accessibility'] }, () => {
 
             cy.checkAccessibility()
         });
-
-        it('Simple failing test - 11', () => {
-            cy.wrap(false).as('falseValue')
-            cy.get('@falseValue').should('be.true')
-            // expect(true).to.be.false
-        });
     })
 
     context('Context 2', () => {
@@ -50,13 +44,6 @@ describe('TEST SUITE 1', { tags: ['@accessibility'] }, () => {
 
     it('Another simple passing test - 8', () => {
         expect(true).to.be.true
-    });
-
-    it('Check accessibility Applitools web site - 9', { defaultCommandTimeout: 15000 }, () => {
-        cy.visit('https://demo.applitools.com/')
-        cy.wait(2000) // Using cy.wait(TIME) is a very bad practice, but it is used for simplicity in this example
-
-        cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'] })
     });
 
 })
@@ -85,13 +72,6 @@ describe('TEST SUITE 2', { tags: ['@accessibility'] }, () => {
 })
 
 
-it('Check accessibility BrowserStack Demo web site - 1', { defaultCommandTimeout: 15000 }, () => {
-    cy.visit('https://bstackdemo.com/')
-    cy.wait(2000) // Using cy.wait(TIME) is a very bad practice, but it is used for simplicity in this example
-
-    cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'] })
-});
-
 it('Another simple passing test - 2', () => {
     expect(true).to.be.true
 });
@@ -100,11 +80,11 @@ it.skip('Another simple skipping test - 3', () => {
     expect(true).to.be.true
 });
 
-it.skip('Check accessibility BrowserStack Demo web site - 4', { defaultCommandTimeout: 15000 }, () => {
+it.only('Check accessibility BrowserStack Demo web site - 4', { defaultCommandTimeout: 15000 }, () => {
     cy.visit('https://bstackdemo.com/')
     cy.wait(2000) // Using cy.wait(TIME) is a very bad practice, but it is used for simplicity in this example
 
-    cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'] })
+    cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious'], onlyWarnImpacts: ['moderate', 'minor'] })
 });
 
 it.skip('Another simple failing test - 5 (Ok in second attempt)', () => {
