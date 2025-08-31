@@ -13,4 +13,6 @@ describe('ACCESSIBILITY TESTS - root', { tags: ['@accessibility'] }, () => {
 
         cy.checkAccessibility(null, { includedImpacts: [], onlyWarnImpacts: ['critical', 'serious', 'moderate', 'minor'] })
     });
+
 });
+

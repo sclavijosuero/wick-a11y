@@ -88,19 +88,25 @@ npm install wick-a11y --save-dev
 
 ## COMPATIBILITY 
 
+### wick-a11y *v*2.2.0 and Greater
+
+- Compatible with all versions from Cypress v15
+- Relies on cypress-axe (≥ 1.7.0)
+
 ### wick-a11y *v*2.1.0 and Greater
 
-- Support of cypress-axe 1.7.0
+- Compatible with all versions from Cypress v14
+- Relies on cypress-axe (≥ 1.7.0)
 
 ### wick-a11y *v*2.0.0 and Greater
 
-- Compatible with all versions of Cypress v14.0.3 and greater
+- Compatible with all versions from Cypress v14
 - Relies on cypress-axe (≥ 1.5.0) and axe-core® for accessibility analysis.
--  ⚠️ **Not officially supported** compatibility with Cypress *v*14.0.0 to *v*14.0.2.
+-  ⚠️ **Not officially tested** with Cypress *v*14.0.0 to *v*14.0.2 (but should work).
 
 ### wick-a11y *v*1.4.0 and Earlier
 
-- Compatible with all versions of Cypress v12.0.0 and greater.
+- Compatible with all versions of Cypress v12 and Cypress v13.
 - Relies on cypress-axe (≥ 1.5.0) and axe-core® for accessibility analysis.
 -  ⚠️ ** Non compatible** with versions of Cypress v14.0.0 and creater
 -  ⚠️ If you want to install wick-a11y *v*1.4.0 or earlier in a Cypress 14.0.3 project you will need to use the `--force` option:
@@ -625,9 +631,14 @@ Thank you for your support!
 
 ## CHANGELOG
 
+### v2.2.0
+
+- Supports Cypress v15
+- This v2.2.0 is not compatible with Cypress ≤v14
+
 ### v2.1.0
 
-- Support of cypress-axe 1.7.0
+- Supports cypress-axe 1.7.0
 - Fix issue of Incorrect Screenshot File Path for Deeply Nested Tests and running specific tests suiteds with `--spec` (contribution by [Peter M Souza Jr](https://github.com/petermsouzajr "Peter M Souza Jr"))
 - Fix issue when a test does not include acccessibility checking and it does not fail.
 

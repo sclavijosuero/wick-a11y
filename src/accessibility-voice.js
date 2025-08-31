@@ -45,7 +45,7 @@ export const captureEventsForCollapsibleElements = (specResults) => {
 
         // Get the original click handler
         const originalClickHandler = collapsible.onclick
-        
+
         collapsible.onclick = (event) => {
             if (originalClickHandler) {
                 // Call the original click handler if existed
@@ -57,16 +57,34 @@ export const captureEventsForCollapsibleElements = (specResults) => {
 
                 setTimeout(() => {
                     // Get tests in case the collapsible is a describe or context block
-                    let $tests = Cypress.$(collapsible).parent().next().find(' .runnable-title>span:nth-child(1)')
+                    let $tests = Cypress.$(collapsible).parent().next().find('.runnable-title>span:nth-child(1)')
+
+                    let $content = Cypress.$(collapsible).parent()
+
+                    let attemptName
+                    if ($content.hasClass('attempt-name')) {
+                        attemptName = $content.text()
+                    }
 
                     if ($tests.length === 0) {
-                        // Is already a test or another collapsible without tests
+                        // It's a test, an attempt, or another collapsible without tests
+                        let $test
 
-                        const $test = Cypress.$(collapsible).find(' .runnable-title>span:nth-child(1)')
+                        if (attemptName) {
+                            // It's an attempt collapsible
+                            $test = Cypress.$(collapsible).closest('.runnable').find('.runnable-wrapper')
+
+                        } else {
+                            // It's a test, or another collapsible without tests
+                            $test = Cypress.$(collapsible)
+                        }
+
+                        $test = $test.find('.runnable-title>span:nth-child(1)')
                         const testTitle = $test.text()
+
                         const skipVoiceForTestHeader = testTitle ? true : false // We are expanding already a test so skip the voice buttons for the test header
 
-                        createTestVoiceControlsInCypressLog(specResults, testTitle, skipVoiceForTestHeader)
+                        createTestVoiceControlsInCypressLog(specResults, testTitle, skipVoiceForTestHeader, attemptName)
                     } else {
                         // It is a describe or context block with tests inside
                         $tests.each((index, test) => {
@@ -77,7 +95,6 @@ export const captureEventsForCollapsibleElements = (specResults) => {
                 }, 250); // Give some time to the UI component to create and render the childern elements (childern contexts and tests)
             } else {
                 // Action of colapse (before colapsing, it  is true, and at this point is not fully ecollapsed yet)
-
                 const doc = window.top?.document
 
                 // Cancel any previous voice message
@@ -99,7 +116,7 @@ export const captureEventsForCollapsibleElements = (specResults) => {
  * @param {string} testTitle - The title of the test.
  * @param {boolean} [skipVoiceForTestHeader=false] - Whether to skip voice for test header.
  */
-export const createTestVoiceControlsInCypressLog = (specResults, testTitle, skipVoiceForTestHeader = false) => {
+export const createTestVoiceControlsInCypressLog = (specResults, testTitle, skipVoiceForTestHeader = false, attemptName) => {
 
     if (!testTitle) {
         // First time after test run completed
@@ -121,7 +138,7 @@ export const createTestVoiceControlsInCypressLog = (specResults, testTitle, skip
         const testResults = specResults.testsResults[testTitle]
 
         if (testResults) {
-            createVoiceControlsForTest(testResults, skipVoiceForTestHeader)
+            createVoiceControlsForTest(testResults, skipVoiceForTestHeader, attemptName)
         }
 
     }
@@ -140,11 +157,6 @@ export const obtainTestSummaryVoiceMessage = (testResults, test, accessibilityOp
     let numViolationsIncludedImpacts = 0
     let numViolationsOnlyWarnImpacts = 0
 
-    console.log('---------------------------------------')
-    console.log(accessibilityOptions)
-    console.log(testResults)
-    console.log(test)
-
     if (accessibilityOptions) {
         numViolationsIncludedImpacts = accessibilityOptions.includedImpacts.reduce((total, impact) => {
             return total + ((testResults.testSummary && testResults.testSummary[impact] != null) ? testResults.testSummary[impact] : 0);
@@ -162,8 +174,8 @@ export const obtainTestSummaryVoiceMessage = (testResults, test, accessibilityOp
             // Passed with accessibility warnings
             const warningList = listOfWarningSeverities(accessibilityOptions)
             return `The test with name. ${title}, passed ${attempts} with ${numViolationsOnlyWarnImpacts} accessibility warnings for ${pluralizedWord('severity', warningList.length)}: ${warningList}.`
-        } else {        
-            return `The test with name. ${title}, passed ${attempts} with no accessibility violations or any other errors.` 
+        } else {
+            return `The test with name. ${title}, passed ${attempts} with no accessibility violations or any other errors.`
         }
     } else if (testResults.testState === 'skipped') {
         // Skipped
@@ -324,11 +336,11 @@ export const createVoiceCssStyles = () => {
  */
 const obtainSpecSummaryVoiceMessage = (specResults) => {
     const summary = specResults.specSummary
- 
+
     return `
         The spec with name ${specResults.specName} ran ${summary.tests} ${pluralizedWord('test', summary.tests)} in total:
         ${summary.passed} ${pluralizedWord('test', summary.tests)} passed,
-        ${summary.failedAccessibility} ${pluralizedWord('test', summary.tests)} failed due accessibility violations,
+        ${summary.failedAccessibility} ${pluralizedWord('test', summary.tests)} failed due accessibility errors,
         ${summary.failed} ${pluralizedWord('test', summary.tests)} failed for other reasons,
         ${summary.pending + summary.skipped} ${pluralizedWord('test', summary.tests)} skipped or pending,
     `
@@ -367,48 +379,57 @@ const obtainNodesResultsVoiceMessage = (nodes, impact, help, description) => {
  * @param {Object} testResults - The test results object.
  * @param {boolean} [skipVoiceForTestHeader=false] - Whether to skip creating voice buttons for the test header.
  */
-const createVoiceControlsForTest = (testResults, skipVoiceForTestHeader = false) => {
+const createVoiceControlsForTest = (testResults, skipVoiceForTestHeader = false, attemptName) => {
     // Get test information
     const testTitle = testResults.testTitle;
     const testSummaryVoice = testResults.testSummaryVoice;
 
     // Find test within Cypress Log
-    const $testElement = findTestElement(testTitle);
+    let $testElement = findTestElement(testTitle);
+    if (attemptName) {
+        $testElement = $testElement.closest('.runnable').find(`.attempt-name:contains("${attemptName}")`).find('.attempt-tag')
+    }
 
-    if ($testElement.length === 1) {// This is a '.runnable-title' element (immediate sibilings are '.runnable-controls')
+    if ($testElement.length === 1) { // This is a '.runnable-title' element (immediate sibilings are '.runnable-controls')
         // Create voice buttons for Test
         if (!skipVoiceForTestHeader) {
             createVoiceButtons($testElement, '.runnable-controls', testSummaryVoice)
         }
 
-        // Process all the Violations for each test
-        for (const [violationName, violationInfo] of Object.entries(testResults.violationsResults)) {
-            // Get violation information
-            const violationSummaryVoice = violationInfo.violationSummaryVoice
-            const numNodes = violationInfo.violationSummary.numNodes
-            const nodes = violationInfo.nodes
+        if ($testElement.length !== 0) {
+            // Process all the Violations for each test
+            for (const [violationName, violationInfo] of Object.entries(testResults.violationsResults)) {
+                // Get violation information
+                const violationSummaryVoice = violationInfo.violationSummaryVoice
+                const numNodes = violationInfo.violationSummary.numNodes
+                const nodes = violationInfo.nodes
 
-            // Find violation for the test within the Cypress Log
-            const $violationElement = findViolationElement($testElement, violationInfo.violationImpact, violationInfo.violationHelp)
+                // Find violation for the test within the Cypress Log
+                const $violationElements = findViolationElement($testElement, violationInfo.violationImpact, violationInfo.violationHelp)
 
-            if ($violationElement.length === 1) {  // This is a '.command-info' element (immediate sibilings are '.command-controls')
-                // Create voice buttons for Test
-                createVoiceButtons($violationElement, '.command-controls', violationSummaryVoice)
+                $violationElements.each((index, elem) => {
+                    // This is a '.command-info' element (immediate sibilings are '.command-controls')
 
-                // Process all the Nodes affected (DOM Elements) for each violation
-                let $nodeLI = $violationElement.closest('li') // <li> for the violation
-                for (let i = 0; i < numNodes; i++) {
-                    $nodeLI = $nodeLI.next() // <li> for the node
+                    const $violationElement = Cypress.$(elem)
 
-                    // Find node for the violation within the Cypress Log
-                    const $nodeElement = findNodeElement($nodeLI)
-                    if ($nodeElement.length === 1) {  // This is a '.command-info' element (immediate sibilings are '.command-controls')
-                        const selector = $nodeElement.find('.command-message-text').text()
-                        const violationSummaryVoice = nodes[selector].nodeSummaryVoice
+                    // Create voice buttons for Test
+                    createVoiceButtons($violationElement, '.command-controls', violationSummaryVoice)
 
-                        createVoiceButtons($nodeElement, '.command-controls', violationSummaryVoice)
+                    // Process all the Nodes affected (DOM Elements) for each violation
+                    let $nodeLI = $violationElement.closest('li') // <li> for the violation
+                    for (let i = 0; i < numNodes; i++) {
+                        $nodeLI = $nodeLI.next() // <li> for the node
+
+                        // Find node for the violation within the Cypress Log
+                        const $nodeElement = findNodeElement($nodeLI)
+                        if ($nodeElement.length === 1) {  // This is a '.command-info' element (immediate sibilings are '.command-controls')
+                            const selector = $nodeElement.find('.command-message-text').text()
+                            const violationSummaryVoice = nodes[selector].nodeSummaryVoice
+
+                            createVoiceButtons($nodeElement, '.command-controls', violationSummaryVoice)
+                        }
                     }
-                }
+                })
             }
         }
     }
@@ -545,7 +566,7 @@ const cancelAndResetAllVoiceControls = () => {
  */
 const setGroupVoiceControls = (voiceGroupId, enabledSelector) => {
     const doc = window.top?.document
-    
+
     const $voiceGroup = Cypress.$(`[data-voice-group="${voiceGroupId}"]`, doc)
 
     // Hide all voice buttons

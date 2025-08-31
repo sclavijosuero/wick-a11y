@@ -530,6 +530,7 @@ Cypress.on('test:after:run', (testAttr, test) => {
  */
 afterEach(() => {
     const test = cy.state().test
+
     const maxRetries = Cypress.config('retries').openMode || 0
 
     if (mustEnableVoice() && (test.state !== 'failed' || test.state === 'failed' && test._currentRetry === maxRetries)) {

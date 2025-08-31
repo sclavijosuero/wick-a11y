@@ -80,7 +80,7 @@ it.skip('Another simple skipping test - 3', () => {
     expect(true).to.be.true
 });
 
-it.only('Check accessibility BrowserStack Demo web site - 4', { defaultCommandTimeout: 15000 }, () => {
+it('Check accessibility BrowserStack Demo web site - 4', { defaultCommandTimeout: 15000 }, () => {
     cy.visit('https://bstackdemo.com/')
     cy.wait(2000) // Using cy.wait(TIME) is a very bad practice, but it is used for simplicity in this example
 
