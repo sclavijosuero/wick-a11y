@@ -734,6 +734,34 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 z-index: 1000;
                 transition: opacity var(--transition-normal), visibility var(--transition-normal);
                 box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+                /* Ensure consistent paragraph and text formatting */
+                font-family: var(--font-family-primary);
+                font-weight: 400;
+                letter-spacing: normal;
+                word-spacing: normal;
+                text-transform: none;
+            }
+
+            /* Consistent paragraph spacing within tooltips for both sections */
+            .tooltip__content br {
+                line-height: 1.4;
+                margin: var(--spacing-xs) 0;
+            }
+
+            /* Ensure consistent text formatting within tooltips */
+            .tooltip__content p {
+                margin: var(--spacing-xs) 0;
+                font-size: var(--font-size-small);
+                line-height: 1.4;
+                font-weight: 400;
+            }
+
+            .tooltip__content p:first-child {
+                margin-top: 0;
+            }
+
+            .tooltip__content p:last-child {
+                margin-bottom: 0;
             }
 
             /* Analysis Configuration tooltips - narrower and positioned to the left */
@@ -741,11 +769,62 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 max-width: 300px;
                 left: 0;
                 transform: translateX(0);
+                /* Ensure consistent font and paragraph styling */
+                font-family: var(--font-family-primary);
+                font-size: var(--font-size-small);
+                line-height: 1.4;
+                font-weight: 400;
             }
 
             .card--yellow .tooltip__content::after {
                 left: 20px;
                 transform: translateX(0);
+            }
+
+            /* Mobile layout: all tooltips anchored to the left when cards are stacked */
+            @media (max-width: 1024px) {
+                .summary-section:nth-child(2) .tooltip__content, /* Analysis Configuration */
+                .summary-section:nth-child(3) .tooltip__content  /* Violations Summary */
+                {
+                    left: 0;
+                    transform: translateX(0);
+                    max-width: 300px;
+                    /* Ensure consistent font and paragraph styling */
+                    font-family: var(--font-family-primary);
+                    font-size: var(--font-size-small);
+                    line-height: 1.4;
+                    font-weight: 400;
+                }
+
+                .summary-section:nth-child(2) .tooltip__content::after, /* Analysis Configuration */
+                .summary-section:nth-child(3) .tooltip__content::after  /* Violations Summary */
+                {
+                    left: 20px;
+                    transform: translateX(0);
+                }
+            }
+
+            /* Desktop layout: Violations Summary tooltips anchored to the right */
+            @media (min-width: 1025px) {
+                .summary-section:nth-child(3) .tooltip__content /* Violations Summary */
+                {
+                    left: auto;
+                    right: 0;
+                    transform: translateX(0);
+                    max-width: 400px;
+                    /* Ensure consistent font and paragraph styling */
+                    font-family: var(--font-family-primary);
+                    font-size: var(--font-size-small);
+                    line-height: 1.4;
+                    font-weight: 400;
+                }
+
+                .summary-section:nth-child(3) .tooltip__content::after /* Violations Summary */
+                {
+                    left: auto;
+                    right: 20px;
+                    transform: translateX(0);
+                }
             }
 
             /* Smart positioning for tooltips near viewport edges */
