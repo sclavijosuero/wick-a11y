@@ -266,7 +266,7 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 padding: 0;
                 font-family: var(--font-family-primary);
                 font-size: var(--font-size-base);
-                line-height: 1.3;
+                line-height: 1.6;
                 color: var(--color-text-primary);
                 background-color: var(--color-white);
                 scroll-behavior: smooth;
@@ -310,110 +310,16 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 color: var(--color-text-primary);
                 font-size: var(--font-size-xxlarge);
                 font-weight: 700;
-                margin: 0 0 var(--spacing-lg) 0;
+                margin: 0 0 var(--spacing-xl) 0;
                 letter-spacing: -0.5px;
-            }
-
-            /* Control buttons */
-            .control-buttons {
-                display: flex;
-                justify-content: center;
-                gap: var(--spacing-sm);
-                margin-bottom: var(--spacing-lg);
-                flex-wrap: wrap;
-            }
-
-            .control-button {
-                padding: var(--spacing-xs) var(--spacing-md);
-                background: linear-gradient(135deg, #e8f4fd 0%, #d1e9f8 100%);
-                border: 1px solid var(--color-border-light);
-                border-radius: var(--border-radius);
-                color: var(--color-text-primary);
-                font-size: var(--font-size-small);
-                font-weight: 500;
-                cursor: pointer;
-                transition: all var(--transition-fast);
-                text-decoration: none;
-                display: inline-flex;
-                align-items: center;
-                gap: var(--spacing-xs);
-            }
-
-            .control-button:hover,
-            .control-button:focus {
-                background: linear-gradient(135deg, #d1e9f8 0%, #b8ddf3 100%);
-                border-color: var(--color-text-link);
-                outline: 2px solid var(--color-focus);
-                outline-offset: 1px;
-                transform: translateY(-1px);
-                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-            }
-
-            .control-button__icon {
-                font-size: 0.9em;
-            }
-
-            /* Summary section wrapper */
-            .summary-wrapper {
-                border: 1px solid var(--color-border-light);
-                border-radius: var(--border-radius-lg);
-                background: var(--color-white);
-                margin-bottom: var(--spacing-lg);
-                box-shadow: 0 2px 8px var(--color-shadow);
-                transition: box-shadow var(--transition-normal);
-            }
-
-            .summary-wrapper:hover {
-                box-shadow: 0 4px 12px var(--color-shadow-hover);
-            }
-
-            .summary-wrapper[open] {
-                box-shadow: 0 4px 12px var(--color-shadow-hover);
-            }
-
-            .summary-wrapper__toggle {
-                width: 100%;
-                padding: var(--spacing-sm);
-                background: linear-gradient(135deg, #e8f4fd 0%, #d1e9f8 100%);
-                border: none;
-                border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                font-size: var(--font-size-large);
-                font-weight: 600;
-                color: var(--color-text-primary);
-                transition: background-color var(--transition-fast);
-                list-style: none;
-            }
-
-            .summary-wrapper__toggle::-webkit-details-marker {
-                display: none;
-            }
-
-            .summary-wrapper__toggle:hover,
-            .summary-wrapper__toggle:focus {
-                background: linear-gradient(135deg, #d1e9f8 0%, #b8ddf3 100%);
-                outline: 2px solid var(--color-focus);
-                outline-offset: -2px;
-            }
-
-            .summary-wrapper__icon {
-                transition: transform var(--transition-fast);
-                font-size: 0.8em;
-            }
-
-            .summary-wrapper[open] .summary-wrapper__icon {
-                transform: rotate(90deg);
             }
 
             /* Horizontal summary grid layout */
             .summary-grid {
                 display: grid;
-                grid-template-columns: 2fr 1.3fr 1fr;
+                grid-template-columns: 1fr 1fr 1fr;
                 gap: var(--spacing-sm);
-                padding: var(--spacing-sm);
+                margin-bottom: var(--spacing-lg);
             }
 
             @media (max-width: 1024px) {
@@ -443,14 +349,14 @@ const buildHtmlReportBody = (reportInfo, options) => {
             .summary-section__toggle {
                 width: 100%;
                 padding: var(--spacing-sm);
-                background: linear-gradient(135deg, #e8f4fd 0%, #d1e9f8 100%);
+                background: linear-gradient(135deg, var(--color-primary-blue) 0%, var(--color-secondary-blue) 100%);
                 border: none;
                 border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
                 cursor: pointer;
                 display: flex;
                 align-items: center;
                 justify-content: space-between;
-                font-size: var(--font-size-base);
+                font-size: var(--font-size-large);
                 font-weight: 600;
                 color: var(--color-text-primary);
                 transition: background-color var(--transition-fast);
@@ -463,7 +369,7 @@ const buildHtmlReportBody = (reportInfo, options) => {
 
             .summary-section__toggle:hover,
             .summary-section__toggle:focus {
-                background: linear-gradient(135deg, #d1e9f8 0%, #b8ddf3 100%);
+                background: linear-gradient(135deg, var(--color-secondary-blue) 0%, var(--color-primary-blue) 100%);
                 outline: 2px solid var(--color-focus);
                 outline-offset: -2px;
             }
@@ -479,28 +385,6 @@ const buildHtmlReportBody = (reportInfo, options) => {
 
             .summary-section__content {
                 padding: var(--spacing-sm);
-            }
-
-            /* Configuration item 2-line layout */
-            .config-item {
-                display: flex;
-                flex-direction: column;
-                gap: var(--spacing-xs);
-                margin-bottom: var(--spacing-sm);
-            }
-
-            .config-item:last-child {
-                margin-bottom: 0;
-            }
-
-            .config-item__label {
-                font-weight: 600;
-                color: var(--color-text-primary);
-            }
-
-            .config-item__value {
-                color: var(--color-text-secondary);
-                word-break: break-word;
             }
 
             /* Legacy card layout - keep for backward compatibility */
@@ -735,7 +619,7 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 visibility: visible;
                 opacity: 1;
             }
-
+                
             /* Violations section */
             .violations-section {
                 margin-top: var(--spacing-lg);
@@ -786,19 +670,19 @@ const buildHtmlReportBody = (reportInfo, options) => {
             }
 
             .severity-section--critical .severity-section__toggle {
-                background: linear-gradient(135deg, #fed7d7, #feb2b2);
+                background: linear-gradient(135deg, #fee, #fdd);
             }
 
             .severity-section--serious .severity-section__toggle {
-                background: linear-gradient(135deg, #fed7aa, #fbb670);
+                background: linear-gradient(135deg, #fff4e6, #ffe6cc);
             }
 
             .severity-section--moderate .severity-section__toggle {
-                background: linear-gradient(135deg, #fef08a, #fde047);
+                background: linear-gradient(135deg, #fffef0, #fefcf0);
             }
 
             .severity-section--minor .severity-section__toggle {
-                background: linear-gradient(135deg, #e8f4fd, #d1e9f8);
+                background: linear-gradient(135deg, var(--color-primary-blue), var(--color-secondary-blue));
             }
 
             .severity-section__icon {
@@ -916,7 +800,6 @@ const buildHtmlReportBody = (reportInfo, options) => {
             .violation-card__content {
                 padding: var(--spacing-sm);
             }
-
 
             .affected-elements {
                 list-style: none;
@@ -1116,136 +999,112 @@ const buildHtmlReportBody = (reportInfo, options) => {
         <div class="container">
             <header role="banner">
                 <h1 class="header">Accessibility Report (Axe-core®)</h1>
-                
-                <!-- Control Buttons -->
-                <div class="control-buttons">
-                    <button type="button" class="control-button" onclick="expandAllSections()" aria-label="Expand all collapsible sections">
-                        <span class="control-button__icon">📂</span>
-                        <span>Expand All</span>
-                    </button>
-                    <button type="button" class="control-button" onclick="collapseAllSections()" aria-label="Collapse all collapsible sections">
-                        <span class="control-button__icon">📁</span>
-                        <span>Collapse All</span>
-                    </button>
-                </div>
             </header>
 
             <main id="main-content" role="main">
-                <!-- Summary Cards Group -->
-                <details class="summary-wrapper" open id="summary-wrapper">
-                    <summary class="summary-wrapper__toggle">
-                        <span>📋 Report Summary</span>
-                        <span class="summary-wrapper__icon">▶</span>
-                    </summary>
-                    <div class="summary-grid">
-                        <details class="summary-section" open>
-                            <summary class="summary-section__toggle" id="summary-heading">
-                                <span>📊 Test Summary</span>
-                                <span class="summary-section__icon">▶</span>
-                            </summary>
-                            <div class="summary-section__content">
-                                <div class="summary-item">
-                                    <span class="summary-item__label">Spec:</span>
-                                    <span class="summary-item__value">${escapeHTML(testSpec)}</span>
-                                </div>
-                                <div class="summary-item">
-                                    <span class="summary-item__label">Test:</span>
-                                    <span class="summary-item__value">${escapeHTML(testName)}</span>
-                                </div>
-                                <div class="summary-item">
-                                    <span class="summary-item__label">Page URL:</span>
-                                    <span class="summary-item__value">
-                                        <a href="${url}" target="_blank" rel="noopener noreferrer" aria-label="Open tested page in new tab">${escapeHTML(url)}</a>
-                                    </span>
-                                </div>
-                                <div class="summary-item">
-                                    <span class="summary-item__label">Generated:</span>
-                                    <span class="summary-item__value">${reportGeneratedOn}</span>
-                                </div>
+                <!-- Horizontal Summary Sections -->
+                <section aria-labelledby="summary-heading" class="summary-grid">
+                    <details class="summary-section" open>
+                        <summary class="summary-section__toggle" id="summary-heading">
+                            <span>📊 Test Summary</span>
+                            <span class="summary-section__icon">▶</span>
+                        </summary>
+                        <div class="summary-section__content">
+                            <div class="summary-item">
+                                <span class="summary-item__label">Spec:</span>
+                                <span class="summary-item__value">${escapeHTML(testSpec)}</span>
+                    </div>
+                            <div class="summary-item">
+                                <span class="summary-item__label">Test:</span>
+                                <span class="summary-item__value">${escapeHTML(testName)}</span>
                             </div>
-                        </details>
+                            <div class="summary-item">
+                                <span class="summary-item__label">Page URL:</span>
+                                <span class="summary-item__value">
+                                    <a href="${url}" target="_blank" rel="noopener noreferrer" aria-label="Open tested page in new tab">${escapeHTML(url)}</a>
+                                </span>
+                            </div>
+                            <div class="summary-item">
+                                <span class="summary-item__label">Generated:</span>
+                                <span class="summary-item__value">${reportGeneratedOn}</span>
+                            </div>
+                        </div>
+                    </details>
 
-                        <details class="summary-section" open>
-                            <summary class="summary-section__toggle">
-                                <span>⚙️ Analysis Configuration</span>
-                                <span class="summary-section__icon">▶</span>
-                            </summary>
-                            <div class="summary-section__content">
-                                <div class="config-item">
-                                    <div class="config-item__label">
-                                        <span tabindex="0" class="tooltip focusable" aria-describedby="tooltip-context">
-                                            Context
-                                            <span id="tooltip-context" class="tooltip__content" role="tooltip">
-                                                ${contextHelp}
-                                            </span>
-                                        </span>:
-                                    </div>
-                                    <div class="config-item__value">${getHumanReadableFormat(accessibilityContext)}</div>
-                                </div>
-                                <div class="config-item">
-                                    <div class="config-item__label">
-                                        <span tabindex="0" class="tooltip focusable" aria-describedby="tooltip-tags">
-                                            Tags
-                                            <span id="tooltip-tags" class="tooltip__content" role="tooltip">
-                                                ${runOnlyHelp}
-                                            </span>
-                                        </span>:
-                                    </div>
-                                    <div class="config-item__value">${accessibilityOptions.runOnly.join(', ')}</div>
-                                </div>
-                                ${accessibilityOptions.rules ? `
-                                    <div class="config-item">
-                                        <div class="config-item__label">
-                                            <span tabindex="0" class="tooltip focusable" aria-describedby="tooltip-rules">
-                                                Rules
-                                                <span id="tooltip-rules" class="tooltip__content" role="tooltip">
-                                                    ${rulesHelp}
+                    <details class="summary-section" open>
+                        <summary class="summary-section__toggle">
+                            <span>⚠️ Violations Summary</span>
+                            <span class="summary-section__icon">▶</span>
+                        </summary>
+                        <div class="summary-section__content">
+                        ${impactPriority.map((impact) => {
+            const totalIssues = testResults.testSummary[impact] !== undefined ? testResults.testSummary[impact] : 'n/a'
+            return `
+                                    <div class="impact-indicator">
+                                        <span class="impact-indicator__icon" aria-hidden="true">${impactStyling[impact].icon}</span>
+                                        <span class="impact-indicator__label">
+                                            <span tabindex="0" class="tooltip focusable" aria-describedby="tooltip-${impact}">
+                                                ${impact}
+                                                <span id="tooltip-${impact}" class="tooltip__content" role="tooltip">
+                                                    ${impactSeverityDescription[impact]}
                                                 </span>
                                             </span>:
-                                        </div>
-                                        <div class="config-item__value">${getHumanReadableFormat(accessibilityOptions.rules)}</div>
-                                    </div>` : ''
-                                }
-                            </div>
-                        </details>
-
-                        <details class="summary-section" open>
-                            <summary class="summary-section__toggle">
-                                <span>⚠️ Violations Summary</span>
-                                <span class="summary-section__icon">▶</span>
-                            </summary>
-                            <div class="summary-section__content">
-                                ${impactPriority.map((impact) => {
-                                    const totalIssues = testResults.testSummary[impact] !== undefined ? testResults.testSummary[impact] : 'n/a'
-                                    return `
-                                        <div class="impact-indicator">
-                                            <span class="impact-indicator__icon" aria-hidden="true">${impactStyling[impact].icon}</span>
-                                            <span class="impact-indicator__label">
-                                                <span tabindex="0" class="tooltip focusable" aria-describedby="tooltip-${impact}">
-                                                    ${impact}
-                                                    <span id="tooltip-${impact}" class="tooltip__content" role="tooltip">
-                                                        ${impactSeverityDescription[impact]}
-                                                    </span>
-                                                </span>:
-                                            </span>
-                                            <span class="impact-indicator__count">${totalIssues}</span>
-                                        </div>`
-                                }).join('')}
-                            </div>
-                        </details>
+                                        </span>
+                                        <span class="impact-indicator__count">${totalIssues}</span>
+                                    </div>`
+        }).join('')}
                     </div>
-                </details>
+                    </details>
+
+                    <details class="summary-section" open>
+                        <summary class="summary-section__toggle">
+                            <span>⚙️ Analysis Configuration</span>
+                            <span class="summary-section__icon">▶</span>
+                        </summary>
+                        <div class="summary-section__content">
+                            <div class="summary-item">
+                                <span class="summary-item__label">
+                                    <span tabindex="0" class="tooltip focusable" aria-describedby="tooltip-context">
+                                        Context
+                                        <span id="tooltip-context" class="tooltip__content" role="tooltip">
+                                            ${contextHelp}
+                                        </span>
+                                    </span>:
+                                </span>
+                                <span class="summary-item__value">${getHumanReadableFormat(accessibilityContext)}</span>
+                </div>
+                            <div class="summary-item">
+                                <span class="summary-item__label">
+                                    <span tabindex="0" class="tooltip focusable" aria-describedby="tooltip-tags">
+                                        Tags
+                                        <span id="tooltip-tags" class="tooltip__content" role="tooltip">
+                                            ${runOnlyHelp}
+                                        </span>
+                                    </span>:
+                                </span>
+                                <span class="summary-item__value">${accessibilityOptions.runOnly.join(', ')}</span>
+                            </div>
+                            ${accessibilityOptions.rules ? `
+                                <div class="summary-item">
+                                    <span class="summary-item__label">
+                                        <span tabindex="0" class="tooltip focusable" aria-describedby="tooltip-rules">
+                                            Rules
+                                            <span id="tooltip-rules" class="tooltip__content" role="tooltip">
+                                                ${rulesHelp}
+                                            </span>
+                                        </span>:
+                                    </span>
+                                    <span class="summary-item__value">${getHumanReadableFormat(accessibilityOptions.rules)}</span>
+                                </div>` : ''
+                            }
+                        </div>
+                    </details>
+                </section>
 
                 <!-- Violations Details by Severity -->
                 <section aria-labelledby="violations-heading" class="violations-section">
                     <h2 id="violations-heading" class="violations-title">Accessibility Violations Details</h2>
                     ${impactPriority.map((impact) => {
-                        // Skip if this impact level was not part of the analysis (n/a value)
-                        const totalIssuesInSummary = testResults.testSummary[impact];
-                        if (totalIssuesInSummary === undefined || totalIssuesInSummary === 'n/a') {
-                            return '';
-                        }
-
                         const violationsForImpact = violations.filter(violation => violation.impact === impact);
                         const violationCount = violationsForImpact.length;
                         
@@ -1297,10 +1156,10 @@ const buildHtmlReportBody = (reportInfo, options) => {
                                                         <span class="violation-card__tags">
                                                             <strong>Tags:</strong> ${violation.tags.join(", ")}
                                                         </span>
-                                                    </div>
-                                                </div>
+                </div>
+                                </div>
                                                 <div class="violation-card__content">
-                                                    <h4 class="affected-elements-title">Affected Elements (${violation.nodes.length})</h4>
+                                                    <h4>Affected Elements (${violation.nodes.length})</h4>
                                                     <ul class="affected-elements">
                                                         ${violation.nodes.map((node, nodeIndex) => `
                                                             <li class="affected-element">
@@ -1322,11 +1181,11 @@ const buildHtmlReportBody = (reportInfo, options) => {
                                                                 </details>
                                                             </li>
                                                         `).join("")}
-                                                    </ul>
+                        </ul>
                                                 </div>
                                             </li>
                                         `).join("")}
-                                    </ul>
+                </ul>
                                 </div>
                             </details>
                         `;
@@ -1343,7 +1202,7 @@ const buildHtmlReportBody = (reportInfo, options) => {
                             class="screenshot-image"
                             loading="lazy"
                         />
-                    </div>
+                </div>
                 </section>
             </main>
 
@@ -1361,27 +1220,6 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 </p>
             </footer>
         </div>
-
-        <script>
-            function expandAllSections() {
-                const allDetails = document.querySelectorAll('details');
-                allDetails.forEach(detail => {
-                    detail.open = true;
-                });
-            }
-
-            function collapseAllSections() {
-                const allDetails = document.querySelectorAll('details');
-                allDetails.forEach(detail => {
-                    detail.open = false;
-                });
-                // Keep the main summary wrapper open
-                const summaryWrapper = document.getElementById('summary-wrapper');
-                if (summaryWrapper) {
-                    summaryWrapper.open = true;
-                }
-            }
-        </script>
     </body>
     </html>
     `

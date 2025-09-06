@@ -4,10 +4,11 @@
 import "../../src/accessibility-commands.js";
 
 
-describe.skip('ACCESSIBILITY TESTS', { tags: ['@accessibility'] }, () => {
+describe('ACCESSIBILITY TESTS', { tags: ['@accessibility'] }, () => {
 
     beforeEach(() => {
-        cy.visit('http://127.0.0.1:8080/pages/page.html')
+        cy.visit('https://parabank.parasoft.com/parabank/index.htm')
+        cy.wait(2000) // Using cy.wait(TIME) is a very bad practice, but it is used for simplicity in this example
     });
 
     // NOTE: AXE analysis can spend quite some time, so it is recommended to increase the default command timeout for such tests
@@ -22,7 +23,7 @@ describe.skip('ACCESSIBILITY TESTS', { tags: ['@accessibility'] }, () => {
         cy.checkAccessibility()
     });
 
-    it('Test Sample Page Accessibility - All levels of severity', {defaultCommandTimeout: 15000}, () => {
+    it.only('Test Sample Page Accessibility - All levels of severity', {defaultCommandTimeout: 15000}, () => {
         cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'] })
     });
 

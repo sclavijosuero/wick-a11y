@@ -10,7 +10,7 @@ module.exports = defineConfig({
   retries: {
     // openMode: 0,
     openMode: 1,
-    runMode: 1,
+    runMode: 0,
   },
 
   watchForFileChanges: false,

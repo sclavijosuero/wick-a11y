@@ -633,67 +633,71 @@ Thank you for your support!
 
 ### v2.2.0
 
-- Supports Cypress v15
-- This v2.2.0 is not compatible with Cypress ≤v14
+- Improved html report.
+
+### v2.2.0
+
+- Supports Cypress v15.
+- This v2.2.0 is not compatible with Cypress ≤v14.
 
 ### v2.1.0
 
 - Supports cypress-axe 1.7.0
-- Fix issue of Incorrect Screenshot File Path for Deeply Nested Tests and running specific tests suiteds with `--spec` (contribution by [Peter M Souza Jr](https://github.com/petermsouzajr "Peter M Souza Jr"))
+- Fix issue of Incorrect Screenshot File Path for Deeply Nested Tests and running specific tests suiteds with `--spec` (contribution by [Peter M Souza Jr](https://github.com/petermsouzajr "Peter M Souza Jr")).
 - Fix issue when a test does not include acccessibility checking and it does not fail.
 
 ### v2.0.1
 
-- Fix issue of Incorrect Screenshot File Path for Deeply Nested Tests https://github.com/sclavijosuero/wick-a11y/issues/21 (contribution by [Peter M Souza Jr](https://github.com/petermsouzajr "Peter M Souza Jr"))
+- Fix issue of Incorrect Screenshot File Path for Deeply Nested Tests https://github.com/sclavijosuero/wick-a11y/issues/21 (contribution by [Peter M Souza Jr](https://github.com/petermsouzajr "Peter M Souza Jr")).
 
 ### v2.0.0
 
-- wick-a11y plugin migrated to Cypress v14.0.3
-- Resolve dependency tree issues when installing wick-a11y in a Cypress v14.0.3 project 
+- wick-a11y plugin migrated to Cypress v14.0.3.
+- Resolve dependency tree issues when installing wick-a11y in a Cypress v14.0.3 project.
 
 ### v1.4.0
 
 - Added option `onlyWarnImpacts` with list of violations severities to include in the analysis to provide a warning, but not to fail.
-- Copy violations screenshot to html report folder instead of moving (to add compatibility with Allure reporter)
+- Copy violations screenshot to html report folder instead of moving (to add compatibility with Allure reporter).
 
 ### v1.3.0
 
 - Added types for command checkAccessibility.
-- Limit size of image in HTML report to 1920px width (contribution by [James Wadley](https://github.com/w4dd325 "James Wadley"))
+- Limit size of image in HTML report to 1920px width (contribution by [James Wadley](https://github.com/w4dd325 "James Wadley")).
 - Use of Cypress 13.17.0 to run package tests.
 
 ### v1.2.2
 
-- Fix issue in creating HTML reports caused by isNodeList() left behind in the refactor into multiple source files
+- Fix issue in creating HTML reports caused by isNodeList() left behind in the refactor into multiple source files.
 
 ### v1.2.1
 
-- Fix issue with voice buttons not showing for a test when retries.openMode:0 in cypress.config.js
+- Fix issue with voice buttons not showing for a test when retries.openMode:0 in cypress.config.js.
 
 ### v1.2.0
 
-- Added support for voice in the Cypress Log and when clicking on DOM elements with violations on the page
-- Introduced a new summary for each test in the Cypress Log, detailing accessibility violations categorized by their severity
+- Added support for voice in the Cypress Log and when clicking on DOM elements with violations on the page.
+- Introduced a new summary for each test in the Cypress Log, detailing accessibility violations categorized by their severity.
 
 ### v1.1.2
 
-- Fix issue with `accessibilityFolder` configuration parameter when missing char `/` at the end
-- Add axe-core® to the source code and documentation to be compliant with Deque trademark
-- Created `.gitignore`
+- Fix issue with `accessibilityFolder` configuration parameter when missing char `/` at the end.
+- Add axe-core® to the source code and documentation to be compliant with Deque trademark.
+- Created `.gitignore`.
 
 ### v1.1.1
 
-- Fix issue regarding highlighting violation when hovering in the cypress runner during the analysis screenshot 
-- Fix reported issue when multiple retries are enabled https://github.com/sclavijosuero/wick-a11y/issues/2
+- Fix issue regarding highlighting violation when hovering in the cypress runner during the analysis screenshot .
+- Fix reported issue when multiple retries are enabled https://github.com/sclavijosuero/wick-a11y/issues/2.
 
 ### v1.1.0
 
-- Implemented tooltip with violations details when hovering over DOM Element in the Cypress runner
+- Implemented tooltip with violations details when hovering over DOM Element in the Cypress runner.
 - Change color highlighted DOM elements from the Cypress log to match color used when hovering.
 
 ### v1.0.1
 
-- Fix typo in README.md
+- Fix typo in README.md.
 
 ### v1.0.0
 
