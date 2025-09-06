@@ -4,6 +4,14 @@
 import "../../src/accessibility-commands.js";
 
 
+
+// it.only('Test Localhost Page Accessibility - All levels of severity and all rules', {defaultCommandTimeout: 15000}, () => {
+//     cy.visit('http://localhost:8080/accessibility.html')
+//     cy.wait(2000)
+//     cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'], runOnly:['wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'wcag21aaa', 'wcag22a', 'wcag22aa',, 'wcag22aaa', 'best-practice'] })
+// });
+
+
 describe('ACCESSIBILITY TESTS', { tags: ['@accessibility'] }, () => {
 
     beforeEach(() => {
@@ -27,7 +35,8 @@ describe('ACCESSIBILITY TESTS', { tags: ['@accessibility'] }, () => {
         cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'] })
     });
 
-    it.only('Test Sample Page Accessibility - All levels of severity and all rules', {defaultCommandTimeout: 15000}, () => {
+
+    it('Test Sample Page Accessibility - All levels of severity and all rules', {defaultCommandTimeout: 15000}, () => {
         cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'], runOnly:['wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'wcag21aaa', 'wcag22a', 'wcag22aa',, 'wcag22aaa', 'best-practice'] })
     });
 
