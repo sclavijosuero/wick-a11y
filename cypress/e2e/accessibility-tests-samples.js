@@ -16,15 +16,19 @@ describe('ACCESSIBILITY TESTS', { tags: ['@accessibility'] }, () => {
     it('Test Sample Page Accessibility - Default analysis', {defaultCommandTimeout: 15000}, () => {
         //   - Analyze entire document
         //   - includedImpacts: ['critical', 'serious']
-        //   - runOnly:['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'] }
+        //   - runOnly:['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice']
         //   - generateReport: true
         //   - iframes: true
 
         cy.checkAccessibility()
     });
 
-    it.only('Test Sample Page Accessibility - All levels of severity', {defaultCommandTimeout: 15000}, () => {
+    it('Test Sample Page Accessibility - All levels of severity', {defaultCommandTimeout: 15000}, () => {
         cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'] })
+    });
+
+    it.only('Test Sample Page Accessibility - All levels of severity', {defaultCommandTimeout: 15000}, () => {
+        cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'], runOnly:['wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'wcag21aaa', 'wcag22a', 'wcag22aa',, 'wcag22aaa', 'best-practice'] })
     });
 
     it('Test Sample Page Accessibility - Custom colors by severity', {defaultCommandTimeout: 15000}, () => {

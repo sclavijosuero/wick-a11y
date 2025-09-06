@@ -477,6 +477,16 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 transform: rotate(90deg);
             }
 
+            /* Static header for non-expandable summary sections */
+            .summary-section__header {
+                padding: var(--spacing-sm);
+                background: linear-gradient(135deg, #e8f4fd 0%, #d1e9f8 100%);
+                border-radius: var(--border-radius-lg) var(--border-radius-lg) 0 0;
+                font-size: var(--font-size-base);
+                font-weight: 600;
+                color: var(--color-text-primary);
+            }
+
             .summary-section__content {
                 padding: var(--spacing-sm);
             }
@@ -746,7 +756,7 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 border: 1px solid var(--color-border-light);
                 border-radius: var(--border-radius-lg);
                 background: var(--color-white);
-                margin-bottom: var(--spacing-sm);
+                margin-bottom: var(--spacing-lg);
                 box-shadow: 0 2px 8px var(--color-shadow);
                 transition: box-shadow var(--transition-normal);
             }
@@ -1138,11 +1148,10 @@ const buildHtmlReportBody = (reportInfo, options) => {
                         <span class="summary-wrapper__icon">▶</span>
                     </summary>
                     <div class="summary-grid">
-                        <details class="summary-section" open>
-                            <summary class="summary-section__toggle" id="summary-heading">
+                        <div class="summary-section">
+                            <div class="summary-section__header" id="summary-heading">
                                 <span>📊 Test Summary</span>
-                                <span class="summary-section__icon">▶</span>
-                            </summary>
+                            </div>
                             <div class="summary-section__content">
                                 <div class="summary-item">
                                     <span class="summary-item__label">Spec:</span>
@@ -1163,13 +1172,12 @@ const buildHtmlReportBody = (reportInfo, options) => {
                                     <span class="summary-item__value">${reportGeneratedOn}</span>
                                 </div>
                             </div>
-                        </details>
+                        </div>
 
-                        <details class="summary-section" open>
-                            <summary class="summary-section__toggle">
+                        <div class="summary-section">
+                            <div class="summary-section__header">
                                 <span>⚙️ Analysis Configuration</span>
-                                <span class="summary-section__icon">▶</span>
-                            </summary>
+                            </div>
                             <div class="summary-section__content">
                                 <div class="config-item">
                                     <div class="config-item__label">
@@ -1207,13 +1215,12 @@ const buildHtmlReportBody = (reportInfo, options) => {
                                     </div>` : ''
                                 }
                             </div>
-                        </details>
+                        </div>
 
-                        <details class="summary-section" open>
-                            <summary class="summary-section__toggle">
+                        <div class="summary-section">
+                            <div class="summary-section__header">
                                 <span>⚠️ Violations Summary</span>
-                                <span class="summary-section__icon">▶</span>
-                            </summary>
+                            </div>
                             <div class="summary-section__content">
                                 ${impactPriority.map((impact) => {
                                     const totalIssues = testResults.testSummary[impact] !== undefined ? testResults.testSummary[impact] : 'n/a'
@@ -1232,7 +1239,7 @@ const buildHtmlReportBody = (reportInfo, options) => {
                                         </div>`
                                 }).join('')}
                             </div>
-                        </details>
+                        </div>
                     </div>
                 </details>
 
