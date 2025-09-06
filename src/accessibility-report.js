@@ -367,6 +367,36 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 font-size: 0.9em;
             }
 
+            /* Screenshot button - distinctive styling for image viewing */
+            .control-button--screenshot {
+                background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+                border: 2px solid #10b981;
+                color: var(--color-text-primary);
+                font-weight: 700;
+                position: relative;
+            }
+
+            .control-button--screenshot:hover {
+                background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+                border-color: #059669;
+                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+                transform: translateY(-1px);
+            }
+
+            .control-button--screenshot:focus {
+                background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+                border-color: #10b981;
+                outline: 3px solid #10b981;
+                outline-offset: 2px;
+                box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+                transform: translateY(-1px);
+            }
+
+            .control-button--screenshot:active {
+                transform: translateY(0px);
+                box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);
+            }
+
             /* Summary section wrapper */
             .summary-wrapper {
                 border: 1px solid var(--color-border-light);
@@ -1265,13 +1295,17 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 
                 <!-- Control Buttons -->
                 <div class="control-buttons">
-                    <button type="button" class="control-button" onclick="expandAllSections()" aria-label="Expand all collapsible sections">
-                        <span class="control-button__icon">📂</span>
+                    <button type="button" class="control-button" onclick="expandAllSections()" aria-label="Expand all collapsible sections to show their content">
+                        <span class="control-button__icon">⬇️</span>
                         <span>Expand All</span>
                     </button>
-                    <button type="button" class="control-button" onclick="collapseAllSections()" aria-label="Collapse all collapsible sections">
-                        <span class="control-button__icon">📁</span>
+                    <button type="button" class="control-button" onclick="collapseAllSections()" aria-label="Collapse all collapsible sections to hide their content">
+                        <span class="control-button__icon">⬆️</span>
                         <span>Collapse All</span>
+                    </button>
+                    <button type="button" class="control-button control-button--screenshot" onclick="scrollToScreenshot()" aria-label="Scroll to accessibility violations screenshot image">
+                        <span class="control-button__icon">🖼️</span>
+                        <span>View Screenshot</span>
                     </button>
                 </div>
             </header>
@@ -1478,7 +1512,7 @@ const buildHtmlReportBody = (reportInfo, options) => {
 
                 <!-- Screenshot Section -->
                 <section aria-labelledby="screenshot-heading" class="screenshot-section">
-                    <h2 id="screenshot-heading" class="screenshot-title">Accessibility Violations Screenshot</h2>
+                    <h2 id="screenshot-heading" class="screenshot-title" tabindex="-1">Accessibility Violations Screenshot</h2>
                     <div class="screenshot-container">
                         <img 
                             src="${issuesScreenshotFilePath}" 
@@ -1518,10 +1552,43 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 allDetails.forEach(detail => {
                     detail.open = false;
                 });
-                // Keep the main summary wrapper open
-                const summaryWrapper = document.getElementById('summary-wrapper');
-                if (summaryWrapper) {
-                    summaryWrapper.open = true;
+            }
+
+            function scrollToScreenshot() {
+                const screenshotSection = document.getElementById('screenshot-heading');
+                if (screenshotSection) {
+                    // Calculate position to place screenshot section at top of viewport with some offset
+                    const headerOffset = 20; // 20px from top for better visibility
+                    const elementPosition = screenshotSection.getBoundingClientRect().top;
+                    const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
+                    
+                    // Smooth scroll to position
+                    window.scrollTo({
+                        top: offsetPosition,
+                        behavior: 'smooth'
+                    });
+                    
+                    // Enhanced focus management for WCAG AAA accessibility
+                    setTimeout(() => {
+                        // Focus on the screenshot section heading for screen reader users
+                        screenshotSection.focus({preventScroll: true});
+                        
+                        // Announce the arrival to screen readers
+                        const announcement = document.createElement('div');
+                        announcement.setAttribute('aria-live', 'polite');
+                        announcement.setAttribute('aria-atomic', 'true');
+                        announcement.textContent = 'Scrolled to accessibility violations screenshot section';
+                        announcement.style.position = 'absolute';
+                        announcement.style.left = '-10000px';
+                        announcement.style.width = '1px';
+                        announcement.style.height = '1px';
+                        announcement.style.overflow = 'hidden';
+                        
+                        document.body.appendChild(announcement);
+                        setTimeout(() => {
+                            document.body.removeChild(announcement);
+                        }, 1000);
+                    }, 300);
                 }
             }
 

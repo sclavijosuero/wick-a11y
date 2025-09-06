@@ -82,10 +82,10 @@ const impactPriority = ['critical', 'serious', 'moderate', 'minor'];
  * @property {string} fixme.icon - The icon for the fixme impact indicator.
  */
 const defaultImpactStyling = {
-    critical: { icon: '🟥', style: 'fill: #DE071B; fill-opacity: 0; stroke: #DE071B; stroke-width: 10;' },
-    serious: { icon: '🟧', style: 'fill: #FFA66A; fill-opacity: 0; stroke: #FFA66A; stroke-width: 10;' },
-    moderate: { icon: '🟨', style: 'fill: #ECDE05; fill-opacity: 0; stroke: #ECDE05; stroke-width: 10;' },
-    minor: { icon: '🟦', style: 'fill: #4598FF; fill-opacity: 0; stroke: #4598FF; stroke-width: 10;' },
+    critical: { icon: '🟥', style: 'fill: #DE071B; fill-opacity: 0; stroke: #DE071B; stroke-width: 8; stroke-linejoin: round; stroke-dasharray: 5 2;' },
+    serious: { icon: '🟧', style: 'fill: #FFA66A; fill-opacity: 0; stroke: #FFA66A; stroke-width: 8; stroke-linejoin: round; stroke-dasharray: 5 2;' },
+    moderate: { icon: '🟨', style: 'fill: #ECDE05; fill-opacity: 0; stroke: #ECDE05; stroke-width: 8; stroke-linejoin: round; stroke-dasharray: 5 2;' },
+    minor: { icon: '🟦', style: 'fill: #4598FF; fill-opacity: 0; stroke: #4598FF; stroke-width: 8; stroke-linejoin: round; stroke-dasharray: 5 2;' },
     fixme: { icon: '🛠️' }
 }
 
