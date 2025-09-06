@@ -369,32 +369,32 @@ const buildHtmlReportBody = (reportInfo, options) => {
 
             /* Screenshot button - distinctive styling for image viewing */
             .control-button--screenshot {
-                background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-                border: 2px solid #10b981;
+                background: linear-gradient(135deg, #fefce8 0%, #fef3c7 100%);
+                border: 2px solid #d97706;
                 color: var(--color-text-primary);
                 font-weight: 700;
                 position: relative;
             }
 
             .control-button--screenshot:hover {
-                background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-                border-color: #059669;
-                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+                background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+                border-color: #c2410c;
+                box-shadow: 0 4px 12px rgba(217, 119, 6, 0.25);
                 transform: translateY(-1px);
             }
 
             .control-button--screenshot:focus {
-                background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-                border-color: #10b981;
-                outline: 3px solid #10b981;
+                background: linear-gradient(135deg, #fef3c7 0%, #fed7aa 100%);
+                border-color: #d97706;
+                outline: 3px solid #d97706;
                 outline-offset: 2px;
-                box-shadow: 0 4px 16px rgba(16, 185, 129, 0.3);
+                box-shadow: 0 4px 16px rgba(217, 119, 6, 0.3);
                 transform: translateY(-1px);
             }
 
             .control-button--screenshot:active {
                 transform: translateY(0px);
-                box-shadow: 0 2px 6px rgba(16, 185, 129, 0.2);
+                box-shadow: 0 2px 6px rgba(217, 119, 6, 0.2);
             }
 
             /* Summary section wrapper */
