@@ -405,34 +405,34 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 margin-bottom: var(--spacing-lg);
             }
 
-            /* Scroll to top button - distinctive styling */
+            /* Scroll to top button - distinctive blue styling */
             .control-button--scroll-top {
-                background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
-                border: 2px solid #059669;
+                background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
+                border: 2px solid var(--color-border-light);
                 color: var(--color-text-primary);
                 font-weight: 700;
                 position: relative;
             }
 
             .control-button--scroll-top:hover {
-                background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-                border-color: #047857;
-                box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+                background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+                border-color: #1e40af;
+                box-shadow: 0 4px 12px rgba(29, 78, 216, 0.25);
                 transform: translateY(-1px);
             }
 
             .control-button--scroll-top:focus {
-                background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
-                border-color: #059669;
-                outline: 3px solid #059669;
+                background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+                border-color: #1d4ed8;
+                outline: 3px solid #1d4ed8;
                 outline-offset: 2px;
-                box-shadow: 0 4px 16px rgba(5, 150, 105, 0.3);
+                box-shadow: 0 4px 16px rgba(29, 78, 216, 0.3);
                 transform: translateY(-1px);
             }
 
             .control-button--scroll-top:active {
                 transform: translateY(0px);
-                box-shadow: 0 2px 6px rgba(5, 150, 105, 0.2);
+                box-shadow: 0 2px 6px rgba(29, 78, 216, 0.2);
             }
 
             /* Summary section wrapper */
@@ -484,6 +484,11 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 background: linear-gradient(135deg, #d1e9f8 0%, #b8ddf3 100%);
                 outline: 3px solid var(--color-focus);
                 outline-offset: 2px;
+            }
+
+            /* Fix rounded corners when collapsed */
+            .summary-wrapper:not([open]) .summary-wrapper__toggle {
+                border-radius: var(--border-radius-lg);
             }
 
             .summary-wrapper__icon {
@@ -557,6 +562,11 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 outline: 3px solid var(--color-focus); /* WCAG AAA: Enhanced focus indicator */
                 outline-offset: 2px;
                 box-shadow: 0 0 0 1px var(--color-focus);
+            }
+
+            /* Fix rounded corners when collapsed */
+            .summary-section:not([open]) .summary-section__toggle {
+                border-radius: var(--border-radius-lg);
             }
 
             .summary-section__icon {
@@ -1012,6 +1022,11 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 box-shadow: 0 0 0 1px var(--color-focus);
             }
 
+            /* Fix rounded corners when collapsed */
+            .severity-section:not([open]) .severity-section__toggle {
+                border-radius: var(--border-radius-lg);
+            }
+
             .severity-section--critical .severity-section__toggle {
                 background: linear-gradient(135deg, #fed7d7, #feb2b2);
             }
@@ -1240,6 +1255,11 @@ const buildHtmlReportBody = (reportInfo, options) => {
                  border-bottom: none;
              }
 
+             /* When collapsed, selector should have rounded corners on all sides */
+             .affected-element__details:not([open]) .affected-element__selector-toggle {
+                 border-radius: var(--border-radius);
+             }
+
              .affected-element__selector-toggle::-webkit-details-marker {
                  display: none;
              }
@@ -1370,6 +1390,11 @@ const buildHtmlReportBody = (reportInfo, options) => {
                  outline-offset: 2px;
                  background: rgba(37, 99, 235, 0.1);
                  box-shadow: 0 0 0 1px var(--color-focus);
+             }
+
+             /* Fix rounded corners when collapsed */
+             .expandable:not([open]) .expandable__toggle {
+                 border-radius: var(--border-radius);
              }
 
              .expandable__icon {
@@ -1709,6 +1734,14 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 </section>
             </main>
 
+            <!-- Scroll to Top Button -->
+            <div class="scroll-to-top-container">
+                <button type="button" class="control-button control-button--scroll-top" onclick="scrollToTop()" aria-label="Scroll to the top of the report">
+                    <span class="control-button__icon">⬆️</span>
+                    <span>Back to Top</span>
+                </button>
+            </div>
+
             <footer role="contentinfo" class="footer">
                 <p>
                     🎓 <strong>Note:</strong> As per the axe-core® library, automated testing can find on average 57% of WCAG issues automatically.
@@ -1722,14 +1755,6 @@ const buildHtmlReportBody = (reportInfo, options) => {
                     in the US and other countries.
                 </p>
             </footer>
-
-            <!-- Scroll to Top Button -->
-            <div class="scroll-to-top-container">
-                <button type="button" class="control-button control-button--scroll-top" onclick="scrollToTop()" aria-label="Scroll to the top of the report">
-                    <span class="control-button__icon">⬆️</span>
-                    <span>Back to Top</span>
-                </button>
-            </div>
         </div>
 
         <script>
