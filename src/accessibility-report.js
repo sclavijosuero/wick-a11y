@@ -1214,11 +1214,15 @@ const buildHtmlReportBody = (reportInfo, options) => {
 
             .affected-elements {
                 list-style: none;
-                padding: 0;
+                padding: 0 8px 0 8px;
                 margin: 0;
                 display: grid;
                 grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
                 gap: var(--spacing-sm);
+            }
+
+            .violation-card__content h4 {
+                padding: 0 8px 0 8px;
             }
 
             @media (min-width: 1200px) {
@@ -1558,13 +1562,13 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 <!-- Summary Cards Group -->
                 <details class="summary-wrapper" open id="summary-wrapper">
                     <summary class="summary-wrapper__toggle">
-                        <span>📋 Report Summary</span>
+                        <span>📊 Report Summary</span>
                         <span class="summary-wrapper__icon">▶</span>
                     </summary>
                     <div class="summary-grid">
                         <div class="summary-section">
                             <div class="summary-section__header" id="summary-heading">
-                                <span>📊 Test Summary</span>
+                                <span>📋 Test Summary</span>
                             </div>
                             <div class="summary-section__content">
                                 <div class="summary-item">
