@@ -222,7 +222,7 @@ const buildHtmlReportBody = (reportInfo, options) => {
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Accessibility Report (Axe-core®)</title>
+        <title>Wick-A11y Accessibility Report</title>
         <style>
             /* CSS Custom Properties for consistent theming - WCAG 2.2 AAA Compliant */
             :root {
@@ -476,7 +476,7 @@ const buildHtmlReportBody = (reportInfo, options) => {
 
             .summary-wrapper__toggle:hover {
                 background: linear-gradient(135deg, #d1e9f8 0%, #b8ddf3 100%);
-                outline: 2px solid var(--color-focus);
+                outline: 2px solid var(--color-text-link);
                 outline-offset: -2px;
             }
 
@@ -1027,36 +1027,45 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 border-radius: var(--border-radius-lg);
             }
 
-            .severity-section--critical .severity-section__toggle {
-                background: linear-gradient(135deg, #fed7d7, #feb2b2);
-            }
-                
+             .severity-section--critical .severity-section__toggle {
+                 background: linear-gradient(135deg, #fed7d7 0%, #fecaca 100%);
+                 border-left: 6px solid #dc2626;
+             }
+
+             .severity-section--serious .severity-section__toggle {
+                 background: linear-gradient(135deg, #fed7aa 0%, #fdba74 100%);
+                 border-left: 6px solid #ea580c;
+             }
+
+             .severity-section--moderate .severity-section__toggle {
+                 background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); 
+                 border-left: 6px solid #d97706;
+             }
+
+             .severity-section--minor .severity-section__toggle {
+                 background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);
+                 border-left: 6px solid #2563eb;
+             }
+
+            
             .severity-section--critical .severity-section__toggle:hover {
-                outline: 2px solid #dc2626;
+                outline: 3px solid #dc2626;
+                outline-offset: -2px;
             }
 
             .severity-section--serious .severity-section__toggle:hover {
-                outline: 2px solid #ea580c;
+                outline: 3px solid #ea580c;
+                outline-offset: -2px;
             }
 
             .severity-section--moderate .severity-section__toggle:hover {
-                outline: 2px solid #ca8a04;
+                outline: 3px solid #d97706;
+                outline-offset: -2px;
             }
 
             .severity-section--minor .severity-section__toggle:hover {
-                outline: 2px solid #4598FF;
-            }
-
-            .severity-section--serious .severity-section__toggle {
-                background: linear-gradient(135deg, #fed7aa, #fbb670);
-            }
-
-            .severity-section--moderate .severity-section__toggle {
-                background: linear-gradient(135deg, #fef08a, #fde047);
-            }
-
-            .severity-section--minor .severity-section__toggle {
-                background: linear-gradient(135deg, #e8f4fd, #d1e9f8);
+                outline: 3px solid #2563eb;
+                outline-offset: -2px;
             }
 
             .severity-section__icon {
@@ -1069,9 +1078,36 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 transform: rotate(90deg);
             }
 
-            .severity-section__content {
-                padding: var(--spacing-sm);
-            }
+             .severity-section__content {
+                 padding: var(--spacing-sm);
+                 border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+                 margin: 0;
+             }
+             
+             /* Severity-specific content styling with proper rounded corners */
+             .severity-section--critical .severity-section__content {
+                 background: linear-gradient(135deg, #fffafa 0%, #fffefe 100%);
+                 border-left: 6px solid #dc2626;
+                 border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+             }
+
+             .severity-section--serious .severity-section__content {
+                 background: linear-gradient(135deg, #fffaf3 0%, #fff5e6 100%);
+                 border-left: 6px solid #ea580c;
+                 border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+             }
+
+             .severity-section--moderate .severity-section__content {
+                 background: linear-gradient(135deg, #fffefb 0%, #fffde7 100%);
+                 border-left: 6px solid #d97706;
+                 border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+             }
+
+             .severity-section--minor .severity-section__content {
+                 background: linear-gradient(135deg, #f8fbff 0%, #f3f8fe 100%);
+                 border-left: 6px solid #2563eb;
+                 border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+             }
 
             .violations-title {
                 font-size: var(--font-size-xlarge);
@@ -1499,7 +1535,7 @@ const buildHtmlReportBody = (reportInfo, options) => {
         
         <div class="container">
             <header role="banner">
-                <h1 class="header" tabindex="-1">Accessibility Report (Axe-core®)</h1>
+                <h1 class="header" tabindex="-1">Wick-A11y Accessibility Report</h1>
                 
                 <!-- Control Buttons -->
                 <div class="control-buttons">

@@ -55,6 +55,7 @@ Or the videos:
 > 
 > ✔️ **The plugin analyzes DOM elements that are visible in the browser viewport as per the axe-core® plugin (it will not include hidden elements).**
 
+---
 
 ## TABLE OF CONTENTS
 
