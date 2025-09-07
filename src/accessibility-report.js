@@ -36,19 +36,19 @@ const rulesHelp = 'Rules define what specific accessibility rules should be enab
  * @property {string} minor - <Description of minor violations>
  */
 const impactSeverityDescription = {
-    critical: `A 'critical' accessibility violation represents a significant barrier that prevents users with disabilities
+    critical: `A 'CRITICAL' accessibility violation represents a significant barrier that prevents users with disabilities
                from accessing core functionality or content.<br>For example, images must have alternate text (alt text) to
                ensure that visually impaired users can understand the content of the images through screen readers.
                Missing alt text on critical images can be a substantial obstacle to accessibility.`,
-    serious: `A 'serious' accessibility violation significantly degrades the user experience for individuals with disabilities
+    serious: `A 'SERIOUS' accessibility violation significantly degrades the user experience for individuals with disabilities
                but does not completely block access.<br>For instance, elements must meet minimum color contrast ratio thresholds.
                If text and background colors do not have sufficient contrast, users with visual impairments or color blindness may
                find it difficult to read the content.`,
-    moderate: `A 'moderate' accessibility violation impacts the user experience but with less severe consequences.
+    moderate: `A 'MODERATE' accessibility violation impacts the user experience but with less severe consequences.
                These issues can cause some confusion or inconvenience.<br>For example, all page content should be contained by landmarks.
                Properly defining landmarks (like header, main, nav) helps screen reader users to navigate and understand the structure
                of the page better.`,
-    minor: `A 'minor' accessibility violation has a minimal impact on accessibility. These issues are typically more related to best
+    minor: `A 'MINOR' accessibility violation has a minimal impact on accessibility. These issues are typically more related to best
                practices and can slightly inconvenience users.<br>For instance, the ARIA role should be appropriate for the element means
                that ARIA roles assigned to elements should match their purpose to avoid confusion for screen reader users, though it does
                not significantly hinder access if not perfectly used.`
@@ -680,28 +680,37 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 font-weight: 600;
                 border-bottom: 2px solid transparent;
                 transition: all var(--transition-normal);
-                padding: var(--spacing-xs) 0;
+                padding: var(--spacing-xs) var(--spacing-sm);
                 display: inline-block;
                 position: relative;
+                border-radius: var(--border-radius);
+                cursor: pointer;
             }
 
             .severity-link:hover {
                 color: var(--color-text-link);
                 border-bottom-color: var(--color-text-link);
                 text-decoration: none;
+                background: rgba(30, 64, 175, 0.1);
+                transform: translateY(-1px);
+                box-shadow: 0 2px 8px rgba(30, 64, 175, 0.15);
             }
 
             .severity-link:focus {
                 outline: 3px solid var(--color-focus); /* WCAG AAA: Enhanced focus indicator */
-                outline-offset: 3px;
-                border-radius: 3px;
+                outline-offset: 2px;
+                border-radius: var(--border-radius);
                 color: var(--color-text-link);
                 border-bottom-color: var(--color-text-link);
                 text-decoration: none;
+                background: rgba(30, 64, 175, 0.1);
+                transform: translateY(-1px);
+                box-shadow: 0 2px 8px rgba(30, 64, 175, 0.15);
             }
 
             .severity-link:active {
-                transform: translateY(1px);
+                transform: translateY(0px);
+                box-shadow: 0 1px 4px rgba(30, 64, 175, 0.1);
             }
 
             /* Links */
@@ -1713,6 +1722,7 @@ const normalizeFileName = (fileName) => {
  * Returns the context parameter of the accessibility analysis as a string human-readable format.
  *
  * @param {Element|NodeList|Object|Array|String|null} context - The context parameter.
+ * 
  * @returns {string} The context as a human-readable string.
  */
 const getHumanReadableFormat = (context) => {
