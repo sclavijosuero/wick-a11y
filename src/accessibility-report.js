@@ -1160,7 +1160,7 @@ const buildHtmlReportBody = (reportInfo, options) => {
              .affected-element__selector-toggle {
                  width: 100%;
                  display: flex;
-                 align-items: center;
+                 align-items: flex-start; /* Align to top instead of center */
                  justify-content: space-between;
                  padding: var(--spacing-xs) var(--spacing-sm);
                  background: rgba(255, 255, 255, 0.8);
@@ -1210,6 +1210,7 @@ const buildHtmlReportBody = (reportInfo, options) => {
                  word-break: break-all;
                  text-align: left;
                  margin-right: var(--spacing-sm);
+                 line-height: 1.4; /* Consistent line height for multi-line selectors */
              }
 
              /* Toggle control on the right */
@@ -1221,6 +1222,8 @@ const buildHtmlReportBody = (reportInfo, options) => {
                  color: var(--color-text-link);
                  font-weight: 500;
                  flex-shrink: 0;
+                 line-height: 1.2; /* Match selector text line height for perfect alignment */
+                 padding-top: 2px; /* Fine-tune alignment with first line of text */
              }
 
              /* Toggle icon with rotation animation */
