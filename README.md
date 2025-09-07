@@ -41,8 +41,9 @@ Or the videos:
 - **HTML Reports**:
   - Complete with out-of-the-box screenshots, per-issue details, and clear fix guidance.
   - WCAG 2.2 AAA compliant reports with full keyboard navigation **(NEW in v2.3.0)**.
-  - Moderm and and functional card layout **(NEW in v2.3.0)**.
+  - Fully mobile responsible, and improved design and usability, and fully mobile responsible **(NEW in v2.3.0)**.
 
+  - Improves HTML report: improved usability, full keyboard navigation support, and WCAG 2.2 AAA compliance, and better design.
 
 - **Terminal Reports**: Produces terminal reports with details of the violations and how to fix them in tabular form.
 
@@ -236,11 +237,11 @@ Cypress custom command to check the accessibility of a given context using axe-c
     Default styles:
      ```javascript
      {
-          critical: { icon: '🟥', style: 'fill: #DE071B; fill-opacity: 0; stroke: #DE071B; stroke-width: 10;' },
-          serious:  { icon: '🟧', style: 'fill: #FFA66A; fill-opacity: 0; stroke: #FFA66A; stroke-width: 10;' },
-          moderate: { icon: '🟨', style: 'fill: #ECDE05; fill-opacity: 0; stroke: #ECDE05; stroke-width: 10;' },
-          minor:    { icon: '🟦', style: 'fill: #4598FF; fill-opacity: 0; stroke: #4598FF; stroke-width: 10;' },
-          fixme:    { icon: '🛠️'}
+        critical: { icon: '🟥', style: 'fill: #DE071B; fill-opacity: 0; stroke: #DE071B; stroke-width: 8; stroke-linejoin: round; stroke-dasharray: 5 2;' },
+        serious: { icon: '🟧', style: 'fill: #FFA66A; fill-opacity: 0; stroke: #FFA66A; stroke-width: 8; stroke-linejoin: round; stroke-dasharray: 5 2;' },
+        moderate: { icon: '🟨', style: 'fill: #ECDE05; fill-opacity: 0; stroke: #ECDE05; stroke-width: 8; stroke-linejoin: round; stroke-dasharray: 5 2;' },
+       minor: { icon: '🟦', style: 'fill: #4598FF; fill-opacity: 0; stroke: #4598FF; stroke-width: 8; stroke-linejoin: round; stroke-dasharray: 5 2;' },
+       fixme: { icon: '🛠️' }
      }
      ```
    
@@ -272,7 +273,7 @@ Cypress custom command to check the accessibility of a given context using axe-c
     
     E.g. `['violations', 'incomplete', 'inapplicable']`.
    
-  - **`selectors`**: (optional) *From axe-core®* - Return CSS selector for elements, optimized for readability.
+  - **`selectors`**: (optional) *From axe-core® and wick-a11y* - Return CSS selector for elements optimized for readability. If data-* test atributes are found () it will return them, other wise will return the selectors provided by axe-core®.
   
     Default: `true`.
    
@@ -439,6 +440,7 @@ Styles by default: Critical 🟥, Serious 🟧, Moderate 🟨, Minor 🟦
 
 If there are any violations for the selected rules used in the analysis, the test will fail.
 
+TODO: REPLACE!!!
 ![Runner Results](/images/runner-results.png)
 
 ### Summary of Violations
@@ -453,6 +455,7 @@ If the analysis was configured to consider accessibility issues as either a viol
 
 By clicking on one of the severity groups in the summary, the details for all the violations of that severity type will be shown in the browser console.
 
+TODO: REPLACE!!!
 ![Summary Details per Severity Type](/images/summary-details-severity.png)
 
 
@@ -460,6 +463,7 @@ By clicking on one of the severity groups in the summary, the details for all th
 
 To identify, in the page, which HTML element is affected by an accessibility violation, mouseover the specific violation in the Cypress log, and that element will be highlighted on the page. To know the details about the accessibility issue, click on the violation in the Cypress log and those details will be shown in the browser console.
 
+TODO: REPLACE!!!
 ![Runner Console](/images/runner-console-new.png)
 
 
@@ -467,6 +471,7 @@ To identify, in the page, which HTML element is affected by an accessibility vio
 
 When hovering over a specific DOM element with a violation on the page in the Cypress runner, the element will be highlighted graphically, and a tooltip will appear showing the violation information. This feature allows you to quickly identify and understand accessibility issues directly on the page, providing an immediate and intuitive way to address them.
 
+TODO: REPLACE!!!
 ![Runner Screen](/images/runner-screen.png)
 
 
@@ -491,6 +496,7 @@ The accessibility voice feature at the suite level in the Cypress Log provides a
 - Number of tests failed for other reasons
 - Number of tests skipped or pending
 
+TODO: REPLACE!!!
 ![Voice Suite Level](/images/voice-suite.png)
 
 [Watch the video](/videos/README.md#accessibility-voice-for-analysis-at-suite-level-in-cypress-log "Accessibility Voice for Analysis at Suite Level in Cypress Log")
@@ -506,6 +512,7 @@ The accessibility voice feature at the test level in the Cypress Log provides au
 - Number of moderate violations
 - Number of minor violations
 
+TODO: REPLACE!!!
 ![Voice Test Level](/images/voice-test.png)
 
 [Watch the video](/videos/README.md#accessibility-voice-for-analysis-at-test-level-in-cypress-log "Accessibility Voice for Analysis at Test Level in Cypress Log")
@@ -519,6 +526,7 @@ The accessibility voice feature at the violation type level in the Cypress Log p
 - The severity of the violation
 - A description of the violation
 
+TODO: REPLACE!!!
 ![Voice Violation Type Level](/images/voice-violation.png)
 
 [Watch the video](/videos/README.md#accessibility-voice-for-analysis-at-violation-type-level-in-cypress-log "Accessibility Voice for Analysis at Violation Type Level in Cypress Log")
@@ -533,6 +541,7 @@ The accessibility voice feature at the DOM element level in the Cypress Log prov
 - A description of the violation
 - A summary of the actions needed to fix the issue
 
+TODO: REPLACE!!!
 ![Voice DOM Element Level](/images/voice-dom-element.png)
 
 [Watch the video](/videos/README.md#accessibility-voice-for-analysis-at-dom-element-level-in-cypress-log "Accessibility Voice for Analysis at DOM Element Level in Cypress Log")
@@ -547,12 +556,15 @@ The wick-a11y plugin also provides accessibility voice for a DOM element by clic
 - A description of the violation
 - A summary of the actions needed to fix the issue
 
+TODO: REPLACE!!!
 ![Voice DOM Element Web Page](/images/voice-dom-element-page.png)
 
 [Watch the video](/videos/README.md#accessibility-voice-for-analysis-at-dom-element-level-in-the-web-page "Accessibility Voice for Analysis at DOM Element Level in the Web Page")
 
 
 ### HTML Report
+
+The HTML accessibility report is WCAG 2.2 AAA compliant (or at least mostly compliant), supports full keyboard navigation and it is mobile responsible.
 
 When the option **`generateReport`** is true (which is the default setting), an HTML report with all the accessibility violation details will be generated. By default, accessibility HTML reports are created in the `cypress/accessibility` folder. You can customize this location by setting the `accessibilityFolder` parameter in your `cypress.config.js` configuration file.
 
@@ -576,6 +588,7 @@ The image file is also referenced within the HTML report.
 In the report, accessibility issues are ordered by severity, and at the end of the report, an image with a screenshot of the page with the violations colored based on severity is included.
 More details on how to fix each of those violations can be seen by hovering over them in the HTML report.
 
+TODO: REPLACE!!!
 ![HTML Report](/images/html-report.png)
 
 > ✔️ **Note:** The HTML accessibility report generated by the plugin complies with all severity levels—critical, serious, moderate, and minor. It also adheres to the tags wcag2a, wcag2aa, wcag21a, wcag21aa, and best-practice.
@@ -590,6 +603,7 @@ Configured custom styles are displayed in the Cypress runner:
 
 Same custom styles shown in the HTML report:
 
+TODO: REPLACE!!!
 ![Custom styles in HTML report](images/report-custom-styles.png)
 
 
@@ -637,7 +651,7 @@ Thank you for your support!
 ### v2.3.0
 
 - Adds accessibility analysis for WCAG 2.2 levels A, AA, and AAA.
-- Improves HTML report: modern layout, full keyboard navigation support, and WCAG 2.2 AAA compliance.
+- Improves HTML report: improved usability, full keyboard navigation support, and WCAG 2.2 AAA compliance, and better design.
 - Uses `data-cy`, `data-testid`, `data-test`, `data-qa`, and `data-test-id` selectors for accessibility violations when available.
 - Displays accessibility issues in the Cypress Runner UI with dashed outlines by default.
 

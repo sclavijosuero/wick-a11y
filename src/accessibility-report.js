@@ -397,6 +397,44 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 box-shadow: 0 2px 6px rgba(217, 119, 6, 0.2);
             }
 
+            /* Scroll to top container - centered positioning */
+            .scroll-to-top-container {
+                display: flex;
+                justify-content: center;
+                margin-top: var(--spacing-lg);
+                margin-bottom: var(--spacing-lg);
+            }
+
+            /* Scroll to top button - distinctive styling */
+            .control-button--scroll-top {
+                background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+                border: 2px solid #059669;
+                color: var(--color-text-primary);
+                font-weight: 700;
+                position: relative;
+            }
+
+            .control-button--scroll-top:hover {
+                background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+                border-color: #047857;
+                box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
+                transform: translateY(-1px);
+            }
+
+            .control-button--scroll-top:focus {
+                background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+                border-color: #059669;
+                outline: 3px solid #059669;
+                outline-offset: 2px;
+                box-shadow: 0 4px 16px rgba(5, 150, 105, 0.3);
+                transform: translateY(-1px);
+            }
+
+            .control-button--scroll-top:active {
+                transform: translateY(0px);
+                box-shadow: 0 2px 6px rgba(5, 150, 105, 0.2);
+            }
+
             /* Summary section wrapper */
             .summary-wrapper {
                 border: 1px solid var(--color-border-light);
@@ -436,11 +474,16 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 display: none;
             }
 
-            .summary-wrapper__toggle:hover,
-            .summary-wrapper__toggle:focus {
+            .summary-wrapper__toggle:hover {
                 background: linear-gradient(135deg, #d1e9f8 0%, #b8ddf3 100%);
                 outline: 2px solid var(--color-focus);
                 outline-offset: -2px;
+            }
+
+            .summary-wrapper__toggle:focus {
+                background: linear-gradient(135deg, #d1e9f8 0%, #b8ddf3 100%);
+                outline: 3px solid var(--color-focus);
+                outline-offset: 2px;
             }
 
             .summary-wrapper__icon {
@@ -972,6 +1015,22 @@ const buildHtmlReportBody = (reportInfo, options) => {
             .severity-section--critical .severity-section__toggle {
                 background: linear-gradient(135deg, #fed7d7, #feb2b2);
             }
+                
+            .severity-section--critical .severity-section__toggle:hover {
+                outline: 2px solid #dc2626;
+            }
+
+            .severity-section--serious .severity-section__toggle:hover {
+                outline: 2px solid #ea580c;
+            }
+
+            .severity-section--moderate .severity-section__toggle:hover {
+                outline: 2px solid #ca8a04;
+            }
+
+            .severity-section--minor .severity-section__toggle:hover {
+                outline: 2px solid #4598FF;
+            }
 
             .severity-section--serious .severity-section__toggle {
                 background: linear-gradient(135deg, #fed7aa, #fbb670);
@@ -1415,7 +1474,7 @@ const buildHtmlReportBody = (reportInfo, options) => {
         
         <div class="container">
             <header role="banner">
-                <h1 class="header">Accessibility Report (Axe-core®)</h1>
+                <h1 class="header" tabindex="-1">Accessibility Report (Axe-core®)</h1>
                 
                 <!-- Control Buttons -->
                 <div class="control-buttons">
@@ -1663,6 +1722,14 @@ const buildHtmlReportBody = (reportInfo, options) => {
                     in the US and other countries.
                 </p>
             </footer>
+
+            <!-- Scroll to Top Button -->
+            <div class="scroll-to-top-container">
+                <button type="button" class="control-button control-button--scroll-top" onclick="scrollToTop()" aria-label="Scroll to the top of the report">
+                    <span class="control-button__icon">⬆️</span>
+                    <span>Back to Top</span>
+                </button>
+            </div>
         </div>
 
         <script>
@@ -1716,6 +1783,39 @@ const buildHtmlReportBody = (reportInfo, options) => {
                         }, 1000);
                     }, 300);
                 }
+            }
+
+            function scrollToTop() {
+                // Smooth scroll to top of the page
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+                
+                // Enhanced focus management for WCAG AAA accessibility
+                setTimeout(() => {
+                    // Focus on the main header for screen reader users
+                    const mainHeader = document.querySelector('.header');
+                    if (mainHeader) {
+                        mainHeader.focus({preventScroll: true});
+                    }
+                    
+                    // Announce the arrival to screen readers
+                    const announcement = document.createElement('div');
+                    announcement.setAttribute('aria-live', 'polite');
+                    announcement.setAttribute('aria-atomic', 'true');
+                    announcement.textContent = 'Scrolled to the top of the accessibility report';
+                    announcement.style.position = 'absolute';
+                    announcement.style.left = '-10000px';
+                    announcement.style.width = '1px';
+                    announcement.style.height = '1px';
+                    announcement.style.overflow = 'hidden';
+                    
+                    document.body.appendChild(announcement);
+                    setTimeout(() => {
+                        document.body.removeChild(announcement);
+                    }, 1000);
+                }, 300);
             }
 
             // WCAG AAA: Enhanced smooth scrolling with proper positioning
