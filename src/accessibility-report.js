@@ -251,7 +251,7 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 --spacing-xs: 8px;
                 --spacing-sm: 12px;
                 --spacing-md: 16px;
-                --spacing-lg: 24px;
+                --spacing-lg: 36px;
                 --spacing-xl: 32px;
                 --spacing-xxl: 48px; /* WCAG AAA: Enhanced spacing options */
                 --border-radius: 8px;

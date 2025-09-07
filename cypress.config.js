@@ -9,7 +9,7 @@ module.exports = defineConfig({
 
   retries: {
     // openMode: 0,
-    openMode: 1,
+    openMode: 0,
     runMode: 0,
   },
 

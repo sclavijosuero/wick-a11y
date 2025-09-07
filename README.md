@@ -1,6 +1,6 @@
 # wick-a11y
 
-**wick-a11y** is a Cypress plugin designed for performing configurable accessibility tests. It allows you to easily incorporate accessibility checks into your End-to-End tests, log detailed information in the Cypress log, and generate HTML documents with screenshots of each violation for easier identification and resolution of accessibility issues, all out-of-the-box
+**wick-a11y** is a Cypress plugin designed for performing configurable accessibility tests. It allows you to easily incorporate accessibility checks into your End-to-End tests, log detailed information in the Cypress log, and generate HTML documents with screenshots of each violation for easier identification and resolution of accessibility issues, all out-of-the-box. The plugin uses axe-core to deliver comprehensive accessibility testing.
 
 ![wick-a11y Overview](/images/overview.png)
 
@@ -23,13 +23,14 @@ Or the videos:
 
 - **Configurable**:
   - Customize to include specific impact levels (severities), rules, and guidelines.
-  - You can separately configure impact levels that will cause the test to fail from those that will serve only as a warning, providing detailed information **(NEW in v1.4.0)**.
+  - You can separately configure impact levels that will cause the test to fail from those that will serve only as a warning, providing detailed information.
 
-- **Summary of Violations**:  Provides a summary for each test in the Cypress Log, detailing accessibility violations categorized by their severity **(NEW in v1.2.0)**.
+- **Summary of Violations**:  Provides a summary for each test in the Cypress Log, detailing accessibility violations categorized by their severity.
   
 - **Detailed Violation Information**:
   - Displays violations details in the Cypress log and browser console.
   - Graphically shows affected DOM elements on the page, enclosing them in a colored box based on severity.
+  - Uses data-cy, data-testid, data-test, data-qa, and data-test-id selectors for accessibility violations when available **(NEW in v2.3.0)**.
 
 - **Custom Styling**: Supports custom styling for accessibility issues based on severity level at the test level.
 
@@ -37,11 +38,17 @@ Or the videos:
   - Hovering over a violation in the Cypress Log highlights the affected DOM element on the page, and clicking it shows detailed issue information in the browser console.
   - Hovering over a DOM element with a violation on the web page in the Cypress runner highlights it graphically and shows a tooltip with the violation information.
 
-- **HTML Reports**: Generates HTML reports with details of the violations and how to fix them, including screenshots for visual reference, all out-of-the-box.
+- **HTML Reports**:
+  - Complete with out-of-the-box screenshots, per-issue details, and clear fix guidance.
+  - WCAG 2.2 AAA compliant reports with full keyboard navigation **(NEW in v2.3.0)**.
+  - Moderm and and functional card layout **(NEW in v2.3.0)**.
+
 
 - **Terminal Reports**: Produces terminal reports with details of the violations and how to fix them in tabular form.
 
-- **Voice Support**: Provides audible information for accessibility issues at the suite level, test level, violation type level, and DOM element level, helping users identify issues through voice feedback **(NEW in v1.2.0)**.
+- **Voice Support**: Provides audible information for accessibility issues at the suite level, test level, violation type level, and DOM element level, helping users identify issues through voice feedback.
+
+- **Cypress v15+ Support**:  Fully supported in Cypress v15.0.0 or greater **(NEW in v2.2.0)**.
 
 > ✔️ **Before launching the accessibility analysis, ensure what you want to analyze is fully rendered on the page.**
 > 
@@ -88,28 +95,24 @@ npm install wick-a11y --save-dev
 
 ## COMPATIBILITY 
 
-### wick-a11y *v*2.2.0 and Greater
 
-- Compatible with all versions from Cypress v15
-- Relies on cypress-axe (≥ 1.7.0)
+### Cypress v15+
 
-### wick-a11y *v*2.1.0 and Greater
+- Use wick-a11y *v*2.2.0 or greater+
+- Relies on cypress-axe (≥ 1.7.0) and axe-core® for accessibility analysis.
 
-- Compatible with all versions from Cypress v14
-- Relies on cypress-axe (≥ 1.7.0)
+### Cypress v14
 
-### wick-a11y *v*2.0.0 and Greater
-
-- Compatible with all versions from Cypress v14
+- Use wick-a11y *v*2.0.0
 - Relies on cypress-axe (≥ 1.5.0) and axe-core® for accessibility analysis.
 -  ⚠️ **Not officially tested** with Cypress *v*14.0.0 to *v*14.0.2 (but should work).
 
-### wick-a11y *v*1.4.0 and Earlier
 
-- Compatible with all versions of Cypress v12 and Cypress v13.
+### Cypress v12 and v13
+
+- Use  wick-a11y *v*1.4.0 or earlier
 - Relies on cypress-axe (≥ 1.5.0) and axe-core® for accessibility analysis.
--  ⚠️ ** Non compatible** with versions of Cypress v14.0.0 and creater
--  ⚠️ If you want to install wick-a11y *v*1.4.0 or earlier in a Cypress 14.0.3 project you will need to use the `--force` option:
+- If you want to install wick-a11y *v*1.4.0 or earlier in a Cypress 14.0.3 project you will need to use the `--force` option:
    ```sh
    npm install wick-a11y --save-dev --force
    ```
@@ -631,9 +634,12 @@ Thank you for your support!
 
 ## CHANGELOG
 
-### v2.2.0
+### v2.3.0
 
-- Improved html report.
+- Adds accessibility analysis for WCAG 2.2 levels A, AA, and AAA.
+- Improves HTML report: modern layout, full keyboard navigation support, and WCAG 2.2 AAA compliance.
+- Uses `data-cy`, `data-testid`, `data-test`, `data-qa`, and `data-test-id` selectors for accessibility violations when available.
+- Displays accessibility issues in the Cypress Runner UI with dashed outlines by default.
 
 ### v2.2.0
 
