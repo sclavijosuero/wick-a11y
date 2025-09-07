@@ -1145,78 +1145,190 @@ const buildHtmlReportBody = (reportInfo, options) => {
                 color: var(--color-text-primary);
             }
 
-            .affected-element__selector {
-                font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-                background: rgba(255, 255, 255, 0.8);
-                padding: var(--spacing-xs) var(--spacing-sm);
-                border-radius: var(--border-radius);
-                border: 1px solid var(--color-border-light);
-                font-size: var(--font-size-small);
-                word-break: break-all;
-                margin-bottom: var(--spacing-sm);
-            }
+             /* Affected element expandable details container */
+             .affected-element__details {
+                 width: 100%;
+                 margin-bottom: var(--spacing-sm); /* Spacing between collapsed elements */
+             }
 
-            /* Expandable controls for failure summaries using HTML5 details/summary */
-            .expandable {
-                border: 1px solid var(--color-border-light);
-                border-radius: var(--border-radius);
-                background: rgba(255, 255, 255, 0.9);
-                margin-top: var(--spacing-sm);
-            }
+             /* Remove margin when expanded since expandable content has its own margin */
+             .affected-element__details[open] {
+                 margin-bottom: 0;
+             }
 
-            .expandable__toggle {
-                width: 100%;
-                padding: var(--spacing-sm);
-                background: none;
-                cursor: pointer;
-                display: flex;
-                align-items: center;
-                gap: var(--spacing-xs);
-                font-size: var(--font-size-small);
-                font-weight: 500;
-                color: var(--color-text-primary);
-                transition: background-color var(--transition-fast);
-                list-style: none;
-            }
+             /* Selector with integrated toggle control */
+             .affected-element__selector-toggle {
+                 width: 100%;
+                 display: flex;
+                 align-items: center;
+                 justify-content: space-between;
+                 padding: var(--spacing-xs) var(--spacing-sm);
+                 background: rgba(255, 255, 255, 0.8);
+                 border: 1px solid var(--color-border-light);
+                 border-radius: var(--border-radius);
+                 cursor: pointer;
+                 font-size: var(--font-size-small);
+                 color: var(--color-text-primary);
+                 transition: all var(--transition-fast);
+                 list-style: none;
+                 margin-bottom: 0; /* Remove spacing */
+                 min-height: var(--min-touch-size); /* WCAG AAA: Minimum touch target */
+             }
 
-            .expandable__toggle::-webkit-details-marker {
-                display: none;
-            }
+             /* When expanded, selector should have rounded top corners only */
+             .affected-element__details[open] .affected-element__selector-toggle {
+                 border-radius: var(--border-radius) var(--border-radius) 0 0;
+                 border-bottom: none;
+             }
 
-            .expandable__toggle::marker {
-                display: none;
-            }
+             .affected-element__selector-toggle::-webkit-details-marker {
+                 display: none;
+             }
 
-            .expandable__toggle:hover {
-                background: rgba(0, 0, 0, 0.05);
-            }
+             .affected-element__selector-toggle::marker {
+                 display: none;
+             }
 
-            .expandable__toggle:focus {
-                outline: 3px solid var(--color-focus); /* WCAG AAA: Enhanced focus indicator */
-                outline-offset: 2px;
-                background: rgba(37, 99, 235, 0.1);
-                box-shadow: 0 0 0 1px var(--color-focus);
-            }
+             .affected-element__selector-toggle:hover {
+                 background: rgba(255, 255, 255, 1);
+                 border-color: var(--color-text-link);
+                 box-shadow: 0 2px 4px rgba(30, 64, 175, 0.1);
+             }
 
-            .expandable__icon {
-                font-size: 12px;
-                transition: transform var(--transition-fast);
-                color: var(--color-text-link);
-                display: inline-block;
-            }
+             .affected-element__selector-toggle:focus {
+                 outline: 3px solid var(--color-focus); /* WCAG AAA: Enhanced focus indicator */
+                 outline-offset: 2px;
+                 background: rgba(255, 255, 255, 1);
+                 border-color: var(--color-focus);
+                 box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
+             }
 
-            .expandable[open] .expandable__icon {
-                transform: rotate(90deg);
-            }
+             /* Selector text with monospace font */
+             .affected-element__selector-text {
+                 font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+                 flex: 1;
+                 word-break: break-all;
+                 text-align: left;
+                 margin-right: var(--spacing-sm);
+             }
 
-            .expandable__content {
-                padding: 0 var(--spacing-sm) var(--spacing-sm) var(--spacing-sm);
-                border-top: 1px solid var(--color-border-light);
-                background: rgba(255, 255, 255, 0.5);
-                font-size: var(--font-size-small);
-                line-height: 1.5;
-                color: var(--color-text-secondary);
-            }
+             /* Toggle control on the right */
+             .affected-element__toggle-control {
+                 display: flex;
+                 align-items: center;
+                 gap: var(--spacing-xs);
+                 font-size: var(--font-size-small);
+                 color: var(--color-text-link);
+                 font-weight: 500;
+                 flex-shrink: 0;
+             }
+
+             /* Toggle icon with rotation animation */
+             .affected-element__toggle-icon {
+                 font-size: 12px;
+                 transition: transform var(--transition-fast);
+                 color: var(--color-text-link);
+                 display: inline-block;
+             }
+
+             .affected-element__details[open] .affected-element__toggle-icon {
+                 transform: rotate(90deg);
+             }
+
+             /* Toggle label */
+             .affected-element__toggle-label {
+                 font-size: var(--font-size-small);
+                 font-weight: 500;
+                 color: var(--color-text-link);
+             }
+
+             /* Expandable content */
+             .affected-element__expandable-content {
+                 padding: var(--spacing-sm);
+                 background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.5) 100%);
+                 border: 1px solid var(--color-border-light);
+                 border-top: 2px solid rgba(30, 64, 175, 0.1); /* Stylish visual separator */
+                 border-radius: 0 0 var(--border-radius) var(--border-radius);
+                 font-size: var(--font-size-small);
+                 line-height: 1.5;
+                 color: var(--color-text-secondary);
+                 margin-bottom: var(--spacing-sm); /* Keep bottom margin for spacing between elements */
+                 position: relative;
+             }
+
+             /* Optional: Add a subtle decorative element */
+             .affected-element__expandable-content::before {
+                 content: "";
+                 position: absolute;
+                 top: 0;
+                 left: var(--spacing-sm);
+                 right: var(--spacing-sm);
+                 height: 1px;
+                 background: linear-gradient(90deg, transparent 0%, rgba(30, 64, 175, 0.2) 50%, transparent 100%);
+                 pointer-events: none;
+             }
+
+             /* Legacy expandable styles for other components */
+             .expandable {
+                 border: 1px solid var(--color-border-light);
+                 border-radius: var(--border-radius);
+                 background: rgba(255, 255, 255, 0.9);
+                 margin-top: var(--spacing-sm);
+             }
+
+             .expandable__toggle {
+                 width: 100%;
+                 padding: var(--spacing-sm);
+                 background: none;
+                 cursor: pointer;
+                 display: flex;
+                 align-items: center;
+                 gap: var(--spacing-xs);
+                 font-size: var(--font-size-small);
+                 font-weight: 500;
+                 color: var(--color-text-primary);
+                 transition: background-color var(--transition-fast);
+                 list-style: none;
+             }
+
+             .expandable__toggle::-webkit-details-marker {
+                 display: none;
+             }
+
+             .expandable__toggle::marker {
+                 display: none;
+             }
+
+             .expandable__toggle:hover {
+                 background: rgba(0, 0, 0, 0.05);
+             }
+
+             .expandable__toggle:focus {
+                 outline: 3px solid var(--color-focus); /* WCAG AAA: Enhanced focus indicator */
+                 outline-offset: 2px;
+                 background: rgba(37, 99, 235, 0.1);
+                 box-shadow: 0 0 0 1px var(--color-focus);
+             }
+
+             .expandable__icon {
+                 font-size: 12px;
+                 transition: transform var(--transition-fast);
+                 color: var(--color-text-link);
+                 display: inline-block;
+             }
+
+             .expandable[open] .expandable__icon {
+                 transform: rotate(90deg);
+             }
+
+             .expandable__content {
+                 padding: 0 var(--spacing-sm) var(--spacing-sm) var(--spacing-sm);
+                 border-top: 1px solid var(--color-border-light);
+                 background: rgba(255, 255, 255, 0.5);
+                 font-size: var(--font-size-small);
+                 line-height: 1.5;
+                 color: var(--color-text-secondary);
+             }
 
             /* Screenshot section */
             .screenshot-section {
@@ -1488,26 +1600,28 @@ const buildHtmlReportBody = (reportInfo, options) => {
                                                 <div class="violation-card__content">
                                                     <h4 class="affected-elements-title">Affected Elements (${violation.nodes.length})</h4>
                                                     <ul class="affected-elements">
-                                                        ${violation.nodes.map((node, nodeIndex) => `
-                                                            <li class="affected-element">
-                                                                <div class="affected-element__header">
-                                                                    <span aria-hidden="true">${impactStyling.fixme.icon}</span>
-                                                                    <span>Element ${nodeIndex + 1}</span>
-                                                                </div>
-                                                                <div class="affected-element__selector">
-                                                                    ${escapeHTML(node.target.join(', '))}
-                                                                </div>
-                                                                <details class="expandable">
-                                                                    <summary class="expandable__toggle">
-                                                                        <span class="expandable__icon">▶</span>
-                                                                        <span>Show how to fix this issue</span>
-                                                                    </summary>
-                                                                    <div class="expandable__content">
-                                                                        ${getFailureSummaryExpandableHtml(node.failureSummary)}
-                                                                    </div>
-                                                                </details>
-                                                            </li>
-                                                        `).join("")}
+                                                         ${violation.nodes.map((node, nodeIndex) => `
+                                                             <li class="affected-element">
+                                                                 <div class="affected-element__header">
+                                                                     <span aria-hidden="true">${impactStyling.fixme.icon}</span>
+                                                                     <span>Element ${nodeIndex + 1}</span>
+                                                                 </div>
+                                                                 <details class="affected-element__details">
+                                                                     <summary class="affected-element__selector-toggle">
+                                                                         <span class="affected-element__selector-text">
+                                                                             ${escapeHTML(node.target.join(', '))}
+                                                                         </span>
+                                                                         <span class="affected-element__toggle-control">
+                                                                             <span class="affected-element__toggle-icon">▶</span>
+                                                                             <span class="affected-element__toggle-label">Details</span>
+                                                                         </span>
+                                                                     </summary>
+                                                                     <div class="affected-element__expandable-content">
+                                                                         ${getFailureSummaryExpandableHtml(node.failureSummary)}
+                                                                     </div>
+                                                                 </details>
+                                                             </li>
+                                                         `).join("")}
                                                     </ul>
                                                 </div>
                                             </li>
