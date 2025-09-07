@@ -1313,7 +1313,7 @@ const buildHtmlReportBody = (reportInfo, options) => {
                         <span>Collapse All</span>
                     </button>
                     <button type="button" class="control-button control-button--screenshot" onclick="scrollToScreenshot()" aria-label="Scroll to accessibility violations screenshot image">
-                        <span class="control-button__icon">🖼️</span>
+                        <span class="control-button__icon">📷</span>
                         <span>View Screenshot</span>
                     </button>
                 </div>
