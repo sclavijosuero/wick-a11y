@@ -56,3 +56,9 @@ https://github.com/user-attachments/assets/beaee1b2-8385-4329-a824-0e0663eeb0d6
 https://github.com/user-attachments/assets/759d00d7-b652-4eef-b015-e1cc2183961a
 
 &nbsp;
+
+# WICK-A11Y Accessibility Report
+
+
+
+&nbsp;
