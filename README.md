@@ -260,7 +260,7 @@ Cypress custom command to check the accessibility of a given context using axe-c
    
     > ⚠️ **IMPORTANT:**  You must include all the rules (tags) that you want to execute in your analysis in this list. 
     > 
-    > For example, if you want to run WCAG 2.1AA and all the previous versions of that standard (WCAG 2.0A, WCAG 2.0AA, WCAG 2.1A), you need to list them explicitly. Otherwise, only the rules specific to WCAG 2.1AA will be executed.
+    > For example, if you want to run WCAG 2.2 AAA and all the previous versions of that standard (wcag2a, wcag2aa, wcag2aaa, wcag21a, wcag21aa, wcag21aaa, wcag22a, wcag22aa, , wcag22aaa), you need to list them explicitly. Otherwise, only the rules specific to WCAG 2.2 AAA will be executed.
    
   - **`rules`**: (optional) *From axe-core®* - Enable or disable rules using the enabled property.
 
@@ -441,7 +441,6 @@ Styles by default: Critical 🟥, Serious 🟧, Moderate 🟨, Minor 🟦
 
 If there are any violations for the selected rules used in the analysis, the test will fail.
 
-TODO: REPLACE!!!
 ![Runner Results](/images/runner-results.png)
 
 ### Summary of Violations
@@ -456,7 +455,6 @@ If the analysis was configured to consider accessibility issues as either a viol
 
 By clicking on one of the severity groups in the summary, the details for all the violations of that severity type will be shown in the browser console.
 
-TODO: REPLACE!!!
 ![Summary Details per Severity Type](/images/summary-details-severity.png)
 
 
@@ -464,7 +462,6 @@ TODO: REPLACE!!!
 
 To identify, in the page, which HTML element is affected by an accessibility violation, mouseover the specific violation in the Cypress log, and that element will be highlighted on the page. To know the details about the accessibility issue, click on the violation in the Cypress log and those details will be shown in the browser console.
 
-TODO: REPLACE!!!
 ![Runner Console](/images/runner-console-new.png)
 
 
@@ -472,7 +469,6 @@ TODO: REPLACE!!!
 
 When hovering over a specific DOM element with a violation on the page in the Cypress runner, the element will be highlighted graphically, and a tooltip will appear showing the violation information. This feature allows you to quickly identify and understand accessibility issues directly on the page, providing an immediate and intuitive way to address them.
 
-TODO: REPLACE!!!
 ![Runner Screen](/images/runner-screen.png)
 
 
@@ -497,7 +493,6 @@ The accessibility voice feature at the suite level in the Cypress Log provides a
 - Number of tests failed for other reasons
 - Number of tests skipped or pending
 
-TODO: REPLACE!!!
 ![Voice Suite Level](/images/voice-suite.png)
 
 [Watch the video](/videos/README.md#accessibility-voice-for-analysis-at-suite-level-in-cypress-log "Accessibility Voice for Analysis at Suite Level in Cypress Log")
@@ -513,7 +508,6 @@ The accessibility voice feature at the test level in the Cypress Log provides au
 - Number of moderate violations
 - Number of minor violations
 
-TODO: REPLACE!!!
 ![Voice Test Level](/images/voice-test.png)
 
 [Watch the video](/videos/README.md#accessibility-voice-for-analysis-at-test-level-in-cypress-log "Accessibility Voice for Analysis at Test Level in Cypress Log")
@@ -527,7 +521,6 @@ The accessibility voice feature at the violation type level in the Cypress Log p
 - The severity of the violation
 - A description of the violation
 
-TODO: REPLACE!!!
 ![Voice Violation Type Level](/images/voice-violation.png)
 
 [Watch the video](/videos/README.md#accessibility-voice-for-analysis-at-violation-type-level-in-cypress-log "Accessibility Voice for Analysis at Violation Type Level in Cypress Log")
@@ -542,7 +535,6 @@ The accessibility voice feature at the DOM element level in the Cypress Log prov
 - A description of the violation
 - A summary of the actions needed to fix the issue
 
-TODO: REPLACE!!!
 ![Voice DOM Element Level](/images/voice-dom-element.png)
 
 [Watch the video](/videos/README.md#accessibility-voice-for-analysis-at-dom-element-level-in-cypress-log "Accessibility Voice for Analysis at DOM Element Level in Cypress Log")
@@ -557,10 +549,20 @@ The wick-a11y plugin also provides accessibility voice for a DOM element by clic
 - A description of the violation
 - A summary of the actions needed to fix the issue
 
-TODO: REPLACE!!!
 ![Voice DOM Element Web Page](/images/voice-dom-element-page.png)
 
 [Watch the video](/videos/README.md#accessibility-voice-for-analysis-at-dom-element-level-in-the-web-page "Accessibility Voice for Analysis at DOM Element Level in the Web Page")
+
+
+### Custom Styles Based on Severity
+
+It is possible to configure styles for the different types of violation severity beyond the default red, orange, yellow, and blue.
+
+Configured custom styles are displayed in the Cypress runner:
+
+![Configured custom styles](images/runner-custom-styles.png)
+
+Same custom styles shown in the HTML report:
 
 
 ### HTML Report
@@ -586,26 +588,45 @@ The image file is also referenced within the HTML report.
 
 ![Accessibility Files](/images/accessibility-files.png)
 
-In the report, accessibility issues are ordered by severity, and at the end of the report, an image with a screenshot of the page with the violations colored based on severity is included.
-More details on how to fix each of those violations can be seen by hovering over them in the HTML report.
+At the top of the report, it is displayed a card with a **Report Summary**. Accessibility issues are grouped into cards and ordered by severity. All cards in the report are expandable and collapsible.
 
-TODO: REPLACE!!!
+Also at the end of the report, a screenshot of the page shows violations boxed and color‑coded by severity.
+
+
 ![HTML Report](/images/html-report.png)
 
-> ✔️ **Note:** The HTML accessibility report generated by the plugin complies with all severity levels—critical, serious, moderate, and minor. It also adheres to the tags wcag2a, wcag2aa, wcag21a, wcag21aa, and best-practice.
+> ✔️ **Note:** The HTML accessibility report generated by the plugin complies with all severity levels—critical, serious, moderate, and minor. It also adheres to the tags wcag2a, wcag2aa, wcag2aaa, wcag21a, wcag21aa, wcag21aaa, wcag22a, wcag22aa, wcag22aaa, and best-practice.
 
-### Custom Styles Based on Severity (Cypress runner and HTML Report)
 
-It is possible to configure styles for the different types of violation severity beyond the default red, orange, yellow, and blue.
+#### Report Summary
 
-Configured custom styles are displayed in the Cypress runner:
+At the beginning of the HTML report, an expandable/collapsible Report Summary section appears. It includes:
 
-![Configured custom styles](images/runner-custom-styles.png)
+  - Test summary: spec name, test name, page URL, and generation timestamp
+  - Accessibility configuration: context, tabs, and rules
+  - Violations: total counts by severity
 
-Same custom styles shown in the HTML report:
+For convenience, at the top there are buttons that let you Expand All cards, Collapse All cards, and Scroll to the Screenshot.
 
-TODO: REPLACE!!!
-![Custom styles in HTML report](images/report-custom-styles.png)
+![HTML Report Summary](/images/html-report-summary.png)
+
+
+#### Accessibility Violations Details
+
+The **Accessibility Violations Details** section includes a card for each Severity Level included in the analysis: Critical, Serious, Moderate, and/or Minor.
+
+Within each section, there is a list of violation types for that severity, and for each violation type, a list of the affected DOM elements with details about how to fix the issue.
+
+![HTML Accessibility Violations Details](/images/html-report-violations-details.png)
+
+
+#### Accessibility Violations ScreenShot
+
+At the end of the report, there is a section that includes a screenshot showing the elements affected by accessibility issues, color‑coded by severity. 
+
+This section also includes a disclaimer, a reference to axe-core®, and a button to return to the top of the page.
+
+![HTML Accessibility Violations ScreenShot](/images/html-report-violations-screenshot.png)
 
 
 ### Terminal Report
@@ -754,7 +775,3 @@ Thank you for your support!
 
 - and many more...
 
-
-&nbsp;
-
-![WICK-A11Y](/images/wick_ally_red.png)

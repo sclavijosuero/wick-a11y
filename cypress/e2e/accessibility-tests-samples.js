@@ -43,7 +43,7 @@ describe('ACCESSIBILITY TESTS', { tags: ['@accessibility'] }, () => {
     it('Test Sample Page Accessibility - Custom colors by severity', {defaultCommandTimeout: 15000}, () => {
         const customImpactStyling = {
             serious: { icon: '🟢', style: 'fill: #42C600; fill-opacity: 0; stroke: #42C600; stroke-width: 7;' },
-            moderate: { icon: '🟣', style: 'fill: #886DE7; fill-opacity: 0.3; stroke: #886DE7; stroke-width: 6; stroke-dasharray: 5,3;' },
+            moderate: { icon: '🟣', style: 'fill: #886DE7; fill-opacity: 0; stroke: #886DE7; stroke-width: 6; stroke-dasharray: 5,3;' },
             minor: { style: 'fill: #4598FF; fill-opacity: 0; stroke: #4598FF; stroke-width: 14; ' },
             fixme: { icon: '🪓' }
         }
