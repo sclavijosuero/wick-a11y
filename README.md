@@ -2,7 +2,7 @@
 
 **wick-a11y** is a Cypress plugin designed for performing configurable accessibility tests. It allows you to easily incorporate accessibility checks into your End-to-End tests, log detailed information in the Cypress log, and generate HTML documents with screenshots of each violation for easier identification and resolution of accessibility issues, all out-of-the-box. The plugin uses axe-core to deliver comprehensive accessibility testing.
 
-![wick-a11y Overview](/images/overview.png)
+![wick-a11y Overview](/images/full-overview.gif)
 
 For a detailed guide on setting up and using this plugin to maximize its benefits, please refer to my articles:
   - ["WICK-A11Y Cypress Plugin: Your Unstoppable Ally for Smashing Accessibility Barriers, Cool as John Wick!"](https://dev.to/sebastianclavijo/wick-a11y-cypress-plugin-your-unstoppable-ally-for-smashing-accessibility-barriers-cool-as-john-wick-280a)
@@ -57,35 +57,41 @@ Or the videos:
 
 ---
 
-## TABLE OF CONTENTS
+## TABLE OF CONTENT
 
-- [wick-a11y](#wick-a11y)
-  - [MAIN FEATURES](#main-features)
-  - [TABLE OF CONTENTS](#table-of-contents)
-  - [INSTALATION](#instalation)
-  - [COMPATIBILITY](#compatibility)
-  - [CONFIGURATION](#configuration)
-  - [API REFERENCE](#api-reference)
-    - [cy.checkAccessibility(context, options)](#cycheckaccessibilitycontext-options)
-  - [USAGE EXAMPLES](#usage-examples)
-  - [RESULTS PRESENTATION](#results-presentation)
-    - [Summary of Violations](#summary-of-violations)
-    - [Violation Details in Browser Console from Cypress Log](#violation-details-in-browser-console-from-cypress-log)
-    - [Violation Details in Tooltip when Hovering over a DOM Element on the Page](#violation-details-in-tooltip-when-hovering-over-a-dom-element-on-the-page)
-    - [Accessibility Voice](#accessibility-voice)
-    - [Accessibility Voice for Analysis at Suite Level in Cypress Log](#accessibility-voice-for-analysis-at-suite-level-in-cypress-log)
-    - [Accessibility Voice for Analysis at Test Level in Cypress Log](#accessibility-voice-for-analysis-at-test-level-in-cypress-log)
-    - [Accessibility Voice for Analysis at Violation Type Level in Cypress Log](#accessibility-voice-for-analysis-at-violation-type-level-in-cypress-log)
-    - [Accessibility Voice for Analysis at DOM Element Level in Cypress Log](#accessibility-voice-for-analysis-at-dom-element-level-in-cypress-log)
-    - [Accessibility Voice for Analysis at DOM Element Level in the Web Page](#accessibility-voice-for-analysis-at-dom-element-level-in-the-web-page)
-    - [HTML Report](#html-report)
-    - [Custom Styles Based on Severity (Cypress runner and HTML Report)](#custom-styles-based-on-severity-cypress-runner-and-html-report)
-    - [Terminal Report](#terminal-report)
-  - [KNOWN LIMITATIONS](#known-limitations)
-  - [LICENSE](#license)
-  - [CONTRIBUTING](#contributing)
-  - [CHANGELOG](#changelog)
-  - [EXTERNAL REFERENCES](#external-references)
+- [MAIN FEATURES](#main-features)
+- [TABLE OF CONTENT](#table-of-content)
+- [INSTALATION](#instalation)
+- [COMPATIBILITY](#compatibility)
+  - [Cypress v15+](#cypress-v15)
+  - [Cypress v14](#cypress-v14)
+  - [Cypress v12 and v13](#cypress-v12-and-v13)
+- [CONFIGURATION](#configuration)
+- [API REFERENCE](#api-reference)
+  - [cy.checkAccessibility(context, options)](#cycheckaccessibilitycontext-options)
+- [USAGE EXAMPLES](#usage-examples)
+- [RESULTS PRESENTATION](#results-presentation)
+  - [Summary of Violations](#summary-of-violations)
+  - [Violation Details in Browser Console from Cypress Log](#violation-details-in-browser-console-from-cypress-log)
+  - [Violation Details in Tooltip when Hovering over a DOM Element on the Page](#violation-details-in-tooltip-when-hovering-over-a-dom-element-on-the-page)
+  - [Accessibility Voice](#accessibility-voice)
+  - [Accessibility Voice for Analysis at Suite Level in Cypress Log](#accessibility-voice-for-analysis-at-suite-level-in-cypress-log)
+  - [Accessibility Voice for Analysis at Test Level in Cypress Log](#accessibility-voice-for-analysis-at-test-level-in-cypress-log)
+  - [Accessibility Voice for Analysis at Violation Type Level in Cypress Log](#accessibility-voice-for-analysis-at-violation-type-level-in-cypress-log)
+  - [Accessibility Voice for Analysis at DOM Element Level in Cypress Log](#accessibility-voice-for-analysis-at-dom-element-level-in-cypress-log)
+  - [Accessibility Voice for Analysis at DOM Element Level in the Web Page](#accessibility-voice-for-analysis-at-dom-element-level-in-the-web-page)
+  - [Custom Styles Based on Severity](#custom-styles-based-on-severity)
+  - [HTML Report](#html-report)
+    - [Report Summary](#report-summary)
+    - [Accessibility Violations Details](#accessibility-violations-details)
+    - [Accessibility Violations ScreenShot](#accessibility-violations-screenshot)
+  - [Terminal Report](#terminal-report)
+- [KNOWN LIMITATIONS](#known-limitations)
+- [LICENSE](#license)
+- [CONTRIBUTING](#contributing)
+- [CHANGELOG](#changelog)
+- [EXTERNAL REFERENCES](#external-references)
+
 
 
 ## INSTALATION
@@ -590,12 +596,25 @@ The image file is also referenced within the HTML report.
 
 At the top of the report, it is displayed a card with a **Report Summary**. Accessibility issues are grouped into cards and ordered by severity. All cards in the report are expandable and collapsible.
 
-Also at the end of the report, a screenshot of the page shows violations boxed and color‑coded by severity.
+The report is _mobile responsible_ by stacking the cards, _WCAG 2.2 AAA compliant_ and fully supports _keyboard navigation_.
 
-
-![HTML Report](/images/html-report.png)
+A screenshot of the page shows violations boxed and color‑coded by severity is shown at the end of the report.
 
 > ✔️ **Note:** The HTML accessibility report generated by the plugin complies with all severity levels—critical, serious, moderate, and minor. It also adheres to the tags wcag2a, wcag2aa, wcag2aaa, wcag21a, wcag21aa, wcag21aaa, wcag22a, wcag22aa, wcag22aaa, and best-practice.
+
+**Desktop Layout HTML Report**
+
+![HTML Report Desktop](/images/html-report.png)
+
+
+**Mobile Layout HTML Report**
+
+![HTML Report Mobile](/images/html-report-mobile.png)
+
+
+**HTML Report Fully Collapsed**
+
+![HTML Report Fully Collapsed](/images/html-report-collapsed.png)
 
 
 #### Report Summary
