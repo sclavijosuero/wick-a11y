@@ -59,6 +59,6 @@ https://github.com/user-attachments/assets/759d00d7-b652-4eef-b015-e1cc2183961a
 
 # WICK-A11Y Accessibility Report
 
-
+https://github.com/user-attachments/assets/1f04104e-e291-4b35-a80e-9a898872ba1d
 
 &nbsp;
