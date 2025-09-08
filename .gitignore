@@ -9,8 +9,6 @@
 # Node.js dependencies
 /node_modules/
 
-# Doc videos
-/videos/
 
 # Environment variables
 /.env
