@@ -20,7 +20,7 @@ declare global {
              *   - {string[]} includedImpacts: Impact levels to include. Default ['critical', 'serious'].
              *   - {integer} retries: Number of times to retry the check if issues are found. Default is 0.
              *   - {integer} interval: Time in milliseconds between retries. Default 1000ms.
-             *   - {string[]} runOnly: Rules to run, e.g., ['wcag2a', 'wcag2aa'].
+             *   - {string[]} runOnly: Rules to run, e.g., ['wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'wcag21aaa', 'wcag22a', 'wcag22aa', 'wcag22aaa', 'best-practice'].
              *   - {Object} rules: Enable or disable specific rules. E.g., { 'color-contrast': { enabled: false } }.
              *   - {string} reporter: Reporter version to use. E.g., 'v2'.
              *   - {string[]} resultTypes: Result types to process, like ['violations', 'inapplicable'].

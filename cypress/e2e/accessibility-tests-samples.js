@@ -4,10 +4,19 @@
 import "../../src/accessibility-commands.js";
 
 
-describe.skip('ACCESSIBILITY TESTS', { tags: ['@accessibility'] }, () => {
+
+// it.only('Test Localhost Page Accessibility - All levels of severity and all rules', {defaultCommandTimeout: 15000}, () => {
+//     cy.visit('http://localhost:8080/accessibility.html')
+//     cy.wait(2000)
+//     cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'], runOnly:['wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'wcag21aaa', 'wcag22a', 'wcag22aa',, 'wcag22aaa', 'best-practice'] })
+// });
+
+
+describe('ACCESSIBILITY TESTS', { tags: ['@accessibility'] }, () => {
 
     beforeEach(() => {
-        cy.visit('http://127.0.0.1:8080/pages/page.html')
+        cy.visit('https://parabank.parasoft.com/parabank/index.htm')
+        cy.wait(2000) // Using cy.wait(TIME) is a very bad practice, but it is used for simplicity in this example
     });
 
     // NOTE: AXE analysis can spend quite some time, so it is recommended to increase the default command timeout for such tests
@@ -15,7 +24,7 @@ describe.skip('ACCESSIBILITY TESTS', { tags: ['@accessibility'] }, () => {
     it('Test Sample Page Accessibility - Default analysis', {defaultCommandTimeout: 15000}, () => {
         //   - Analyze entire document
         //   - includedImpacts: ['critical', 'serious']
-        //   - runOnly:['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'] }
+        //   - runOnly:['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice']
         //   - generateReport: true
         //   - iframes: true
 
@@ -26,10 +35,15 @@ describe.skip('ACCESSIBILITY TESTS', { tags: ['@accessibility'] }, () => {
         cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'] })
     });
 
+
+    it('Test Sample Page Accessibility - All levels of severity and all rules', {defaultCommandTimeout: 15000}, () => {
+        cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'], runOnly:['wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'wcag21aaa', 'wcag22a', 'wcag22aa',, 'wcag22aaa', 'best-practice'] })
+    });
+
     it('Test Sample Page Accessibility - Custom colors by severity', {defaultCommandTimeout: 15000}, () => {
         const customImpactStyling = {
             serious: { icon: '🟢', style: 'fill: #42C600; fill-opacity: 0; stroke: #42C600; stroke-width: 7;' },
-            moderate: { icon: '🟣', style: 'fill: #886DE7; fill-opacity: 0.3; stroke: #886DE7; stroke-width: 6; stroke-dasharray: 5,3;' },
+            moderate: { icon: '🟣', style: 'fill: #886DE7; fill-opacity: 0; stroke: #886DE7; stroke-width: 6; stroke-dasharray: 5,3;' },
             minor: { style: 'fill: #4598FF; fill-opacity: 0; stroke: #4598FF; stroke-width: 14; ' },
             fixme: { icon: '🪓' }
         }

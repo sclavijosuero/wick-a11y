@@ -26,6 +26,8 @@ let specResults
  * @returns {Array} - The sorted array of accessibility violations.
  */
 export const logViolations = (violations) => {
+    violations = improveViolationSelectors(violations)
+
     // Log the accessibility violations in Cypress Log and the Browser Console
     recordViolations(violations, true)
 }
@@ -37,6 +39,8 @@ export const logViolations = (violations) => {
  * @param {Array} violations - The array of accessibility violations.
  */
 export const logViolationsAndGenerateReport = (violations) => {
+    violations = improveViolationSelectors(violations)
+
     // Log the accessibility violations in Cypress Log and the Browser Console
     const violationsSorted = recordViolations(violations, false)
 
@@ -82,10 +86,10 @@ const impactPriority = ['critical', 'serious', 'moderate', 'minor'];
  * @property {string} fixme.icon - The icon for the fixme impact indicator.
  */
 const defaultImpactStyling = {
-    critical: { icon: '🟥', style: 'fill: #DE071B; fill-opacity: 0; stroke: #DE071B; stroke-width: 10;' },
-    serious: { icon: '🟧', style: 'fill: #FFA66A; fill-opacity: 0; stroke: #FFA66A; stroke-width: 10;' },
-    moderate: { icon: '🟨', style: 'fill: #ECDE05; fill-opacity: 0; stroke: #ECDE05; stroke-width: 10;' },
-    minor: { icon: '🟦', style: 'fill: #4598FF; fill-opacity: 0; stroke: #4598FF; stroke-width: 10;' },
+    critical: { icon: '🟥', style: 'fill: #DE071B; fill-opacity: 0; stroke: #DE071B; stroke-width: 8; stroke-linejoin: round; stroke-dasharray: 5 2;' },
+    serious: { icon: '🟧', style: 'fill: #FFA66A; fill-opacity: 0; stroke: #FFA66A; stroke-width: 8; stroke-linejoin: round; stroke-dasharray: 5 2;' },
+    moderate: { icon: '🟨', style: 'fill: #ECDE05; fill-opacity: 0; stroke: #ECDE05; stroke-width: 8; stroke-linejoin: round; stroke-dasharray: 5 2;' },
+    minor: { icon: '🟦', style: 'fill: #4598FF; fill-opacity: 0; stroke: #4598FF; stroke-width: 8; stroke-linejoin: round; stroke-dasharray: 5 2;' },
     fixme: { icon: '🛠️' }
 }
 
@@ -104,6 +108,52 @@ const sortValidationsBySeverity = (a, b) => {
     if (aIndex < bIndex)
         return -1;
     return 0;
+}
+
+
+/**
+ * List of common data-test attribute names used for identifying elements in testing in priority order.
+ * @type {string[]}
+ */
+const dataTestAttributes = ['data-cy', 'data-testid', 'data-test', 'data-qa', 'data-test-id'];
+
+/**
+ * Improves the selectors in accessibility violation objects by replacing them with more stable
+ * data-cy, data-testid, etc.d attribute selectors if available on the target element.
+ *
+ * @function
+ * @param {Array<Object>} violations - Array of accessibility violation objects.
+ * @returns {Array<Object>} The violations array with improved selectors in each node's target.
+ *
+ * @example
+ * const improvedViolations = improveViolationSelectors(violations);
+ */
+const improveViolationSelectors = (violations) => {
+    return violations.map(violation => {
+        return {
+            ...violation,
+            nodes: violation.nodes.map(node => {
+                return {
+                    ...node,
+                    target: node.target.map(target => {
+                        // Attempt to find the DOM element for the target selector
+                        const el = Cypress.$(target)[0];
+                        if (el) {
+                            for (const attr of dataTestAttributes) {
+                                const val = el.getAttribute && el.getAttribute(attr);
+                                if (val) {
+                                    // Return a selector using the data-test attribute if found
+                                    return `[${attr}="${val}"]`;
+                                }
+                            }
+                        }
+                        // Fallback to the original selector if no data-test attribute is found
+                        return target;
+                    })
+                }
+            })
+        }
+    })
 }
 
 /**
