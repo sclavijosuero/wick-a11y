@@ -1,6 +1,7 @@
 # wick-a11y
 
-**wick-a11y** is a Cypress plugin designed for performing configurable accessibility tests. It allows you to easily incorporate accessibility checks into your End-to-End tests, log detailed information in the Cypress log, Cypress runner, generate HTML documents with screenshots of each violation for easier identification and resolution of accessibility issues, and provides audible information, all out-of-the-box. The plugin uses axe-core to deliver comprehensive accessibility testing.
+**wick-a11y** is A Cypress plugin for configurable accessibility analysis supporting WCAG 2.2 (A–AAA).
+It provides a detailed list of violations in the Cypress log, visual feedback directly in the Cypress runner, and generates a comprehensive, severity-based HTML report that includes per-violation details, fix guidance, and a screenshot with interactive elements for each accessibility issue. The plugin uses axe-core and cypress-axe to deliver comprehensive accessibility testing.
 
 ![wick-a11y Overview](/images/full-overview.gif)
 
