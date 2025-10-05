@@ -413,8 +413,8 @@ const buildHtmlReportBody = (reportInfo, options) => {
             .scroll-to-top-container {
                 display: flex;
                 justify-content: center;
-                margin-top: var(--spacing-md); /* Reduced margin */
-                margin-bottom: var(--spacing-md); /* Reduced margin */
+                margin-top: var(--spacing-lg); /* Reduced margin */
+                margin-bottom: var(--spacing-lg); /* Reduced margin */
             }
 
             /* Scroll to top button - distinctive blue styling */

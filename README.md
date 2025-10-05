@@ -1,6 +1,6 @@
 # wick-a11y
 
-**wick-a11y** is A Cypress plugin for configurable accessibility analysis supporting WCAG 2.2 (A–AAA).
+**wick-a11y** is a Cypress plugin for configurable accessibility analysis supporting WCAG 2.2 (A–AAA).
 It provides a detailed list of violations in the Cypress log, visual feedback directly in the Cypress runner, and generates a comprehensive, severity-based HTML report that includes per-violation details, fix guidance, and a screenshot with interactive elements for each accessibility issue. The plugin uses axe-core and cypress-axe to deliver comprehensive accessibility testing.
 
 ![wick-a11y Overview](/images/full-overview.gif)
@@ -18,35 +18,35 @@ Or the videos:
 
 ## MAIN FEATURES
 
-- **Comprehensive Accessibility Analysis**: Leverages cypress-axe plugin and axe-core®  for thorough accessibility checks. Axe-core® <https://github.com/dequelabs/axe-core> is a trademark of Deque Systems, Inc. <https://www.deque.com/> in the US and other countries.
+- **Comprehensive Accessibility Analysis**: Leverages axe-core® and cypress-axe plugin for thorough accessibility checks. Axe-core® <https://github.com/dequelabs/axe-core> is a trademark of Deque Systems, Inc. <https://www.deque.com/> in the US and other countries.
   
 - **Cypress Command**: Use the custom command `cy.checkAccessibility()` to run checks smoothly.
 
 - **Configurable**:
-  - Customize to include specific impact levels (severities), rules, and guidelines.
-  - You can separately configure impact levels that will cause the test to fail from those that will serve only as a warning, providing detailed information.
+  - Customize which impact levels (severities), rules, and guidelines to include.
+  - Configure specific impact levels to determine which should fail the test and which should act only as warnings, providing detailed feedback.
 
 - **Summary of Violations**:  Provides a summary for each test in the Cypress Log, detailing accessibility violations categorized by their severity.
   
 - **Detailed Violation Information**:
-  - Displays violations details in the Cypress log and browser console.
-  - Graphically shows affected DOM elements on the page, enclosing them in a colored box based on severity.
-  - Uses data-cy, data-testid, data-test, data-qa, and data-test-id selectors for accessibility violations when available **_(NEW in v2.3.0)_**.
+  - Displays detailed accessibility violation information in both the Cypress log and the browser console.
+  - Visually highlights affected DOM elements on the page, enclosing them in color-coded boxes based on severity.
+  - When available, uses `data-cy`, `data-testid`, `data-test`, `data-qa`, and `data-test-id` selectors to identify accessibility violations. **_(NEW in v2.3.0)_**
 
 - **Custom Styling**: Supports custom styling for accessibility issues based on severity level at the test level.
 
 - **Interactive Console**:
-  - Hovering over a violation in the Cypress Log highlights the affected DOM element on the page, and clicking it shows detailed issue information in the browser console.
-  - Hovering over a DOM element with a violation on the web page in the Cypress runner highlights it graphically and shows a tooltip with the violation information.
+  - **From the Cypress Log**: Hover over a violation to highlight the affected DOM element on the page. Click it to view detailed issue information in the browser console.
+  - **From the Cypress Runner**: Hover over any DOM element with a violation to highlight it visually and display a tooltip with the violation details.
 
 - **HTML Reports**:
   - **Out of the box**, ready to use with no additional setup.
-  - **Comprehensive severity-based report of accessibility issues**, including detailed information and clear fix recommendations.
+  - Comprehensive severity-based report of accessibility issues, including detailed information and clear fix recommendations.
   - **Enhanced screenshot view** featuring **interactive elements** for each accessibility issue, allowing improved visualization and exploration. **_(NEW in v2.4.0)_**.
   - **WCAG 2.2 AAA**-compliant reports, with **full keyboard navigation**. **_(NEW in v2.3.0)_**.
   - **Fully responsive design**, optimized for mobile devices with improved layout and usability. **_(NEW in v2.3.0)_**.
 
-- **Terminal Reports**: Produces terminal reports with details of the violations and how to fix them in tabular form.
+- **Terminal Reports**: Generates terminal reports in a clear tabular format, including details of each violation and guidance on how to fix them.
 
 - **Voice Support**: Provides audible information for accessibility issues at the suite level, test level, violation type level, and DOM element level, helping users identify issues through voice feedback.
 
@@ -643,10 +643,13 @@ Within each section, there is a list of violation types for that severity, and f
 ![HTML Accessibility Violations Details](/images/html-report-violations-details.png)
 
 
-#### Accessibility Violations ScreenShot
+#### Interactive Accessibility Violations ScreenShot
 
 At the end of the report, there is a section that includes a screenshot showing the elements affected by accessibility issues, color-coded by severity.
 The screenshot features an interactive layout that highlights each accessibility issue on hover, and displays a tooltip on click with detailed information about the violation and guidance on how to fix it.
+
+Also this section includes a button to return to the top of the page, and also a disclaimer with a reference to axe-core®.
+
 
 ![HTML Accessibility Violations ScreenShot](/images/html-report-violations-screenshot.png)
 
