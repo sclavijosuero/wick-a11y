@@ -15,7 +15,7 @@ describe('OTHER ACCESSIBILITY TESTS', { tags: ['@accessibility'] }, () => {
         // cy.checkAccessibility()
     });
 
-    it('Test practicesoftwaretesting.com Accessibility', {defaultCommandTimeout: 15000}, () => {
+    it.only('Test practicesoftwaretesting.com Accessibility', {defaultCommandTimeout: 15000}, () => {
         cy.visit('https://practicesoftwaretesting.com/#/')
         cy.wait(2000) // Using cy.wait(TIME) is a very bad practice, but it is used for simplicity in this example
 
