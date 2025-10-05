@@ -1,6 +1,7 @@
 # wick-a11y
 
-**wick-a11y** is a Cypress plugin designed for performing configurable accessibility tests. It allows you to easily incorporate accessibility checks into your End-to-End tests, log detailed information in the Cypress log, and generate HTML documents with screenshots of each violation for easier identification and resolution of accessibility issues, all out-of-the-box. The plugin uses axe-core to deliver comprehensive accessibility testing.
+**wick-a11y** is a Cypress plugin for configurable accessibility analysis supporting WCAG 2.2 (A–AAA).
+It provides a detailed list of violations in the Cypress log, visual feedback directly in the Cypress runner, and generates a comprehensive, severity-based HTML report that includes per-violation details, fix guidance, and a screenshot with interactive elements for each accessibility issue. The plugin uses axe-core and cypress-axe to deliver comprehensive accessibility testing.
 
 ![wick-a11y Overview](/images/full-overview.gif)
 
@@ -17,39 +18,39 @@ Or the videos:
 
 ## MAIN FEATURES
 
-- **Comprehensive Accessibility Analysis**: Leverages cypress-axe plugin and axe-core®  for thorough accessibility checks. Axe-core® <https://github.com/dequelabs/axe-core> is a trademark of Deque Systems, Inc. <https://www.deque.com/> in the US and other countries.
+- **Comprehensive Accessibility Analysis**: Leverages axe-core® and cypress-axe plugin for thorough accessibility checks. Axe-core® <https://github.com/dequelabs/axe-core> is a trademark of Deque Systems, Inc. <https://www.deque.com/> in the US and other countries.
   
 - **Cypress Command**: Use the custom command `cy.checkAccessibility()` to run checks smoothly.
 
 - **Configurable**:
-  - Customize to include specific impact levels (severities), rules, and guidelines.
-  - You can separately configure impact levels that will cause the test to fail from those that will serve only as a warning, providing detailed information.
+  - Customize which impact levels (severities), rules, and guidelines to include.
+  - Configure specific impact levels to determine which should fail the test and which should act only as warnings, providing detailed feedback.
 
 - **Summary of Violations**:  Provides a summary for each test in the Cypress Log, detailing accessibility violations categorized by their severity.
   
 - **Detailed Violation Information**:
-  - Displays violations details in the Cypress log and browser console.
-  - Graphically shows affected DOM elements on the page, enclosing them in a colored box based on severity.
-  - Uses data-cy, data-testid, data-test, data-qa, and data-test-id selectors for accessibility violations when available **(NEW in v2.3.0)**.
+  - Displays detailed accessibility violation information in both the Cypress log and the browser console.
+  - Visually highlights affected DOM elements on the page, enclosing them in color-coded boxes based on severity.
+  - When available, uses `data-cy`, `data-testid`, `data-test`, `data-qa`, and `data-test-id` selectors to identify accessibility violations. **_(NEW in v2.3.0)_**
 
 - **Custom Styling**: Supports custom styling for accessibility issues based on severity level at the test level.
 
 - **Interactive Console**:
-  - Hovering over a violation in the Cypress Log highlights the affected DOM element on the page, and clicking it shows detailed issue information in the browser console.
-  - Hovering over a DOM element with a violation on the web page in the Cypress runner highlights it graphically and shows a tooltip with the violation information.
+  - **From the Cypress Log**: Hover over a violation to highlight the affected DOM element on the page. Click it to view detailed issue information in the browser console.
+  - **From the Cypress Runner**: Hover over any DOM element with a violation to highlight it visually and display a tooltip with the violation details.
 
 - **HTML Reports**:
-  - Complete with out-of-the-box screenshots, per-issue details, and clear fix guidance.
-  - WCAG 2.2 AAA compliant reports with full keyboard navigation **(NEW in v2.3.0)**.
-  - Fully mobile responsible, and improved design and usability, and fully mobile responsible **(NEW in v2.3.0)**.
+  - **Out of the box**, ready to use with no additional setup.
+  - Comprehensive severity-based report of accessibility issues, including detailed information and clear fix recommendations.
+  - **Enhanced screenshot view** featuring **interactive elements** for each accessibility issue, allowing improved visualization and exploration. **_(NEW in v2.4.0)_**.
+  - **WCAG 2.2 AAA**-compliant reports, with **full keyboard navigation**. **_(NEW in v2.3.0)_**.
+  - **Fully responsive design**, optimized for mobile devices with improved layout and usability. **_(NEW in v2.3.0)_**.
 
-  - Improves HTML report: improved usability, full keyboard navigation support, and WCAG 2.2 AAA compliance, and better design.
-
-- **Terminal Reports**: Produces terminal reports with details of the violations and how to fix them in tabular form.
+- **Terminal Reports**: Generates terminal reports in a clear tabular format, including details of each violation and guidance on how to fix them.
 
 - **Voice Support**: Provides audible information for accessibility issues at the suite level, test level, violation type level, and DOM element level, helping users identify issues through voice feedback.
 
-- **Cypress v15+ Support**:  Fully supported in Cypress v15.0.0 or greater **(NEW in v2.2.0)**.
+- **Cypress v15+ Support**:  Fully supported in Cypress v15.0.0 or greater **_(NEW in v2.2.0)_**.
 
 > ✔️ **Before launching the accessibility analysis, ensure what you want to analyze is fully rendered on the page.**
 > 
@@ -356,9 +357,10 @@ In this basic usage example, the `cy.checkAccessibility()` function is called wi
 - Run the rules for WCAG 2.0 Level A, WCAG 2.0 Level AA, WCAG 2.1 Level A, WCAG 2.1 Level AA, and best practices.
 - Generate an HTML report for the identified violations.
 
-> ⚠️ **Note:** Accessibility analysis can take some time, so it is recommended to increase the **`defaultCommandTimeout`** when running an accessibility test. You can configure this timeout either directly when defining the test or in your **`cypress.config.js`** file.
+> ⚠️ Before launching the accessibility analysis, ensure that what you want to analyze is fully rendered on the page. Only DOM elements that are visible in the browser viewport will be considered, as per the axe-core® plugin (hidden elements will be ignored).**
 >
-> **Also, before launching the accessibility analysis, ensure that what you want to analyze is fully rendered on the page. Only DOM elements that are visible in the browser viewport will be considered, as per the axe-core® plugin (hidden elements will be ignored).**
+> ⚠️ **Accessibility analysis can take some time, so it is recommended to increase the _`defaultCommandTimeout`_ when running an accessibility test. You can configure this timeout either directly when defining the test or in your _`cypress.config.js`_ file.**
+
 
 ```javascript
 describe('Accessibility Test', () => {
@@ -573,7 +575,7 @@ Same custom styles shown in the HTML report:
 
 ### HTML Report
 
-The HTML accessibility report is WCAG 2.2 AAA compliant (or at least mostly compliant), supports full keyboard navigation and it is mobile responsible.
+The HTML accessibility report is mostly **WCAG 2.2 AAA compliant**, supports **full keyboard navigation** and it is **mobile responsive**.
 
 When the option **`generateReport`** is true (which is the default setting), an HTML report with all the accessibility violation details will be generated. By default, accessibility HTML reports are created in the `cypress/accessibility` folder. You can customize this location by setting the `accessibilityFolder` parameter in your `cypress.config.js` configuration file.
 
@@ -596,9 +598,9 @@ The image file is also referenced within the HTML report.
 
 At the top of the report, it is displayed a card with a **Report Summary**. Accessibility issues are grouped into cards and ordered by severity. All cards in the report are expandable and collapsible.
 
-The report is _mobile responsible_ by stacking the cards, _WCAG 2.2 AAA compliant_ and fully supports _keyboard navigation_.
+At the end of the report, a **screenshot** of the page is provided, showing violations boxed and color-coded by severity. Each issue includes **interactive elements** that display detailed information and fix guidance when clicked.
 
-A screenshot of the page shows violations boxed and color‑coded by severity is shown at the end of the report.
+Also, the report is _mobile responsive_ by stacking the cards, mostly _WCAG 2.2 AAA compliant_ and fully supports _keyboard navigation_.
 
 [Watch the video](/videos/README.md#wick-a11y-accessibility-report "Accessibility Report")
 
@@ -641,13 +643,20 @@ Within each section, there is a list of violation types for that severity, and f
 ![HTML Accessibility Violations Details](/images/html-report-violations-details.png)
 
 
-#### Accessibility Violations ScreenShot
+#### Interactive Accessibility Violations ScreenShot
 
-At the end of the report, there is a section that includes a screenshot showing the elements affected by accessibility issues, color‑coded by severity. 
+At the end of the report, there is a section that includes a screenshot showing the elements affected by accessibility issues, color-coded by severity.
+The screenshot features an interactive layout that highlights each accessibility issue on hover, and displays a tooltip on click with detailed information about the violation and guidance on how to fix it.
 
-This section also includes a disclaimer, a reference to axe-core®, and a button to return to the top of the page.
+Also this section includes a button to return to the top of the page, and also a disclaimer with a reference to axe-core®.
+
 
 ![HTML Accessibility Violations ScreenShot](/images/html-report-violations-screenshot.png)
+
+
+#### Report Footer
+
+This section includes a button to return to the top of the page, and also a disclaimer with a reference to axe-core®.
 
 
 ### Terminal Report
@@ -691,10 +700,14 @@ Thank you for your support!
 
 ## CHANGELOG
 
+### v2.4.0
+
+- Screenshot with interactive elements highlighting accessibility issues.
+
 ### v2.3.0
 
 - Adds accessibility analysis for WCAG 2.2 levels A, AA, and AAA.
-- Improves HTML report: improved usability, full keyboard navigation support, and WCAG 2.2 AAA compliance, and better design.
+- Improves HTML report: full mobile responsive, improved usability, full keyboard navigation support, mostly WCAG 2.2 AAA compliant.
 - Uses `data-cy`, `data-testid`, `data-test`, `data-qa`, and `data-test-id` selectors for accessibility violations when available.
 - Displays accessibility issues in the Cypress Runner UI with dashed outlines by default.
 
@@ -785,6 +798,8 @@ Thank you for your support!
 - [**Joan Esquivel Montero**](https://www.linkedin.com/in/joanesquivel/ "Joan Esquivel Montero") — Video: [Cypress Accessibility Testing powered by WICK-A11Y](https://www.youtube.com/watch?v=LVxyJMW6EJw "Cypress Accessibility Testing powered by WICK-A11Y"), and [Spanish version](https://www.youtube.com/watch?v=96Sz2QCXE7I "Spanish version")
 
 - [**Ioan Solderea**](https://www.linkedin.com/in/%F0%9F%95%B5ioan-s-b0928516/ "Ioan Solderea") — Video: [European Accessibility Act 2025: Compliance Deadline Nears – How Cypress.io Can Save Your Business](https://www.youtube.com/watch?v=joP3TNdLjF8 "European Accessibility Act 2025: Compliance Deadline Nears – How Cypress.io Can Save Your Business")
+
+- [**Ioan Solderea**](https://www.linkedin.com/in/%F0%9F%95%B5ioan-s-b0928516/ "Ioan Solderea") — Video: [Wick A11y – Cypress Plugin for Automated Accessibility Checks](https://www.youtube.com/watch?v=joP3TNdLjF8 "Wick A11y – Cypress Plugin for Automated Accessibility Checks")
 
 - [**Gleb Bahmutov**](https://www.linkedin.com/in/bahmutov/ "Gleb Bahmutov") — Cypress Tips Newsletter: [Sept 2024 - WICK-A11Y plugin with voice support](https://cypresstips.substack.com/i/149058474/wick-ay-plugin-with-voice-support "Sept 2024 - WICK-A11Y plugin with voice support"), and [Dec 2024 - Sebastian Clavijo's WICK-A11Y](https://cypresstips.substack.com/i/153579922/sebastian-clavijo-suero "[Dec 2024 - Sebastian Clavijo's WICK-A11Y") 
 

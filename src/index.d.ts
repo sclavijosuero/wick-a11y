@@ -24,7 +24,7 @@ declare global {
              *   - {Object} rules: Enable or disable specific rules. E.g., { 'color-contrast': { enabled: false } }.
              *   - {string} reporter: Reporter version to use. E.g., 'v2'.
              *   - {string[]} resultTypes: Result types to process, like ['violations', 'inapplicable'].
-             *   - Other options like selectors, ancestry, xpath, etc., to customize rule execution.
+             *   - Other options like selectors, ancestry, xpath, etc., to customize rule execution (See https://www.deque.com/axe/core-documentation/api-documentation/).
              * @returns {void}
              *
              * @example

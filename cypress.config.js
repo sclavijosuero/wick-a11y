@@ -8,7 +8,7 @@ module.exports = defineConfig({
   viewportHeight: 1080,
 
   retries: {
-    openMode: 1,
+    openMode: 0,
     runMode: 0,
   },
 

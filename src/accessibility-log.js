@@ -345,7 +345,7 @@ const getFailureSummaryTooltipScreen = (summary) => {
         if (/^Fix/.test(line)) {
             return line;
         }
-        return `      • ${line}`
+        return `  • ${line}`
     }).join('\n')
 }
 
@@ -389,14 +389,18 @@ const flagViolationOnPage = (doc, elem, violation, node) => {
     div.setAttribute('data-impact', impact)
     div.setAttribute('style', `width: ${boundingRect.width}px; height: ${boundingRect.height}px; top: ${boundingRect.y}px; left: ${boundingRect.x}px;`)
 
-    // SVG
+    // SVG with viewBox matching the container dimensions and proper aspect ratio preservation
     const svg = document.createElementNS(namespaceURI, 'svg')
+    svg.setAttribute('viewBox', `0 0 ${boundingRect.width} ${boundingRect.height}`)
+    svg.setAttribute('preserveAspectRatio', 'xMinYMin meet')
 
     // RECT
     const rect = document.createElementNS(namespaceURI, 'rect');
     rect.setAttribute('class', `enabled`)
     rect.setAttribute('x', '0')
     rect.setAttribute('y', '0')
+    rect.setAttribute('width', `${boundingRect.width}`)
+    rect.setAttribute('height', `${boundingRect.height}`)
     rect.setAttribute('rx', '10')
     rect.setAttribute('ry', '10')
 
@@ -446,12 +450,12 @@ const flagViolationOnPage = (doc, elem, violation, node) => {
  * @returns {string} The tooltip violation message.
  */
 const getTooltipViolation = ({ impact, description, help, failureSummary, html, target, impactIcon }) => {
-    return `
-◼️ DOM element selector ➜ ${target}
-◼️ Impact ➜ ${impactIcon} ${impact.toUpperCase()}
-◼️ Help ➜ ${help.toUpperCase()}
-◼️ Description ➜ ${description}
-◼️ Failure Summary ➜ ${getFailureSummaryTooltipScreen(failureSummary)}
+    const impactCapitalized = impact.charAt(0).toUpperCase() + impact.slice(1);
+    return `SELECTOR:\u00A0\u00A0 ${target}
+IMPACT:\u00A0\u00A0\u00A0 ${impactIcon} ${impactCapitalized}
+ISSUE:\u00A0\u00A0 ${help}
+DESCRIPTION:\u00A0\u00A0 ${description}
+${getFailureSummaryTooltipScreen(failureSummary).replace('Fix any of the following:', 'FIX ANY OF THE FOLLOWING:').replace('Fix all of the following:', 'FIX ALL OF THE FOLLOWING:').replaceAll("•", "\u00A0\u00A0•")}
 `
 }
 
