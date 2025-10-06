@@ -1,5 +1,4 @@
 import { 
-    help,
     escapeHTML,
     getHumanReadableFormat
 } from '../cypress/support/utils'
@@ -26,691 +25,165 @@ const buildBasicHtmlReportBody = (reportInfo, options) => {
     const { testResults, violations, accessibilityContext, accessibilityOptions, impactStyling, impactPriority } = reportInfo
     const { testSpec, testName, url, reportGeneratedOn, issuesScreenshotFilePath } = options
 
+    // Sort violations by severity (critical first, then serious, moderate, minor)
+    const sortedViolations = violations.sort((a, b) => {
+        return impactPriority.indexOf(a.impact) - impactPriority.indexOf(b.impact)
+    })
+
     const fileBody = `<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wick-A11y Basic Accessibility Report</title>
-    <style>
-        /* Basic Reset */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        /* Root Variables */
-        :root {
-            --color-bg: #ffffff;
-            --color-text: #1a1a1a;
-            --color-text-muted: #666666;
-            --color-border: #e0e0e0;
-            --color-link: #0066cc;
-            --color-link-hover: #004499;
-            --color-critical: #dc2626;
-            --color-serious: #ea580c;
-            --color-moderate: #d97706;
-            --color-minor: #2563eb;
-            --color-bg-critical: #fef2f2;
-            --color-bg-serious: #fff7ed;
-            --color-bg-moderate: #fffbeb;
-            --color-bg-minor: #eff6ff;
-            --spacing: 16px;
-            --border-radius: 4px;
-            --font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        }
-
-        body {
-            font-family: var(--font-family);
-            line-height: 1.6;
-            color: var(--color-text);
-            background: var(--color-bg);
-            padding: var(--spacing);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-
-        /* Header */
-        .header {
-            text-align: center;
-            padding: var(--spacing) 0;
-            margin-bottom: var(--spacing);
-        }
-
-        .header h1 {
-            font-size: 24px;
-            font-weight: 600;
-            margin: 0;
-        }
-
-        /* Summary Section */
-        .summary {
-            background: #f9fafb;
-            border: 1px solid var(--color-border);
-            border-radius: var(--border-radius);
-            padding: 12px;
-            margin-bottom: var(--spacing);
-        }
-
-        .summary h2 {
-            font-size: 18px;
-            font-weight: 600;
-            margin-bottom: 10px;
-            padding-bottom: 6px;
-            border-bottom: 1px solid var(--color-border);
-        }
-
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .summary-item {
-            font-size: 14px;
-            padding: 6px 8px;
-            background: #ffffff;
-            border-radius: var(--border-radius);
-            border: 1px solid var(--color-border);
-        }
-
-        .summary-item strong {
-            display: block;
-            color: var(--color-text-muted);
-            font-size: 11px;
-            text-transform: uppercase;
-            letter-spacing: 0.8px;
-            margin-bottom: 4px;
-            font-weight: 700;
-        }
-
-        .summary-item span {
-            word-break: break-word;
-            color: var(--color-text);
-            font-size: 14px;
-            font-weight: 500;
-        }
-
-        /* Violations Summary */
-        .violations-summary {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 10px;
-        }
-
-        .violation-count {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 10px;
-            background: #ffffff;
-            border: 2px solid var(--color-border);
-            border-radius: var(--border-radius);
-            font-size: 14px;
-            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        }
-
-        .violation-count .icon {
-            font-size: 18px;
-        }
-
-        .violation-count .label {
-            font-weight: 700;
-            text-transform: uppercase;
-            font-size: 11px;
-            letter-spacing: 0.5px;
-            color: var(--color-text);
-        }
-
-        .violation-count .count {
-            color: var(--color-text);
-            font-weight: 600;
-            font-size: 15px;
-            margin-left: 4px;
-        }
-
-        /* Violations Section */
-        .violations {
-            margin-top: var(--spacing);
-        }
-
-        .violations h2 {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: var(--spacing);
-            text-align: center;
-        }
-
-        .severity-section {
-            margin-bottom: var(--spacing);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        }
-
-        .severity-header {
-            padding: 10px 12px;
-            font-size: 16px;
-            font-weight: 700;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .severity-section.critical {
-            border: 2px solid var(--color-critical);
-        }
-
-        .severity-section.critical .severity-header {
-            background: linear-gradient(135deg, #fef2f2 0%, #fee2e2 100%);
-            color: var(--color-critical);
-            border-bottom: 2px solid var(--color-critical);
-        }
-
-        .severity-section.serious {
-            border: 2px solid var(--color-serious);
-        }
-
-        .severity-section.serious .severity-header {
-            background: linear-gradient(135deg, #fff7ed 0%, #ffedd5 100%);
-            color: var(--color-serious);
-            border-bottom: 2px solid var(--color-serious);
-        }
-
-        .severity-section.moderate {
-            border: 2px solid var(--color-moderate);
-        }
-
-        .severity-section.moderate .severity-header {
-            background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
-            color: var(--color-moderate);
-            border-bottom: 2px solid var(--color-moderate);
-        }
-
-        .severity-section.minor {
-            border: 2px solid var(--color-minor);
-        }
-
-        .severity-section.minor .severity-header {
-            background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
-            color: var(--color-minor);
-            border-bottom: 2px solid var(--color-minor);
-        }
-
-        .violation-item {
-            padding: 12px;
-            background: #ffffff;
-            position: relative;
-        }
-
-        .violation-item + .violation-item {
-            border-top: 3px solid var(--color-border);
-        }
-
-        .violation-item + .violation-item::before {
-            content: '';
-            position: absolute;
-            top: -3px;
-            left: 0;
-            right: 0;
-            height: 3px;
-            background: linear-gradient(90deg, 
-                transparent 0%, 
-                var(--color-border) 10%, 
-                var(--color-border) 90%, 
-                transparent 100%);
-        }
-
-        .violation-title {
-            font-size: 15px;
-            font-weight: 600;
-            margin-bottom: 6px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            flex-wrap: wrap;
-        }
-
-        .violation-rule {
-            font-size: 13px;
-            color: var(--color-text-muted);
-            font-style: italic;
-            font-weight: normal;
-        }
-
-        .violation-meta {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 10px;
-            flex-wrap: wrap;
-        }
-
-        .violation-link {
-            display: inline-block;
-            padding: 4px 12px;
-            background: var(--color-link);
-            color: white;
-            text-decoration: none;
-            border-radius: var(--border-radius);
-            font-size: 13px;
-            transition: background 0.2s;
-        }
-
-        .violation-link:hover {
-            background: var(--color-link-hover);
-        }
-
-        .violation-tags {
-            font-size: 12px;
-            color: var(--color-text-muted);
-        }
-
-        .affected-elements {
-            margin-top: 10px;
-        }
-
-        .affected-elements h4 {
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 8px;
-            color: var(--color-text-muted);
-        }
-
-        .elements-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 8px;
-        }
-
-        @media (max-width: 768px) {
-            .elements-grid {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        .element-item {
-            background: #f9fafb;
-            border: 1px solid var(--color-border);
-            border-radius: var(--border-radius);
-            padding: 8px 10px;
-            position: relative;
-            cursor: help;
-            transition: all 0.2s ease;
-            min-height: 44px; /* WCAG 2.2 AAA: Minimum touch target */
-            display: flex;
-            align-items: center;
-        }
-
-        .element-item:hover {
-            background: #ffffff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-            transform: translateY(-2px);
-        }
-
-        .element-item:focus {
-            outline: 3px solid var(--color-link);
-            outline-offset: 2px;
-            background: #ffffff;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        .element-item:focus-within {
-            outline: 3px solid var(--color-link);
-            outline-offset: 2px;
-        }
-
-        /* Ensure tooltips show on focus for keyboard users */
-        .element-item:focus .tooltip {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .element-selector {
-            font-family: 'Monaco', 'Menlo', monospace;
-            font-size: 13px;
-            color: var(--color-text);
-            word-break: break-all;
-            line-height: 1.5;
-        }
-
-        /* Tooltip styles */
-        .element-item .tooltip {
-            visibility: hidden;
-            opacity: 0;
-            position: absolute;
-            z-index: 1000;
-            background: #1a1a1a;
-            color: #ffffff;
-            padding: 12px 16px;
-            border-radius: var(--border-radius);
-            font-size: 13px;
-            line-height: 1.6;
-            width: 300px;
-            max-width: 90vw;
-            bottom: 100%;
-            left: 50%;
-            transform: translateX(-50%) translateY(-8px);
-            margin-bottom: 8px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-            transition: opacity 0.2s ease, visibility 0.2s ease;
-            pointer-events: none;
-        }
-
-        .element-item .tooltip::after {
-            content: "";
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border: 6px solid transparent;
-            border-top-color: #1a1a1a;
-        }
-
-        .element-item:hover .tooltip,
-        .element-item:focus-within .tooltip {
-            visibility: visible;
-            opacity: 1;
-        }
-
-        .tooltip p {
-            margin: 4px 0;
-        }
-
-        .tooltip p:first-child {
-            margin-top: 0;
-        }
-
-        .tooltip p:last-child {
-            margin-bottom: 0;
-        }
-
-        .tooltip strong {
-            color: #ffffff;
-            font-weight: 600;
-        }
-
-        /* Adjust tooltip position on mobile */
-        @media (max-width: 768px) {
-            .element-item .tooltip {
-                width: calc(100vw - 32px);
-                left: 50%;
-                transform: translateX(-50%) translateY(-8px);
-            }
-        }
-
-        /* Screenshot Section */
-        .screenshot-section {
-            margin-top: calc(var(--spacing) * 2);
-            text-align: center;
-        }
-
-        .screenshot-section h2 {
-            font-size: 20px;
-            font-weight: 600;
-            margin-bottom: var(--spacing);
-        }
-
-        .screenshot-container {
-            border: 1px solid var(--color-border);
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            display: inline-block;
-            max-width: 100%;
-        }
-
-        .screenshot-image {
-            display: block;
-            max-width: 100%;
-            height: auto;
-        }
-
-        /* Footer */
-        .footer {
-            margin-top: calc(var(--spacing) * 2);
-            padding: 12px;
-            background: #f9fafb;
-            border-radius: var(--border-radius);
-            text-align: center;
-            font-size: 13px;
-            color: var(--color-text-muted);
-            line-height: 1.6;
-        }
-
-        .footer a {
-            color: var(--color-link);
-            text-decoration: none;
-        }
-
-        .footer a:hover {
-            text-decoration: underline;
-        }
-
-        /* Links - WCAG 2.2 AAA Compliant */
-        a {
-            color: var(--color-link);
-            text-decoration: underline;
-            transition: color 0.2s ease;
-        }
-
-        a:hover {
-            color: var(--color-link-hover);
-        }
-
-        a:focus {
-            outline: 3px solid var(--color-link);
-            outline-offset: 2px;
-            border-radius: 2px;
-        }
-
-        /* Button focus states - WCAG 2.2 AAA */
-        .violation-link:focus {
-            outline: 3px solid var(--color-link);
-            outline-offset: 2px;
-        }
-
-        /* Print Styles */
-        @media print {
-            body {
-                padding: 0;
-            }
-            
-            .violation-item {
-                page-break-inside: avoid;
-            }
-        }
-
-        /* Mobile Responsive */
-        @media (max-width: 768px) {
-            body {
-                padding: 8px;
-            }
-
-            .header h1 {
-                font-size: 20px;
-            }
-
-            .summary-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .violations-summary {
-                flex-direction: column;
-            }
-
-            .violation-count {
-                width: 100%;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wick-A11y Basic Accessibility Report - ${escapeHTML(testName)}</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{
+--c-text:#1a1a1a;
+--c-muted:#666;
+--c-border:#ddd;
+--c-link:#0056b3;
+--c-crit:#dc2626;
+--c-ser:#ea580c;
+--c-mod:#d97706;
+--c-min:#2563eb;
+--s:14px;
+--f:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif
+}
+body{font:var(--s)/1.6 var(--f);color:var(--c-text);max-width:1200px;margin:0 auto;padding:14px}
+h1{font-size:22px;font-weight:600;margin-bottom:14px;text-align:center}
+h2{font-size:18px;font-weight:600;margin:18px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--c-border)}
+a{color:var(--c-link);text-decoration:underline}
+a:hover{text-decoration:none}
+a:focus{outline:3px solid var(--c-link);outline-offset:2px}
+.info{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin-bottom:14px;font-size:13px}
+.info>div{display:flex;flex-direction:column;gap:4px;background:#fff;padding:12px;border-radius:4px;border:2px solid var(--c-border);box-shadow:0 1px 3px rgba(0,0,0,.06)}
+.info dt{color:var(--c-muted);font-size:10px;text-transform:uppercase;letter-spacing:.8px;font-weight:700;background:#f8f9fa;display:inline-block;padding:3px 8px;border-radius:3px;width:fit-content;margin-bottom:2px}
+.info dd{color:var(--c-text);font-size:14px;font-weight:600;word-break:break-word;line-height:1.4}
+.counts{display:flex;gap:12px;flex-wrap:wrap;padding:12px 0;border-top:2px solid var(--c-border);margin-bottom:16px}
+.counts span{display:inline-flex;align-items:center;gap:8px;font-size:13px;font-weight:600;padding:8px 14px;border-radius:6px;}
+.counts span[data-severity="critical"]{background:#fee2e2;color:var(--c-crit)}
+.counts span[data-severity="serious"]{background:#ffedd5;color:var(--c-ser)}
+.counts span[data-severity="moderate"]{background:#fef3c7;color:var(--c-mod)}
+.counts span[data-severity="minor"]{background:#dbeafe;color:var(--c-min)}
+.counts b{font-weight:700;font-size:18px;margin-left:2px}
+.vlist{list-style:none}
+.v{border-left:4px solid;padding:10px 0 10px 12px;margin-bottom:30px}
+.v.crit{border-color:var(--c-crit)}
+.v.ser{border-color:var(--c-ser)}
+.v.mod{border-color:var(--c-mod)}
+.v.min{border-color:var(--c-min)}
+.vtitle{font-size:15px;font-weight:600;margin-bottom:6px;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.sev{font-size:16px}
+.crit .sev{color:var(--c-crit)}
+.ser .sev{color:var(--c-ser)}
+.mod .sev{color:var(--c-mod)}
+.min .sev{color:var(--c-min)}
+.vmeta{font-size:13px;color:var(--c-muted);margin-bottom:8px}
+.vmeta a{font-size:13px;padding:3px 10px;background:var(--c-link);color:#fff;text-decoration:none;border-radius:3px;margin-right:8px}
+.vmeta a:hover{background:#003d82}
+.vmeta a:focus{outline:2px solid var(--c-link);outline-offset:2px}
+.elems{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px 18px;margin-top:8px}
+.elem{position:relative;min-height:44px;padding:8px;border-bottom:1px solid var(--c-border);font-family:Monaco,Menlo,monospace;font-size:13px;line-height:1.4;cursor:help;transition:background .15s ease}
+.elem:hover{background:#e3f2fd}
+.elem:focus{outline:2px solid var(--c-link);outline-offset:2px;background:#e3f2fd}
+.elem .tip{visibility:hidden;opacity:0;position:absolute;z-index:100;background:#222;color:#fff;padding:10px 14px;border-radius:3px;font-size:13px;line-height:1.5;width:280px;max-width:90vw;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:6px;box-shadow:0 2px 8px rgba(0,0,0,.3);transition:opacity .2s,visibility .2s;pointer-events:none;font-family:var(--f)}
+.elem .tip::after{content:"";position:absolute;top:100%;left:50%;transform:translateX(-50%);border:5px solid transparent;border-top-color:#222}
+.elem:hover .tip,.elem:focus .tip{visibility:visible;opacity:1}
+.tip p{margin:3px 0}
+.tip p:first-child{margin-top:0}
+.tip p:last-child{margin-bottom:0}
+.tip strong{font-weight:600}
+.shot{margin:20px 0;}
+.shot img{max-width:100%;border:1px solid var(--c-border);display:block;margin:0 auto}
+.foot{margin-top:20px;padding-top:12px;border-top:1px solid var(--c-border);text-align:center;font-size:12px;color:var(--c-muted);line-height:1.6}
+@media(max-width:768px){
+body{padding:10px}
+h1{font-size:20px}
+.info{grid-template-columns:1fr}
+.counts{flex-direction:column;gap:8px}
+.elems{grid-template-columns:1fr}
+.elem .tip{width:calc(100vw - 24px)}
+}
+@media print{
+body{padding:0}
+.v{page-break-inside:avoid}
+}
+</style>
 </head>
 <body>
-    <div class="container">
-        <header class="header">
-            <h1>Wick-A11y Basic Accessibility Report</h1>
-        </header>
+<h1>Wick-A11y Basic Accessibility Report</h1>
 
-        <main>
-            <!-- Summary Section -->
-            <section class="summary">
-                <h2>Report Summary</h2>
-                
-                <div class="summary-grid">
-                    <div class="summary-item">
-                        <strong>Spec File</strong>
-                        <span>${escapeHTML(testSpec)}</span>
-                    </div>
-                    <div class="summary-item">
-                        <strong>Test Name</strong>
-                        <span>${escapeHTML(testName)}</span>
-                    </div>
-                    <div class="summary-item">
-                        <strong>Page URL</strong>
-                        <span><a href="${url}" target="_blank" rel="noopener noreferrer">${escapeHTML(url)}</a></span>
-                    </div>
-                    <div class="summary-item">
-                        <strong>Generated On</strong>
-                        <span>${reportGeneratedOn}</span>
-                    </div>
-                    <div class="summary-item">
-                        <strong>Context</strong>
-                        <span>${getHumanReadableFormat(accessibilityContext)}</span>
-                    </div>
-                    <div class="summary-item">
-                        <strong>Tags</strong>
-                        <span>${accessibilityOptions.runOnly.join(', ')}</span>
-                    </div>
-                    ${accessibilityOptions.rules ? `
-                        <div class="summary-item">
-                            <strong>Rules</strong>
-                            <span>${getHumanReadableFormat(accessibilityOptions.rules)}</span>
-                        </div>
-                    ` : ''}
-                </div>
+<div class="info">
+<div>
+<dt>Test</dt>
+<dd>${escapeHTML(testSpec)} › ${escapeHTML(testName)}</dd>
+</div>
+<div>
+<dt>URL</dt>
+<dd><a href="${url}" target="_blank" rel="noopener">${escapeHTML(url)}</a></dd>
+</div>
+<div>
+<dt>Date</dt>
+<dd>${reportGeneratedOn}</dd>
+</div>
+<div>
+<dt>Context</dt>
+<dd>${getHumanReadableFormat(accessibilityContext)}</dd>
+</div>
+<div>
+<dt>Tags</dt>
+<dd>${accessibilityOptions.runOnly.join(', ')}</dd>
+</div>
+${accessibilityOptions.rules ? `<div><dt>Rules</dt><dd>${getHumanReadableFormat(accessibilityOptions.rules)}</dd></div>` : ''}
+</div>
 
-                <div class="violations-summary">
-                    ${impactPriority.map((impact) => {
-                        const totalIssues = testResults.testSummary[impact] !== undefined ? testResults.testSummary[impact] : 'n/a'
-                        return `
-                            <div class="violation-count">
-                                <span class="icon">${impactStyling[impact].icon}</span>
-                                <span class="label">${impact}</span>
-                                <span class="count">${totalIssues}</span>
-                            </div>
-                        `
-                    }).join('')}
-                </div>
-            </section>
+<div class="counts">
+${impactPriority.map((impact) => {
+    const count = testResults.testSummary[impact] !== undefined ? testResults.testSummary[impact] : 'n/a'
+    return `<span data-severity="${impact}">${impactStyling[impact].icon} <span style="text-transform:uppercase;letter-spacing:.5px">${impact}</span> <b>${count}</b></span>`
+}).join('')}
+</div>
 
-            <!-- Violations Details -->
-            <section class="violations">
-                <h2>Accessibility Violations Details</h2>
-                
-                ${impactPriority.map((impact) => {
-                    // Skip if this impact level was not part of the analysis
-                    const totalIssuesInSummary = testResults.testSummary[impact];
-                    if (totalIssuesInSummary === undefined || totalIssuesInSummary === 'n/a') {
-                        return '';
-                    }
+<h2>Violations</h2>
 
-                    const violationsForImpact = violations.filter(violation => violation.impact === impact);
-                    const violationCount = violationsForImpact.length;
-                    
-                    if (violationCount === 0) {
-                        return `
-                            <div class="severity-section ${impact}">
-                                <div class="severity-header">
-                                    <span>${impactStyling[impact].icon}</span>
-                                    <span>${impact.toUpperCase()} VIOLATIONS (${violationCount})</span>
-                                </div>
-                                <div class="violation-item">
-                                    <p style="text-align: center; color: var(--color-text-muted); font-style: italic;">
-                                        No ${impact} violations found.
-                                    </p>
-                                </div>
-                            </div>
-                        `;
-                    }
-                    
-                    return `
-                        <div class="severity-section ${impact}">
-                            <div class="severity-header">
-                                <span>${impactStyling[impact].icon}</span>
-                                <span>${impact.toUpperCase()} VIOLATIONS (${violationCount})</span>
-                            </div>
-                            ${violationsForImpact.map((violation) => `
-                                <div class="violation-item">
-                                    <div class="violation-title">
-                                        <span>${escapeHTML(violation.help)}</span>
-                                        <span class="violation-rule">(${escapeHTML(violation.id)})</span>
-                                    </div>
-                                    <div class="violation-meta">
-                                        <a href="${violation.helpUrl}" target="_blank" rel="noopener noreferrer" class="violation-link">
-                                            Learn More
-                                        </a>
-                                        <span class="violation-tags">
-                                            <strong>Tags:</strong> ${violation.tags.join(", ")}
-                                        </span>
-                                    </div>
-                                    <div class="affected-elements">
-                                        <h4>Affected Elements (${violation.nodes.length})</h4>
-                                        <div class="elements-grid">
-                                            ${violation.nodes.map((node) => `
-                                                <div class="element-item" tabindex="0" role="button" aria-label="Element selector with fix details">
-                                                    <div class="element-selector">
-                                                        ${escapeHTML(node.target.join(', '))}
-                                                    </div>
-                                                    <div class="tooltip" role="tooltip">
-                                                        ${formatFailureSummary(node.failureSummary)}
-                                                    </div>
-                                                </div>
-                                            `).join('')}
-                                        </div>
-                                    </div>
-                                </div>
-                            `).join('')}
-                        </div>
-                    `;
-                }).join('')}
-            </section>
+<ul class="vlist">
+${sortedViolations.map((violation) => `
+<li class="v ${violation.impact === 'critical' ? 'crit' : violation.impact === 'serious' ? 'ser' : violation.impact === 'moderate' ? 'mod' : 'min'}">
+<div class="vtitle">
+<span class="sev">${impactStyling[violation.impact].icon}</span>
+<span>${escapeHTML(violation.help)}</span>
+<small style="color:var(--c-muted);font-weight:400;font-style:italic">(${escapeHTML(violation.id)})</small>
+</div>
+<div class="vmeta">
+<a href="${violation.helpUrl}" target="_blank" rel="noopener">Learn More</a>
+<span>Tags: ${violation.tags.join(", ")}</span>
+</div>
+<div class="elems">
+${violation.nodes.map((node) => `
+<div class="elem" tabindex="0" role="button" aria-label="Element selector with fix details">
+${escapeHTML(node.target.join(', '))}
+<div class="tip" role="tooltip">
+${formatFailureSummary(node.failureSummary)}
+</div>
+</div>
+`).join('')}
+</div>
+</li>
+`).join('')}
+</ul>
 
-            <!-- Screenshot Section -->
-            <section class="screenshot-section">
-                <h2>Accessibility Violations Screenshot</h2>
-                <div class="screenshot-container">
-                    <img 
-                        src="${issuesScreenshotFilePath}" 
-                        alt="Screenshot showing accessibility violations highlighted with colored borders"
-                        class="screenshot-image"
-                        loading="lazy"
-                    />
-                </div>
-            </section>
-        </main>
+<div class="shot">
+<h2>Screenshot</h2>
+<img src="${issuesScreenshotFilePath}" alt="Accessibility violations screenshot" loading="lazy">
+</div>
 
-        <footer class="footer">
-            <p>
-                <strong>Note:</strong> As per the axe-core® library, automated testing can find on average 57% of WCAG issues automatically.
-                It only analyzes DOM elements that are visible in the browser viewport.
-            </p>
-            <p>
-                Axe-core® (<a href="https://github.com/dequelabs/axe-core" target="_blank" rel="noopener noreferrer">https://github.com/dequelabs/axe-core</a>) 
-                is a trademark of Deque Systems, Inc (<a href="https://www.deque.com/" target="_blank" rel="noopener noreferrer">https://www.deque.com/</a>) 
-                in the US and other countries.
-            </p>
-        </footer>
-    </div>
+<footer class="foot">
+<p><strong>Note:</strong> Automated testing finds ~57% of WCAG issues. Analyzes visible DOM elements only.</p>
+<p>Axe-core® (<a href="https://github.com/dequelabs/axe-core" target="_blank" rel="noopener">github.com/dequelabs/axe-core</a>) is a trademark of Deque Systems, Inc (<a href="https://www.deque.com/" target="_blank" rel="noopener">deque.com</a>).</p>
+</footer>
 </body>
-</html>
-`
+</html>`
     return fileBody
 }
 
