@@ -1,6 +1,6 @@
 {
   "name": "wick-a11y",
-  "version": "2.4.0",
+  "version": "2.5.0",
   "description": "A Cypress plugin for configurable accessibility analysis supporting WCAG 2.2 (A-AAA). It provides a detailed list of violations in the Cypress log, visual feedback directly in the Cypress runner, and generates a comprehensive, severity-based HTML report that includes per-violation details, fix guidance, and a screenshot with interactive elements for each accessibility issue. The plugin uses axe-core and cypress-axe to deliver comprehensive accessibility testing.",
   "main": "src/index.js",
   "types": "src/index.d.ts",
