@@ -48,7 +48,7 @@ describe('ACCESSIBILITY TESTS', { tags: ['@accessibility'] }, () => {
             fixme: { icon: '🪓' }
         }
 
-        cy.checkAccessibility(null, { impactStyling: customImpactStyling, includedImpacts: ['critical', 'serious', 'moderate', 'minor'] })
+        cy.checkAccessibility(null, { generateReport: true, impactStyling: customImpactStyling, includedImpacts: ['critical', 'serious', 'moderate', 'minor'] })
     });
 
     it('Test Sample Page Accessibility - Disable rules "contrast" and "valid-lang"', {defaultCommandTimeout: 15000}, () => {

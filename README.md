@@ -165,7 +165,18 @@ module.exports = defineConfig({
 });
 ```
 
-4. 👉 By default, the voice feature is disabled. To enable it, set the Cypress environment variable **`enableAccessibilityVoice`** to **`true`**. This will only take effect when you execute tests in the Cypress runner (`npx cypress open`). You can enable the voice feature by setting this environment variable in three different ways:
+4. 👉 By default, a detailed HTML report of accessibility violations is generated whenever issues are detected during the analysis. This behavior can be modified by setting the Cypress environment variable `generateReport`.
+Acepted values:
+  - `detailed` – Generates a detailed HTML accessibility report (default). Also accepted `true`.
+  - `basic` – Generates a simplified, minimalistic HTML accessibility report.
+  - `none` – Disables report generation entirely. Also accepted `false`.
+
+This can be overridden by using the `generateReport` option when calling the `checkAccessibility()` command.
+
+
+5. 👉 By default, the voice feature is disabled. To enable it, set the Cypress environment variable **`enableAccessibilityVoice`** to **`true`**. This will only take effect when you execute tests in the Cypress runner (`npx cypress open`).
+
+You can configure a Cypress environment variable in three different ways:
     - Including it within the `env` property in the **`cypress.config.js`** file
     
       ```javascript
@@ -189,6 +200,7 @@ module.exports = defineConfig({
       ```shell
       npx cypress open --env enableAccessibilityVoice=true
       ```
+
 
 ## API REFERENCE
 
@@ -215,9 +227,14 @@ Cypress custom command to check the accessibility of a given context using axe-c
    
 - **`options`**: (optional) Object with options to configure the accessibility check.
   
-  - **`generateReport`**: (optional) *From WICK-A11Y* - Generate a detailed report.
+  - **`generateReport`**: (optional) *From WICK-A11Y* - Generate a html report with the accessibility violations.
   
-    Default: `true`.
+    Options:
+      - `true` or `'detailed'`: Default option. Generate a detailed html report with Cards design.
+      - `'basic'`: Generate a basic html report (also smaller file size).
+      - `false` or `'none'`: Do not generate html report of violations
+
+    **⚠️ IMPORTANT**: If the `checkAccessibility()` command includes the **`generateReport` option**, it will override the value of the **`generateReport` environment variable**.
 
   - **`includedImpacts`**: (optional) *From CYPRESS-AXE* - List of impact levels to include in the accessibility analysis that would make the analysis to fail. Map to impact levels in violations, where possible impact level values are "critical", "serious", "moderate", or "minor".
   
