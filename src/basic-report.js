@@ -77,15 +77,14 @@ const buildBasicHtmlReportBody = (reportInfo, options) => {
         /* Header */
         .header {
             text-align: center;
-            padding: calc(var(--spacing) * 2) 0;
-            border-bottom: 2px solid var(--color-border);
-            margin-bottom: calc(var(--spacing) * 2);
+            padding: var(--spacing) 0;
+            margin-bottom: var(--spacing);
         }
 
         .header h1 {
             font-size: 24px;
             font-weight: 600;
-            margin-bottom: var(--spacing);
+            margin: 0;
         }
 
         /* Summary Section */
@@ -93,28 +92,28 @@ const buildBasicHtmlReportBody = (reportInfo, options) => {
             background: #f9fafb;
             border: 1px solid var(--color-border);
             border-radius: var(--border-radius);
-            padding: var(--spacing);
-            margin-bottom: calc(var(--spacing) * 2);
+            padding: 12px;
+            margin-bottom: var(--spacing);
         }
 
         .summary h2 {
             font-size: 18px;
             font-weight: 600;
-            margin-bottom: var(--spacing);
-            padding-bottom: calc(var(--spacing) / 2);
+            margin-bottom: 10px;
+            padding-bottom: 6px;
             border-bottom: 1px solid var(--color-border);
         }
 
         .summary-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: var(--spacing);
-            margin-top: var(--spacing);
+            gap: 8px;
+            margin-top: 10px;
         }
 
         .summary-item {
             font-size: 14px;
-            padding: 8px;
+            padding: 6px 8px;
             background: #ffffff;
             border-radius: var(--border-radius);
             border: 1px solid var(--color-border);
@@ -126,7 +125,7 @@ const buildBasicHtmlReportBody = (reportInfo, options) => {
             font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.8px;
-            margin-bottom: 6px;
+            margin-bottom: 4px;
             font-weight: 700;
         }
 
@@ -140,16 +139,16 @@ const buildBasicHtmlReportBody = (reportInfo, options) => {
         /* Violations Summary */
         .violations-summary {
             display: flex;
-            gap: var(--spacing);
+            gap: 8px;
             flex-wrap: wrap;
-            margin-top: var(--spacing);
+            margin-top: 10px;
         }
 
         .violation-count {
             display: flex;
             align-items: center;
             gap: 8px;
-            padding: 10px 14px;
+            padding: 6px 10px;
             background: #ffffff;
             border: 2px solid var(--color-border);
             border-radius: var(--border-radius);
@@ -178,25 +177,25 @@ const buildBasicHtmlReportBody = (reportInfo, options) => {
 
         /* Violations Section */
         .violations {
-            margin-top: calc(var(--spacing) * 2);
+            margin-top: var(--spacing);
         }
 
         .violations h2 {
             font-size: 20px;
             font-weight: 600;
-            margin-bottom: calc(var(--spacing) * 1.5);
+            margin-bottom: var(--spacing);
             text-align: center;
         }
 
         .severity-section {
-            margin-bottom: calc(var(--spacing) * 2.5);
+            margin-bottom: var(--spacing);
             border-radius: var(--border-radius);
             overflow: hidden;
             box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
         }
 
         .severity-header {
-            padding: calc(var(--spacing) * 1.25) var(--spacing);
+            padding: 10px 12px;
             font-size: 16px;
             font-weight: 700;
             display: flex;
@@ -247,14 +246,13 @@ const buildBasicHtmlReportBody = (reportInfo, options) => {
         }
 
         .violation-item {
-            padding: calc(var(--spacing) * 1.5) var(--spacing);
+            padding: 12px;
             background: #ffffff;
             position: relative;
         }
 
         .violation-item + .violation-item {
             border-top: 3px solid var(--color-border);
-            margin-top: 2px;
         }
 
         .violation-item + .violation-item::before {
@@ -274,7 +272,7 @@ const buildBasicHtmlReportBody = (reportInfo, options) => {
         .violation-title {
             font-size: 15px;
             font-weight: 600;
-            margin-bottom: 8px;
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -290,9 +288,9 @@ const buildBasicHtmlReportBody = (reportInfo, options) => {
 
         .violation-meta {
             display: flex;
-            gap: var(--spacing);
+            gap: 10px;
             align-items: center;
-            margin-bottom: var(--spacing);
+            margin-bottom: 10px;
             flex-wrap: wrap;
         }
 
@@ -317,20 +315,20 @@ const buildBasicHtmlReportBody = (reportInfo, options) => {
         }
 
         .affected-elements {
-            margin-top: var(--spacing);
+            margin-top: 10px;
         }
 
         .affected-elements h4 {
             font-size: 14px;
             font-weight: 600;
-            margin-bottom: 12px;
+            margin-bottom: 8px;
             color: var(--color-text-muted);
         }
 
         .elements-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 12px;
+            gap: 8px;
         }
 
         @media (max-width: 768px) {
@@ -343,10 +341,13 @@ const buildBasicHtmlReportBody = (reportInfo, options) => {
             background: #f9fafb;
             border: 1px solid var(--color-border);
             border-radius: var(--border-radius);
-            padding: 12px;
+            padding: 8px 10px;
             position: relative;
             cursor: help;
             transition: all 0.2s ease;
+            min-height: 44px; /* WCAG 2.2 AAA: Minimum touch target */
+            display: flex;
+            align-items: center;
         }
 
         .element-item:hover {
@@ -448,14 +449,14 @@ const buildBasicHtmlReportBody = (reportInfo, options) => {
 
         /* Screenshot Section */
         .screenshot-section {
-            margin-top: calc(var(--spacing) * 3);
+            margin-top: calc(var(--spacing) * 2);
             text-align: center;
         }
 
         .screenshot-section h2 {
             font-size: 20px;
             font-weight: 600;
-            margin-bottom: calc(var(--spacing) * 1.5);
+            margin-bottom: var(--spacing);
         }
 
         .screenshot-container {
@@ -474,14 +475,14 @@ const buildBasicHtmlReportBody = (reportInfo, options) => {
 
         /* Footer */
         .footer {
-            margin-top: calc(var(--spacing) * 3);
-            padding: var(--spacing);
+            margin-top: calc(var(--spacing) * 2);
+            padding: 12px;
             background: #f9fafb;
             border-radius: var(--border-radius);
             text-align: center;
             font-size: 13px;
             color: var(--color-text-muted);
-            line-height: 1.8;
+            line-height: 1.6;
         }
 
         .footer a {
