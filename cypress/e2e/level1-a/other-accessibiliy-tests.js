@@ -19,7 +19,7 @@ describe('OTHER ACCESSIBILITY TESTS', { tags: ['@accessibility'] }, () => {
         cy.visit('https://practicesoftwaretesting.com/#/')
         cy.wait(2000) // Using cy.wait(TIME) is a very bad practice, but it is used for simplicity in this example
 
-        cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'] })
+        cy.checkAccessibility(null, { generateReport: 'detailed', includedImpacts: ['critical', 'serious', 'moderate', 'minor'] })
     });
     
     it('Test https://example.cypress.io/ Accessibility', {defaultCommandTimeout: 15000}, () => {

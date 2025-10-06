@@ -422,7 +422,17 @@ describe('Accessibility Tests', { tags: ['@accessibility'] }, () => {
   });
 
   it('Disable report generation', { defaultCommandTimeout: 15000 }, () => {
-    cy.checkAccessibility(null, { generateReport: false, includedImpacts: ['critical', 'serious', 'moderate', 'minor'] });
+    // Also generateReport: false
+    cy.checkAccessibility(null, { generateReport: 'none', includedImpacts: ['critical', 'serious', 'moderate', 'minor'] });
+  });
+
+  it('Basic report generation', { defaultCommandTimeout: 15000 }, () => {
+    cy.checkAccessibility(null, { generateReport: 'basic', includedImpacts: ['critical', 'serious', 'moderate', 'minor'] });
+  });
+
+  it('Detailed report generation', { defaultCommandTimeout: 15000 }, () => {
+    // Default is 'detailed' report, so it can be omited generateReport option
+    cy.checkAccessibility(null, { generateReport: 'detailed', includedImpacts: ['critical', 'serious', 'moderate', 'minor'] });
   });
 
   it('Provide context as CSS selector and only best-practice', { defaultCommandTimeout: 15000 }, () => {
@@ -670,16 +680,31 @@ When both are provided, **the command option takes precedence** over the environ
 
 ##### Detailed Report (Default)
 
-A visually rich report presented in a **stylish card layout**, featuring an **enhanced screenshot view** with **interactive elements** for each accessibility issue. This is the default report.
+A visually rich report presented in a **stylish card layout**, featuring an **enhanced screenshot view** with **interactive elements** for each accessibility issue. **Detailed is the default report**.
 
-Each issue card includes detailed information such as severity, rule description, impact, affected DOM elements, and guidance for remediation.
+Accessibility issues are **grouped by severity**, with each group providing the **rule description**, **impact, and the **affected DOM elements**.
+For each affected element, you can **expand** its card to view detailed **guidance on how to fix** the accessibility issue.
 
 This format enables better **visualization and exploration** of accessibility issues within the page.
 It includes convenient controls to expand or collapse cards, scroll to the screenshot view, and return to the top of the report.
 
 This report type includes **embedded JavaScript** for interactivity.
 
+**_HTML Report Detailed - Desktop_**
 
+![HTML Report Detailed Desktop](/images/html-report-detailed.png)
+
+**_HTML Report Detailed - Mobile_**
+
+![HTML Report Detailed Mobile](/images/html-report-detailed-mobile.png)
+
+**_HTML Report Violation Details_**
+
+![HTML Report Violation Details](/images/html-report-violations-details.png)
+
+**_HTML Report Detailed - Interactive Screenshot_**
+
+![HTML Report Detailed Interactive Screenshot](/images/html-report-detailed-screenshot.png)
 
 
 ##### Basic Report
@@ -690,73 +715,16 @@ It provides the same essential data -violation summaries, issue details, and fix
 
 Ideal for CI/CD pipelines or environments where interactivity is not required.
 
+**_HTML Report Basic Desktop_**
 
-
-
-
-
-
-
-
-[Watch the video](/videos/README.md#wick-a11y-accessibility-report "Accessibility Report")
-
-
-
-**Desktop Layout HTML Report**
-
-![HTML Report Desktop](/images/html-report.png)
-
-
-**Mobile Layout HTML Report**
-
-![HTML Report Mobile](/images/html-report-mobile.png)
-
-
-**HTML Report Fully Collapsed**
-
-![HTML Report Fully Collapsed](/images/html-report-collapsed.png)
-
-
-#### Report Summary
-
-At the beginning of the HTML report, an expandable/collapsible Report Summary section appears. It includes:
-
-  - Test summary: spec name, test name, page URL, and generation timestamp
-  - Accessibility configuration: context, tabs, and rules
-  - Violations: total counts by severity
-
-For convenience, at the top there are buttons that let you Expand All cards, Collapse All cards, and Scroll to the Screenshot.
-
-![HTML Report Summary](/images/html-report-summary.png)
-
-
-#### Accessibility Violations Details
-
-The **Accessibility Violations Details** section includes a card for each Severity Level included in the analysis: Critical, Serious, Moderate, and/or Minor.
-
-Within each section, there is a list of violation types for that severity, and for each violation type, a list of the affected DOM elements with details about how to fix the issue.
-
-![HTML Accessibility Violations Details](/images/html-report-violations-details.png)
-
-
-#### Interactive Accessibility Violations ScreenShot
-
-At the end of the report, there is a section that includes a screenshot showing the elements affected by accessibility issues, color-coded by severity.
-The screenshot features an interactive layout that highlights each accessibility issue on hover, and displays a tooltip on click with detailed information about the violation and guidance on how to fix it.
-
-Also this section includes a button to return to the top of the page, and also a disclaimer with a reference to axe-core®.
-
-
-![HTML Accessibility Violations ScreenShot](/images/html-report-violations-screenshot.png)
-
-
-
+![HTML Report Basic Desktop](/images/html-report-basic.png)
 
 
 ### Terminal Report
 
 A tabular report containing all accessibility violation details will be generated in the Terminal. This includes a summary of violations and warnings, categorized by severity level.
 
+![Terminal Report](/images/termnal-report.png)
 
 ## KNOWN LIMITATIONS
 

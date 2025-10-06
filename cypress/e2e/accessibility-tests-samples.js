@@ -37,7 +37,7 @@ describe('ACCESSIBILITY TESTS', { tags: ['@accessibility'] }, () => {
 
 
     it.only('Test Sample Page Accessibility - All levels of severity and all rules', {defaultCommandTimeout: 15000}, () => {
-        cy.checkAccessibility(null, { includedImpacts: ['critical', 'serious', 'moderate', 'minor'], runOnly:['wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'wcag21aaa', 'wcag22a', 'wcag22aa',, 'wcag22aaa', 'best-practice'] })
+        cy.checkAccessibility(null, { generateReport: 'detailed', includedImpacts: ['critical', 'serious', 'moderate', 'minor'], runOnly:['wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'wcag21aaa', 'wcag22a', 'wcag22aa',, 'wcag22aaa', 'best-practice'] })
     });
 
     it('Test Sample Page Accessibility - Custom colors by severity', {defaultCommandTimeout: 15000}, () => {
