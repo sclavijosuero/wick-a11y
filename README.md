@@ -42,9 +42,11 @@ Or the videos:
 - **HTML Reports**:
   - **Out of the box**, ready to use with no additional setup.
   - Comprehensive severity-based report of accessibility issues, including detailed information and clear fix recommendations.
-  - **Enhanced screenshot view** featuring **interactive elements** for each accessibility issue, allowing improved visualization and exploration. **_(NEW in v2.4.0)_**.
-  - **WCAG 2.2 AAA**-compliant reports, with **full keyboard navigation**. **_(NEW in v2.3.0)_**.
+  - **WCAG 2.2 AAA-compliant** reports, with **full keyboard navigation**. **_(NEW in v2.3.0)_**
   - **Fully responsive design**, optimized for mobile devices with improved layout and usability. **_(NEW in v2.3.0)_**.
+  - Two types of reports: **_(NEW in v2.5.0)_**
+    - **Detailed** - Stylish card layout with an **enhanced screenshot** view featuring **interactive elements** for each accessibility issue, enabling improved visualization and exploration (the HTML includes embedded JavaScript code). **_(NEW in v2.4.0)_**
+    - **Basic** - Compact and minimalistic layout, with screenshots without interactive elements (smaller file size, only HTML5 and CSS3 code). **_(NEW in v2.5.0)_**
 
 - **Terminal Reports**: Generates terminal reports in a clear tabular format, including details of each violation and guidance on how to fix them.
 
@@ -69,30 +71,33 @@ Or the videos:
   - [Cypress v12 and v13](#cypress-v12-and-v13)
 - [CONFIGURATION](#configuration)
 - [API REFERENCE](#api-reference)
-  - [cy.checkAccessibility(context, options)](#cycheckaccessibilitycontext-options)
+  - [`cy.checkAccessibility(context, options)`](#cycheckaccessibilitycontext-options)
+    - [Options](#options)
+    - [Context](#context)
 - [USAGE EXAMPLES](#usage-examples)
 - [RESULTS PRESENTATION](#results-presentation)
   - [Summary of Violations](#summary-of-violations)
   - [Violation Details in Browser Console from Cypress Log](#violation-details-in-browser-console-from-cypress-log)
   - [Violation Details in Tooltip when Hovering over a DOM Element on the Page](#violation-details-in-tooltip-when-hovering-over-a-dom-element-on-the-page)
   - [Accessibility Voice](#accessibility-voice)
-    - [Accessibility Voice for Analysis at Suite Level in Cypress Log](#accessibility-voice-for-analysis-at-suite-level-in-cypress-log)
-    - [Accessibility Voice for Analysis at Test Level in Cypress Log](#accessibility-voice-for-analysis-at-test-level-in-cypress-log)
-    - [Accessibility Voice for Analysis at Violation Type Level in Cypress Log](#accessibility-voice-for-analysis-at-violation-type-level-in-cypress-log)
-    - [Accessibility Voice for Analysis at DOM Element Level in Cypress Log](#accessibility-voice-for-analysis-at-dom-element-level-in-cypress-log)
-    - [Accessibility Voice for Analysis at DOM Element Level in the Web Page](#accessibility-voice-for-analysis-at-dom-element-level-in-the-web-page)
+    - [Suite Level](#accessibility-voice-for-analysis-at-suite-level-in-cypress-log)
+    - [Test Level](#accessibility-voice-for-analysis-at-test-level-in-cypress-log)
+    - [Violation Type Level](#accessibility-voice-for-analysis-at-violation-type-level-in-cypress-log)
+    - [DOM Element Level in Cypress Log](#accessibility-voice-for-analysis-at-dom-element-level-in-cypress-log)
+    - [DOM Element Level in the Web Page](#accessibility-voice-for-analysis-at-dom-element-level-in-the-web-page)
   - [Custom Styles Based on Severity](#custom-styles-based-on-severity)
-  - [HTML Report](#html-report)
-    - [Report Summary](#report-summary)
-    - [Accessibility Violations Details](#accessibility-violations-details)
-    - [Interactive Accessibility Violations ScreenShot](#interactive-accessibility-violations-screenshot)
+  - [HTML Reports](#html-reports)
+    - [Reports Location](#reports-location)
+    - [Reports Content](#reports-content)
+    - [Report Types](#report-types)
+      - [Detailed Report (Default)](#detailed-report-default)
+      - [Basic Report](#basic-report)
   - [Terminal Report](#terminal-report)
 - [KNOWN LIMITATIONS](#known-limitations)
 - [LICENSE](#license)
 - [CONTRIBUTING](#contributing)
 - [CHANGELOG](#changelog)
 - [EXTERNAL REFERENCES](#external-references)
-
 
 
 ## INSTALATION
@@ -165,7 +170,18 @@ module.exports = defineConfig({
 });
 ```
 
-4. 👉 By default, the voice feature is disabled. To enable it, set the Cypress environment variable **`enableAccessibilityVoice`** to **`true`**. This will only take effect when you execute tests in the Cypress runner (`npx cypress open`). You can enable the voice feature by setting this environment variable in three different ways:
+4. 👉 By default, a detailed HTML report of accessibility violations is generated whenever issues are detected during the analysis. This behavior can be modified by setting the Cypress environment variable `generateReport`.
+Acepted values:
+  - `detailed` – Generates a detailed HTML accessibility report (default). Also accepted `true`.
+  - `basic` – Generates a simplified, minimalistic HTML accessibility report.
+  - `none` – Disables report generation entirely. Also accepted `false`.
+
+This can be overridden by using the `generateReport` option when calling the `checkAccessibility()` command.
+
+
+5. 👉 By default, the voice feature is disabled. To enable it, set the Cypress environment variable **`enableAccessibilityVoice`** to **`true`**. This will only take effect when you execute tests in the Cypress runner (`npx cypress open`).
+
+You can configure a Cypress environment variable in three different ways:
     - Including it within the `env` property in the **`cypress.config.js`** file
     
       ```javascript
@@ -189,6 +205,7 @@ module.exports = defineConfig({
       ```shell
       npx cypress open --env enableAccessibilityVoice=true
       ```
+
 
 ## API REFERENCE
 
@@ -215,9 +232,14 @@ Cypress custom command to check the accessibility of a given context using axe-c
    
 - **`options`**: (optional) Object with options to configure the accessibility check.
   
-  - **`generateReport`**: (optional) *From WICK-A11Y* - Generate a detailed report.
+  - **`generateReport`**: (optional) *From WICK-A11Y* - Generate a html report with the accessibility violations.
   
-    Default: `true`.
+    Options:
+      - `true` or `'detailed'`: Default option. Generate a detailed html report with Cards design.
+      - `'basic'`: Generate a basic html report (also smaller file size).
+      - `false` or `'none'`: Do not generate html report of violations
+
+    **⚠️ IMPORTANT**: If the `checkAccessibility()` command includes the **`generateReport` option**, it will override the value of the **`generateReport` environment variable**.
 
   - **`includedImpacts`**: (optional) *From CYPRESS-AXE* - List of impact levels to include in the accessibility analysis that would make the analysis to fail. Map to impact levels in violations, where possible impact level values are "critical", "serious", "moderate", or "minor".
   
@@ -403,7 +425,17 @@ describe('Accessibility Tests', { tags: ['@accessibility'] }, () => {
   });
 
   it('Disable report generation', { defaultCommandTimeout: 15000 }, () => {
-    cy.checkAccessibility(null, { generateReport: false, includedImpacts: ['critical', 'serious', 'moderate', 'minor'] });
+    // Also generateReport: false
+    cy.checkAccessibility(null, { generateReport: 'none', includedImpacts: ['critical', 'serious', 'moderate', 'minor'] });
+  });
+
+  it('Basic report generation', { defaultCommandTimeout: 15000 }, () => {
+    cy.checkAccessibility(null, { generateReport: 'basic', includedImpacts: ['critical', 'serious', 'moderate', 'minor'] });
+  });
+
+  it('Detailed report generation', { defaultCommandTimeout: 15000 }, () => {
+    // Default is 'detailed' report, so it can be omited generateReport option
+    cy.checkAccessibility(null, { generateReport: 'detailed', includedImpacts: ['critical', 'serious', 'moderate', 'minor'] });
   });
 
   it('Provide context as CSS selector and only best-practice', { defaultCommandTimeout: 15000 }, () => {
@@ -478,6 +510,17 @@ To identify, in the page, which HTML element is affected by an accessibility vio
 When hovering over a specific DOM element with a violation on the page in the Cypress runner, the element will be highlighted graphically, and a tooltip will appear showing the violation information. This feature allows you to quickly identify and understand accessibility issues directly on the page, providing an immediate and intuitive way to address them.
 
 ![Runner Screen](/images/runner-screen.png)
+
+
+### Custom Styles Based on Severity
+
+It is possible to configure styles for the different types of violation severity beyond the default red, orange, yellow, and blue.
+
+Configured custom styles are displayed in the Cypress runner:
+
+![Configured custom styles](images/runner-custom-styles.png)
+
+Same custom styles shown in the HTML report:
 
 
 ### Accessibility Voice
@@ -562,22 +605,13 @@ The wick-a11y plugin also provides accessibility voice for a DOM element by clic
 [Watch the video](/videos/README.md#accessibility-voice-for-analysis-at-dom-element-level-in-the-web-page "Accessibility Voice for Analysis at DOM Element Level in the Web Page")
 
 
-### Custom Styles Based on Severity
+### HTML Reports
 
-It is possible to configure styles for the different types of violation severity beyond the default red, orange, yellow, and blue.
+Wick-a11y HTML accessibility reports are mostly **WCAG 2.2 AAA compliant**, supports **full keyboard navigation** and it is **mobile responsive**.
 
-Configured custom styles are displayed in the Cypress runner:
+#### Reports Location
 
-![Configured custom styles](images/runner-custom-styles.png)
-
-Same custom styles shown in the HTML report:
-
-
-### HTML Report
-
-The HTML accessibility report is mostly **WCAG 2.2 AAA compliant**, supports **full keyboard navigation** and it is **mobile responsive**.
-
-When the option **`generateReport`** is true (which is the default setting), an HTML report with all the accessibility violation details will be generated. By default, accessibility HTML reports are created in the `cypress/accessibility` folder. You can customize this location by setting the `accessibilityFolder` parameter in your `cypress.config.js` configuration file.
+By default, all accessibility HTML reports are created in the `cypress/accessibility` folder. You can customize this location by setting the `accessibilityFolder` parameter in your `cypress.config.js` configuration file.
 
 For each test that checks accessibility using the `cy.checkAccessibility()` command, a directory will be created in the accessibility folder.
 
@@ -596,68 +630,104 @@ The image file is also referenced within the HTML report.
 
 ![Accessibility Files](/images/accessibility-files.png)
 
-At the top of the report, it is displayed a card with a **Report Summary**. Accessibility issues are grouped into cards and ordered by severity. All cards in the report are expandable and collapsible.
+#### Reports Content
 
-At the end of the report, a **screenshot** of the page is provided, showing violations boxed and color-coded by severity. Each issue includes **interactive elements** that display detailed information and fix guidance when clicked.
+Any **wick-a11y** HTML accessibility report consists of three sections
 
-Also, the report is _mobile responsive_ by stacking the cards, mostly _WCAG 2.2 AAA compliant_ and fully supports _keyboard navigation_.
+1. Report Summary
 
-[Watch the video](/videos/README.md#wick-a11y-accessibility-report "Accessibility Report")
+   At the beginning of the HTML report, you will find the **Report Summary**, which includes:
+
+      - Test summary: spec name, test name, page URL, and generation timestamp
+      - Accessibility configuration: context, tabs, and rules
+      - Violations: total counts by severity
+
+2. Accessibility Violations Details
+
+   The **Accessibility Violations Details** section lists all detected accessibility issues, grouped by severity (Critical, Serious, Moderate, Minor).
+
+   Each group includes the affected DOM elements, along with detailed information and guidance on how to fix the issues.
+
+3. Accessibility Violations ScreenShot
+
+   At the end of the report, there is a screenshot section that highlights the elements affected by accessibility issues, color-coded by severity.
+
+   This section also includes a disclaimer referencing axe-core®.
+
+
+#### Report Types
+
+There are two type of reports:
+
+1. **Detailed**
+2. **Basic**
+
+You can also skip generating HTML accessibility reports (even when accessibility issues are detected) by setting the Cypress environment variable `generateReport` to `none` or `false`.
+
+Alternatively, you can pass the `generateReport` option with the value `'none'` or `false` directly to the `checkAccessibility()` command.
+
+When both are provided, **the command option takes precedence** over the environment variable.
+
+E.g.
+
+```javascript
+  it('Disable report for default analysis', { defaultCommandTimeout: 15000 }, () => {
+    cy.checkAccessibility(null, { generateReport: 'none'});
+  });
+```
+
+> ⚠️ **If no accessibility issues are found, no report will be generated**.
 
 > ✔️ **Note:** The HTML accessibility report generated by the plugin complies with all severity levels—critical, serious, moderate, and minor. It also adheres to the tags wcag2a, wcag2aa, wcag2aaa, wcag21a, wcag21aa, wcag21aaa, wcag22a, wcag22aa, wcag22aaa, and best-practice.
 
-**Desktop Layout HTML Report**
 
-![HTML Report Desktop](/images/html-report.png)
+##### Detailed Report (Default)
 
+A visually rich report presented in a **stylish card layout**, featuring an **enhanced screenshot view** with **interactive elements** for each accessibility issue. **Detailed is the default report**.
 
-**Mobile Layout HTML Report**
+Accessibility issues are **grouped by severity**, with each group providing the **rule description**, **impact**, and the **affected DOM elements**.
+For each affected element, you can **expand** its card to view detailed **guidance on how to fix** the accessibility issue.
 
-![HTML Report Mobile](/images/html-report-mobile.png)
+This format enables better **visualization and exploration** of accessibility issues within the page.
+It includes convenient controls to expand or collapse cards, scroll to the screenshot view, and return to the top of the report.
 
+This report type includes **embedded JavaScript** for interactivity.
 
-**HTML Report Fully Collapsed**
+**_HTML Report Detailed - Desktop_**
 
-![HTML Report Fully Collapsed](/images/html-report-collapsed.png)
+![HTML Report Detailed Desktop](/images/html-report-detailed.png)
 
+**_HTML Report Detailed - Mobile_**
 
-#### Report Summary
+![HTML Report Detailed Mobile](/images/html-report-detailed-mobile.png)
 
-At the beginning of the HTML report, an expandable/collapsible Report Summary section appears. It includes:
+**_HTML Report Violation Details_**
 
-  - Test summary: spec name, test name, page URL, and generation timestamp
-  - Accessibility configuration: context, tabs, and rules
-  - Violations: total counts by severity
+![HTML Report Violation Details](/images/html-report-violations-details.png)
 
-For convenience, at the top there are buttons that let you Expand All cards, Collapse All cards, and Scroll to the Screenshot.
+**_HTML Report Detailed - Interactive Screenshot_**
 
-![HTML Report Summary](/images/html-report-summary.png)
-
-
-#### Accessibility Violations Details
-
-The **Accessibility Violations Details** section includes a card for each Severity Level included in the analysis: Critical, Serious, Moderate, and/or Minor.
-
-Within each section, there is a list of violation types for that severity, and for each violation type, a list of the affected DOM elements with details about how to fix the issue.
-
-![HTML Accessibility Violations Details](/images/html-report-violations-details.png)
+![HTML Report Detailed Interactive Screenshot](/images/html-report-detailed-screenshot.png)
 
 
-#### Interactive Accessibility Violations ScreenShot
+##### Basic Report
 
-At the end of the report, there is a section that includes a screenshot showing the elements affected by accessibility issues, color-coded by severity.
-The screenshot features an interactive layout that highlights each accessibility issue on hover, and displays a tooltip on click with detailed information about the violation and guidance on how to fix it.
+A **simplified and minimalistic** HTML report with a clean layout and static screenshots (no interactive elements).
 
-Also this section includes a button to return to the top of the page, and also a disclaimer with a reference to axe-core®.
+It provides the same essential data -violation summaries, issue details, and fix recommendations- but in a lighter format with a **smaller file size**, using **only HTML5 and CSS3**.
 
+Ideal for CI/CD pipelines or environments where interactivity is not required.
 
-![HTML Accessibility Violations ScreenShot](/images/html-report-violations-screenshot.png)
+**_HTML Report Basic Desktop_**
+
+![HTML Report Basic Desktop](/images/html-report-basic.png)
 
 
 ### Terminal Report
 
 A tabular report containing all accessibility violation details will be generated in the Terminal. This includes a summary of violations and warnings, categorized by severity level.
 
+![Terminal Report](/images/termnal-report.png)
 
 ## KNOWN LIMITATIONS
 
@@ -695,14 +765,19 @@ Thank you for your support!
 
 ## CHANGELOG
 
+### v2.5.0
+
+- Added **Basic**, minimalistic HTML report option.
+- Fixed issue where tooltips did not close correctly when resizing the browser window.
+
 ### v2.4.0
 
-- Screenshot with interactive elements highlighting accessibility issues.
+- Enhanced HTML report with **screenshots supporting interactive elements** for each accessibility issue.
 
 ### v2.3.0
 
 - Adds accessibility analysis for WCAG 2.2 levels A, AA, and AAA.
-- Improves HTML report: full mobile responsive, improved usability, full keyboard navigation support, mostly WCAG 2.2 AAA compliant.
+- New improved HTML report (**Detailed**): full mobile responsive, improved usability, full keyboard navigation support, mostly WCAG 2.2 AAA compliant.
 - Uses `data-cy`, `data-testid`, `data-test`, `data-qa`, and `data-test-id` selectors for accessibility violations when available.
 - Displays accessibility issues in the Cypress Runner UI with dashed outlines by default.
 
