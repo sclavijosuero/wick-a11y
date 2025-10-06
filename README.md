@@ -636,23 +636,23 @@ Any **wick-a11y** HTML accessibility report consists of three sections
 
 1. Report Summary
 
-At the beginning of the HTML report, you will find the **Report Summary**, which includes:
+   At the beginning of the HTML report, you will find the **Report Summary**, which includes:
 
-  - Test summary: spec name, test name, page URL, and generation timestamp
-  - Accessibility configuration: context, tabs, and rules
-  - Violations: total counts by severity
+      - Test summary: spec name, test name, page URL, and generation timestamp
+      - Accessibility configuration: context, tabs, and rules
+      - Violations: total counts by severity
 
 2. Accessibility Violations Details
 
-The **Accessibility Violations Details** section lists all detected accessibility issues, grouped by severity (Critical, Serious, Moderate, Minor).
+   The **Accessibility Violations Details** section lists all detected accessibility issues, grouped by severity (Critical, Serious, Moderate, Minor).
 
-Each group includes the affected DOM elements, along with detailed information and guidance on how to fix the issues.
+   Each group includes the affected DOM elements, along with detailed information and guidance on how to fix the issues.
 
 3. Accessibility Violations ScreenShot
 
-At the end of the report, there is a screenshot section that highlights the elements affected by accessibility issues, color-coded by severity.
+   At the end of the report, there is a screenshot section that highlights the elements affected by accessibility issues, color-coded by severity.
 
-This section also includes a disclaimer referencing axe-core®.
+   This section also includes a disclaimer referencing axe-core®.
 
 
 #### Report Types
@@ -666,6 +666,8 @@ You can also skip generating HTML accessibility reports (even when accessibility
 
 Alternatively, you can pass the `generateReport` option with the value `'none'` or `false` directly to the `checkAccessibility()` command.
 
+When both are provided, **the command option takes precedence** over the environment variable.
+
 E.g.
 
 ```javascript
@@ -673,8 +675,6 @@ E.g.
     cy.checkAccessibility(null, { generateReport: 'none'});
   });
 ```
-
-When both are provided, **the command option takes precedence** over the environment variable.
 
 > ⚠️ **If no accessibility issues are found, no report will be generated**.
 
@@ -685,7 +685,7 @@ When both are provided, **the command option takes precedence** over the environ
 
 A visually rich report presented in a **stylish card layout**, featuring an **enhanced screenshot view** with **interactive elements** for each accessibility issue. **Detailed is the default report**.
 
-Accessibility issues are **grouped by severity**, with each group providing the **rule description**, **impact, and the **affected DOM elements**.
+Accessibility issues are **grouped by severity**, with each group providing the **rule description**, **impact**, and the **affected DOM elements**.
 For each affected element, you can **expand** its card to view detailed **guidance on how to fix** the accessibility issue.
 
 This format enables better **visualization and exploration** of accessibility issues within the page.
@@ -777,7 +777,7 @@ Thank you for your support!
 ### v2.3.0
 
 - Adds accessibility analysis for WCAG 2.2 levels A, AA, and AAA.
-- Improves HTML report: full mobile responsive, improved usability, full keyboard navigation support, mostly WCAG 2.2 AAA compliant.
+- New improved HTML report (**Detailed**): full mobile responsive, improved usability, full keyboard navigation support, mostly WCAG 2.2 AAA compliant.
 - Uses `data-cy`, `data-testid`, `data-test`, `data-qa`, and `data-test-id` selectors for accessibility violations when available.
 - Displays accessibility issues in the Cypress Runner UI with dashed outlines by default.
 
