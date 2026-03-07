@@ -1,7 +1,7 @@
 # wick-a11y
 
 **wick-a11y** is a Cypress plugin for configurable accessibility analysis supporting WCAG 2.2 (A–AAA).
-It provides a detailed list of violations in the Cypress log, visual feedback directly in the Cypress runner, and generates a comprehensive, severity-based HTML report that includes per-violation details, fix guidance, and a screenshot with interactive elements for each accessibility issue. The plugin uses axe-core and cypress-axe to deliver comprehensive accessibility testing.
+It provides a detailed list of violations in the Cypress log, visual feedback directly in the Cypress runner as well as voice feedback, and generates a comprehensive, severity-based HTML report that includes per-violation details, fix guidance, and a screenshot with interactive elements for each accessibility issue. The plugin uses axe-core and cypress-axe to deliver comprehensive accessibility testing.
 
 ![wick-a11y Overview](/images/full-overview.gif)
 
@@ -109,8 +109,12 @@ npm install wick-a11y --save-dev
 
 ## COMPATIBILITY 
 
+### Cypress v15.10.0+
 
-### Cypress v15+
+- Use wick-a11y *v*3.0.0 or greater+
+- Use to `cy.env` and `Cypress.expose` (https://docs.cypress.io/app/references/migration-guide#Migrating-away-from-Cypressenv)
+
+### Cypress v15.0.0 - v15.9.0
 
 - Use wick-a11y *v*2.2.0 or greater+
 - Relies on cypress-axe (≥ 1.7.0) and axe-core® for accessibility analysis.
@@ -170,7 +174,7 @@ module.exports = defineConfig({
 });
 ```
 
-4. 👉 By default, a detailed HTML report of accessibility violations is generated whenever issues are detected during the analysis. This behavior can be modified by setting the Cypress environment variable `generateReport`.
+4. 👉 By default, a detailed HTML report of accessibility violations is generated whenever issues are detected during the analysis. This behavior can be modified by setting the exposed Cypress environment variable `generateReport`.
 Acepted values:
   - `detailed` – Generates a detailed HTML accessibility report (default). Also accepted `true`.
   - `basic` – Generates a simplified, minimalistic HTML accessibility report.
@@ -179,33 +183,37 @@ Acepted values:
 This can be overridden by using the `generateReport` option when calling the `checkAccessibility()` command.
 
 
-5. 👉 By default, the voice feature is disabled. To enable it, set the Cypress environment variable **`enableAccessibilityVoice`** to **`true`**. This will only take effect when you execute tests in the Cypress runner (`npx cypress open`).
+5. 👉 By default, the voice feature is disabled. To enable it, set the exposed Cypress environment variable **`enableAccessibilityVoice`** to **`true`**. This will only take effect when you execute tests in the Cypress runner (`npx cypress open`).
 
 You can configure a Cypress environment variable in three different ways:
-    - Including it within the `env` property in the **`cypress.config.js`** file
-    
-      ```javascript
-      module.exports = defineConfig({
-            // [...]
-            env: {
-                  enableAccessibilityVoice: true
-            }
-            // [...]
-      });
-      ```
-    - Including it in the **`cypress.env.json`** file
-    
-      ```json
-      {
-            "enableAccessibilityVoice": true
-      }
-      ```
-    - Providing it as a command line argument `--env` in the terminal when opening the Cypress runner.
-    
-      ```shell
-      npx cypress open --env enableAccessibilityVoice=true
-      ```
 
+- Including it in the **`cypress.env.json`** file
+    
+    ```json
+    {
+          "enableAccessibilityVoice": true
+    }
+    ```
+    
+- Providing it as a command line argument `--env` in the terminal when opening the Cypress runner.
+    
+    ```shell
+    npx cypress open --env enableAccessibilityVoice=true
+    ```
+
+- Including it within the **`expose`** property in the **`cypress.config.js`** file
+    
+    ```javascript
+    module.exports = defineConfig({
+          // [...]
+          expose: {
+                enableAccessibilityVoice: true
+          }
+          // [...]
+    });
+    ```
+
+> ℹ️ **NOTE:** All **environment variables** defined for wick-a11y use **`Cypress.expose`**, since they **do not contain restricted information** and are only simple configuration options.
 
 ## API REFERENCE
 
@@ -735,9 +743,10 @@ A tabular report containing all accessibility violation details will be generate
 
 - Only the last test run in the suite allows graphical interaction with the web page.
 
+- The feature Voice Feedback is not supported in the _Edit in studio_ mode.
+
 - When an element is "**Pinned**" in the Cypress Log, the accessibility voice for a DOM element by clicking directly on the colored box representing the violation on the web page is disabled (due to the behavior of the Cypress runner in the interactive page).
 
-- At this moment, it does not flag suspicious violations considered by the AJV validator as inconclusive.
 
 
 ## LICENSE
@@ -764,6 +773,14 @@ Thank you for your support!
 
 
 ## CHANGELOG
+
+### v3.0.0
+
+- Added support for the new environment variable handling in v15.10+ (`cy.env` and `Cypress.expose`).
+- Major release due a breaking change that will be introduced in the Cypress v16 release:
+  - `Cypress.env` deprecated in Cypress v15.10.0 and no loger supported in Cypress v16.0.0.
+- **wick-a11y v3.0.0 is not supported on versions earlier than v15.10.0**.
+
 
 ### v2.5.0
 
@@ -872,6 +889,8 @@ Thank you for your support!
 - [**Ioan Solderea**](https://www.linkedin.com/in/%F0%9F%95%B5ioan-s-b0928516/ "Ioan Solderea") — Video: [Wick A11y – Cypress Plugin for Automated Accessibility Checks](https://www.youtube.com/watch?v=joP3TNdLjF8 "Wick A11y – Cypress Plugin for Automated Accessibility Checks")
 
 - [**Gleb Bahmutov**](https://www.linkedin.com/in/bahmutov/ "Gleb Bahmutov") — Cypress Tips Newsletter: [Sept 2024 - WICK-A11Y plugin with voice support](https://cypresstips.substack.com/i/149058474/wick-ay-plugin-with-voice-support "Sept 2024 - WICK-A11Y plugin with voice support"), and [Dec 2024 - Sebastian Clavijo's WICK-A11Y](https://cypresstips.substack.com/i/153579922/sebastian-clavijo-suero "[Dec 2024 - Sebastian Clavijo's WICK-A11Y") 
+
+- [**Gleb Bahmutov**](https://www.linkedin.com/in/bahmutov/ "Gleb Bahmutov") — Video: [Check Page Accessibility Using wick-a11y Plugin](https://www.youtube.com/watch?v=G1tpXv0hv0s "Check Page Accessibility Using wick-a11y Plugin")
 
 - [**Dawid Dylowicz**](https://www.linkedin.com/in/dawid-dylowicz/ "Dawid Dylowicz") — Newsletter: [Software Testing Weekly Issue 235](https://softwaretestingweekly.com/issues/235 "Software Testing Weekly Issue 235 ")
 

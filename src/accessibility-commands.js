@@ -106,12 +106,12 @@ const defaultGenerateReport = 'detailed'
  */
 
 const normalizeGenerateReport = (options) => {
-    // Normalize to string the generateReport option VS Cypress.env('generateReport') ('none', 'basic', 'detailed')
+    // Normalize to string the generateReport option VS Cypress.expose('generateReport') ('none', 'basic', 'detailed')
     if (options.generateReport === false || options.generateReport === 'false' || options.generateReport === 'none') return 'none'
     else if (options.generateReport === true || options.generateReport === 'true' || options.generateReport === 'detailed') return 'detailed'
     else if (options.generateReport === 'basic') return 'basic'
     else {
-        let generateReport = Cypress.env('generateReport')
+        let generateReport = Cypress.expose('generateReport')
 
         if (generateReport === false || generateReport === 'false' || generateReport === 'none') generateReport = 'none'
         else if (generateReport === true || generateReport === 'true' || generateReport === 'detailed') generateReport = 'detailed'
@@ -135,13 +135,13 @@ const checkAccessibility = (context, options) => {
     // Normalize generateReport
     options.generateReport = normalizeGenerateReport(options)
     
-    options.generateReport = options.generateReport || Cypress.env('generateReport') || 
+    options.generateReport = options.generateReport || Cypress.expose('generateReport') || 
 
-    console.log('Cypress.env("generateReport")', Cypress.env('generateReport'))
+    console.log('Cypress.expose("generateReport")', Cypress.expose('generateReport'))
     console.log('options.generateReport', options.generateReport)
 
-    Cypress.env('accessibilityContext', context)
-    Cypress.env('accessibilityOptions', options)
+    Cypress.expose('accessibilityContext', context)
+    Cypress.expose('accessibilityOptions', options)
 
 
     // Cypress-axe and axe-core will analyze the impacts for both options (includedImpacts and onlyWarnImpacts)

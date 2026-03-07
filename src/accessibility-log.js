@@ -165,8 +165,8 @@ const improveViolationSelectors = (violations) => {
  */
 const recordViolations = (violations, logSummary = true) => {
     // Retrieve the accessibility context and options
-    accessibilityContext = Cypress.env('accessibilityContext')
-    accessibilityOptions = Cypress.env('accessibilityOptions') || {}
+    accessibilityContext = Cypress.expose('accessibilityContext')
+    accessibilityOptions = Cypress.expose('accessibilityOptions') || {}
     impactStyling = Cypress._.merge({}, defaultImpactStyling, accessibilityOptions.impactStyling)
 
     // Calculate the summary totals of violations by severity
@@ -612,11 +612,10 @@ after(() => {
 
 })
 
-
 /**
  * Determines if voice accessibility should be enabled.
  * @returns {boolean} - True if voice accessibility should be enabled, false otherwise.
  */
 const mustEnableVoice = () => {
-    return Cypress.config('isInteractive') && Cypress.env('enableAccessibilityVoice')
+    return Cypress.config('isInteractive') && Cypress.expose('enableAccessibilityVoice')
 }
