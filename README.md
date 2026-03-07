@@ -111,12 +111,12 @@ npm install wick-a11y --save-dev
 
 ### Cypress v15.10.0+
 
-- Use wick-a11y *v*3.0.0 or greater+
+- Use wick-a11y *v*3.0.0 or greater
 - Use to `cy.env` and `Cypress.expose` (https://docs.cypress.io/app/references/migration-guide#Migrating-away-from-Cypressenv)
 
 ### Cypress v15.0.0 - v15.9.0
 
-- Use wick-a11y *v*2.2.0 or greater+
+- Use wick-a11y *v*2.2.0 or greater
 - Relies on cypress-axe (≥ 1.7.0) and axe-core® for accessibility analysis.
 
 ### Cypress v14
@@ -194,7 +194,7 @@ You can configure a Cypress environment variable in three different ways:
           "enableAccessibilityVoice": true
     }
     ```
-    
+
 - Providing it as a command line argument `--env` in the terminal when opening the Cypress runner.
     
     ```shell
