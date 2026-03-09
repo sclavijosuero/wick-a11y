@@ -6,6 +6,16 @@
 
 const wickVoice = window.speechSynthesis;
 
+let enableAccessibilityVoice;
+
+export const setEnableAccessibilityVoice = (enableVoice) => {
+    enableAccessibilityVoice = enableVoice
+}
+
+export const getEnableAccessibilityVoice = () => {
+    return enableAccessibilityVoice
+}
+
 
 //*******************************************************************************
 // PUBLIC FUNCTIONS FOR ACCESSIBILITY VIOLATIONS VOICE MESSAGES

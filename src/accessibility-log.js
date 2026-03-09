@@ -242,7 +242,7 @@ const assertTestViolations = (violations) => {
     const includedViolations = violations.filter(v => includedImpacts.includes(v.impact))
     const numIncludedViolations = includedViolations.length
 
-    assert.equal(numIncludedViolations, 0, `${numIncludedViolations} accessibility violation${violations.length === 1 ? '' : 's' 
+    assert.equal(numIncludedViolations, 0, `${numIncludedViolations} accessibility violation${violations.length === 1 ? '' : 's'
         } ${numIncludedViolations === 1 ? 'was' : 'were'} detected with impact levels: [${includedImpacts.join(', ')}]`)
 }
 
@@ -536,15 +536,19 @@ before(() => {
     // // Delete voice buttons for the previous runs
     accessibilityVoice.removeVoiceControls()
 
-    if (mustEnableVoice()) {
-        // Empty stored results in the first test of the suite
-        if (cy.state().test.order === 1) {
-            cy.task('emptySpecResults')
-        }
+    cy.env(['enableAccessibilityVoice']).then(({ enableAccessibilityVoice }) => {
+        accessibilityVoice.setEnableAccessibilityVoice(enableAccessibilityVoice)
 
-        // Create event to stop voice when clicked in Aut Panel
-        accessibilityVoice.createEventClickAutPanel()
-    }
+        if (mustEnableVoice()) {
+            // Empty stored results in the first test of the suite
+            if (cy.state().test.order === 1) {
+                cy.task('emptySpecResults')
+            }
+
+            // Create event to stop voice when clicked in Aut Panel
+            accessibilityVoice.createEventClickAutPanel()
+        }
+    })
 })
 
 /**
@@ -612,10 +616,11 @@ after(() => {
 
 })
 
+
 /**
  * Determines if voice accessibility should be enabled.
  * @returns {boolean} - True if voice accessibility should be enabled, false otherwise.
  */
 const mustEnableVoice = () => {
-    return Cypress.config('isInteractive') && Cypress.expose('enableAccessibilityVoice')
+    return Cypress.config('isInteractive') && accessibilityVoice.getEnableAccessibilityVoice()
 }

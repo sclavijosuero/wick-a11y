@@ -4,6 +4,13 @@ const { defineConfig } = require("cypress");
 const addAccessibilityTasks  = require('./src/accessibility-tasks');
 
 module.exports = defineConfig({
+
+  allowCypressEnv: false,
+  // env: {
+  //   enableAccessibilityVoice: true,
+  //   generateReport: 'detailed',
+  // },
+
   viewportWidth: 1920,
   viewportHeight: 1080,
 

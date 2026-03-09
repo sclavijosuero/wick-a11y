@@ -112,7 +112,7 @@ npm install wick-a11y --save-dev
 ### Cypress v15.10.0+
 
 - Use wick-a11y *v*3.0.0 or greater
-- Use to `cy.env` and `Cypress.expose` (https://docs.cypress.io/app/references/migration-guide#Migrating-away-from-Cypressenv)
+- Use of `cy.env` and `Cypress.expose` (https://docs.cypress.io/app/references/migration-guide#Migrating-away-from-Cypressenv)
 
 ### Cypress v15.0.0 - v15.9.0
 
@@ -201,19 +201,19 @@ You can configure a Cypress environment variable in three different ways:
     npx cypress open --env enableAccessibilityVoice=true
     ```
 
-- Including it within the **`expose`** property in the **`cypress.config.js`** file
+- Including it within the **`env`** property in the **`cypress.config.js`** file
     
     ```javascript
     module.exports = defineConfig({
           // [...]
-          expose: {
+          env: {
                 enableAccessibilityVoice: true
           }
           // [...]
     });
     ```
 
-> ℹ️ **NOTE:** All **environment variables** defined for wick-a11y use **`Cypress.expose`**, since they **do not contain restricted information** and are only simple configuration options.
+> ℹ️ **NOTE:** All **environment variables** defined for wick-a11y use **`cy.env()`** so they can be overridden in all three supported ways. 
 
 ## API REFERENCE
 

@@ -123,38 +123,41 @@ const normalizeGenerateReport = (options) => {
 }
 
 const checkAccessibility = (context, options) => {
-    options = {
-        ...defaultOptions,
-        ...options
-    }
-    // If there is overlapping between includedImpacts and onlyWarnImpacts, the includedImpacts configuration will have precedence
-    options.onlyWarnImpacts = options.onlyWarnImpacts.filter(impact => !options.includedImpacts.includes(impact))
 
-    console.log('options.generateReport', options.generateReport)
+    cy.env(['generateReport']).then(({ generateReport }) => {
+        options = {
+            ...defaultOptions,
+            ...options
+        }
+        // If there is overlapping between includedImpacts and onlyWarnImpacts, the includedImpacts configuration will have precedence
+        options.onlyWarnImpacts = options.onlyWarnImpacts.filter(impact => !options.includedImpacts.includes(impact))
 
-    // Normalize generateReport
-    options.generateReport = normalizeGenerateReport(options)
-    
-    options.generateReport = options.generateReport || Cypress.expose('generateReport') || 
+        console.log('options.generateReport = ', options.generateReport)
+        console.log('cy.env("generateReport") = ', generateReport)
 
-    console.log('Cypress.expose("generateReport")', Cypress.expose('generateReport'))
-    console.log('options.generateReport', options.generateReport)
-
-    Cypress.expose('accessibilityContext', context)
-    Cypress.expose('accessibilityOptions', options)
+        // Normalize generateReport
+        options.generateReport = options.generateReport || generateReport
+        options.generateReport = normalizeGenerateReport(options)
 
 
-    // Cypress-axe and axe-core will analyze the impacts for both options (includedImpacts and onlyWarnImpacts)
-    let { includedImpacts, onlyWarnImpacts, ...cypressAxeOptions } = { ...options }
-    cypressAxeOptions.includedImpacts = [...new Set([...includedImpacts, ...onlyWarnImpacts])]
-    
-    cy.injectAxe()
-    cy.checkA11y(
-        context,
-        cypressAxeOptions,
-        options.generateReport === false || options.generateReport === 'false' || options.generateReport === 'none' ? logViolations : logViolationsAndGenerateReport,
-        true // skipFailures = true (wick-a11y will handle the failures based in the configuration: includedImpacts and onlyWarnImpacts)
-    )
+        // Expose the accessibility context and options for analysis when recording & logging the results
+        // This information is not private so expose() is used similarly to the decomisioned env()
+        Cypress.expose('accessibilityContext', context)
+        Cypress.expose('accessibilityOptions', options)
+
+
+        // Cypress-axe and axe-core will analyze the impacts for both options (includedImpacts and onlyWarnImpacts)
+        let { includedImpacts, onlyWarnImpacts, ...cypressAxeOptions } = { ...options }
+        cypressAxeOptions.includedImpacts = [...new Set([...includedImpacts, ...onlyWarnImpacts])]
+
+        cy.injectAxe()
+        cy.checkA11y(
+            context,
+            cypressAxeOptions,
+            options.generateReport === false || options.generateReport === 'false' || options.generateReport === 'none' ? logViolations : logViolationsAndGenerateReport,
+            true // skipFailures = true (wick-a11y will handle the failures based in the configuration: includedImpacts and onlyWarnImpacts)
+        )
+    })
 }
 Cypress.Commands.add('checkAccessibility', checkAccessibility)
 
