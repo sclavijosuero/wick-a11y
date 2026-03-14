@@ -18,6 +18,7 @@ declare global {
              *   - {boolean} generateReport: Whether to generate a report for violations. Default is true.
              *   - {Object} impactStyling: Custom styling for impacts ('critical', 'serious', 'moderate', 'minor').
              *   - {string[]} includedImpacts: Impact levels to include. Default ['critical', 'serious'].
+             *   - {string[]} onlyWarnImpacts: Impact levels to warn about. Default [].
              *   - {integer} retries: Number of times to retry the check if issues are found. Default is 0.
              *   - {integer} interval: Time in milliseconds between retries. Default 1000ms.
              *   - {string[]} runOnly: Rules to run, e.g., ['wcag2a', 'wcag2aa', 'wcag2aaa', 'wcag21a', 'wcag21aa', 'wcag21aaa', 'wcag22a', 'wcag22aa', 'wcag22aaa', 'best-practice'].
@@ -53,6 +54,7 @@ declare global {
                     generateReport?: boolean;
                     impactStyling?: Record<string, { icon: string; style: string }>;
                     includedImpacts?: string[];
+                    onlyWarnImpacts?: string[];
                     retries?: number;
                     interval?: number;
                     runOnly?: string[];
