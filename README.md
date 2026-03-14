@@ -174,7 +174,7 @@ module.exports = defineConfig({
 });
 ```
 
-4. 👉 By default, a detailed HTML report of accessibility violations is generated whenever issues are detected during the analysis. This behavior can be modified by setting the exposed Cypress environment variable `generateReport`.
+4. 👉 By default, a detailed HTML report of accessibility violations is generated whenever issues are detected during the analysis. This behavior can be modified by setting the Cypress environment variable `generateReport`.
 Acepted values:
   - `detailed` – Generates a detailed HTML accessibility report (default). Also accepted `true`.
   - `basic` – Generates a simplified, minimalistic HTML accessibility report.
@@ -185,7 +185,9 @@ This can be overridden by using the `generateReport` option when calling the `ch
 
 5. 👉 By default, the voice feature is disabled. To enable it, set the exposed Cypress environment variable **`enableAccessibilityVoice`** to **`true`**. This will only take effect when you execute tests in the Cypress runner (`npx cypress open`).
 
-You can configure a Cypress environment variable in three different ways:
+Starting in Cypress v15.10.0, you can configure wick-a11y using the two environment variables generateReport and enableAccessibilityVoice in either of these ways: as regular (non-exposed) Cypress environment variables, or as exposed Cypress environment variables.
+
+Option A: Set it as a regular non-exposed Cypress env var in three different ways:
 
 - Including it in the **`cypress.env.json`** file
     
@@ -213,7 +215,26 @@ You can configure a Cypress environment variable in three different ways:
     });
     ```
 
-> ℹ️ **NOTE:** All **environment variables** defined for wick-a11y use **`cy.env()`** so they can be overridden in all three supported ways. 
+Option B: Set it as an exposed Cypress env var in two different ways:
+
+- Providing it as a command line argument `--expose` in the terminal when opening the Cypress runner.
+    
+    ```shell
+    npx cypress open --expose enableAccessibilityVoice=true
+    ```
+
+- Including it within the **`expose`** property in the **`cypress.config.js`** file
+    
+    ```javascript
+    module.exports = defineConfig({
+          // [...]
+          expose: {
+                enableAccessibilityVoice: true
+          }
+          // [...]
+    });
+    ```
+> ⚠️ **Note:** If enableAccessibilityVoice is defined both as exposed and non-exposed, the non-exposed value takes priority.
 
 ## API REFERENCE
 

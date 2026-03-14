@@ -106,34 +106,35 @@ const defaultGenerateReport = 'detailed'
  */
 
 const normalizeGenerateReport = (options) => {
-    // Normalize to string the generateReport option VS Cypress.expose('generateReport') ('none', 'basic', 'detailed')
-    if (options.generateReport === false || options.generateReport === 'false' || options.generateReport === 'none') return 'none'
-    else if (options.generateReport === true || options.generateReport === 'true' || options.generateReport === 'detailed') return 'detailed'
-    else if (options.generateReport === 'basic') return 'basic'
-    else {
-        let generateReport = Cypress.expose('generateReport')
+    const resolveGenerateReport = (value) => {
+        if (value === false || value === 'false' || value === 'none') return 'none';
+        if (value === true || value === 'true' || value === 'detailed') return 'detailed';
+        if (value === 'basic') return 'basic';
+        return undefined;
+    };
 
-        if (generateReport === false || generateReport === 'false' || generateReport === 'none') generateReport = 'none'
-        else if (generateReport === true || generateReport === 'true' || generateReport === 'detailed') generateReport = 'detailed'
-        else if (generateReport === 'basic') generateReport = 'basic'
-        else generateReport = defaultGenerateReport
+    // First, check options.generateReport
+    let normalized = resolveGenerateReport(options.generateReport);
+    if (normalized !== undefined) return normalized;
 
-        return generateReport
-    }
-}
+    // Fallback to Cypress.expose('generateReport')
+    normalized = resolveGenerateReport(Cypress.expose('generateReport'));
+    if (normalized !== undefined) return normalized;
+
+    // Fallback to defaultGenerateReport
+    return defaultGenerateReport;
+};
 
 const checkAccessibility = (context, options) => {
 
-    cy.env(['generateReport']).then(({ generateReport }) => {
+    cy.env(['generateReport']).then(({ generateReport = Cypress.expose('generateReport') }) => {
+
         options = {
             ...defaultOptions,
             ...options
         }
         // If there is overlapping between includedImpacts and onlyWarnImpacts, the includedImpacts configuration will have precedence
         options.onlyWarnImpacts = options.onlyWarnImpacts.filter(impact => !options.includedImpacts.includes(impact))
-
-        console.log('options.generateReport = ', options.generateReport)
-        console.log('cy.env("generateReport") = ', generateReport)
 
         // Normalize generateReport
         options.generateReport = options.generateReport || generateReport

@@ -536,7 +536,8 @@ before(() => {
     // // Delete voice buttons for the previous runs
     accessibilityVoice.removeVoiceControls()
 
-    cy.env(['enableAccessibilityVoice']).then(({ enableAccessibilityVoice }) => {
+    cy.env(['enableAccessibilityVoice']).then(({ enableAccessibilityVoice = Cypress.expose('enableAccessibilityVoice') }) => {
+
         accessibilityVoice.setEnableAccessibilityVoice(enableAccessibilityVoice)
 
         if (mustEnableVoice()) {
