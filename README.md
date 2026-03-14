@@ -780,6 +780,7 @@ Thank you for your support!
 - Major release due a breaking change that will be introduced in the Cypress v16 release:
   - `Cypress.env` deprecated in Cypress v15.10.0 and no loger supported in Cypress v16.0.0.
 - **wick-a11y v3.0.0 is not supported on versions earlier than v15.10.0**.
+- Adding typescript typings for the onlyWarnImpacts config option (contribution by [Robby Fletcher](https://github.com/robbyfletcher "Robby Fletcher")).
 
 
 ### v2.5.0
