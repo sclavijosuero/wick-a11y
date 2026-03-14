@@ -185,7 +185,9 @@ This can be overridden by using the `generateReport` option when calling the `ch
 
 5. 👉 By default, the voice feature is disabled. To enable it, set the exposed Cypress environment variable **`enableAccessibilityVoice`** to **`true`**. This will only take effect when you execute tests in the Cypress runner (`npx cypress open`).
 
-Starting in Cypress v15.10.0, you can configure wick-a11y using the two environment variables generateReport and enableAccessibilityVoice in either of these ways: as regular (non-exposed) Cypress environment variables, or as exposed Cypress environment variables.
+---
+
+Starting in Cypress v15.10.0, you can configure **wick-a11y* using the two environment variables `generateReport` and `enableAccessibilityVoice` in either of these ways: as regular (non-exposed) Cypress environment variables, or as exposed Cypress environment variables.
 
 Option A: Set it as a regular non-exposed Cypress env var in three different ways:
 
@@ -235,6 +237,8 @@ Option B: Set it as an exposed Cypress env var in two different ways:
     });
     ```
 > ⚠️ **Note:** If enableAccessibilityVoice is defined both as exposed and non-exposed, the non-exposed value takes priority.
+
+---
 
 ## API REFERENCE
 
