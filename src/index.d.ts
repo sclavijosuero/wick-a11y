@@ -51,7 +51,7 @@ declare global {
                     fromShadowDom?: object;
                 },
                 options?: {
-                    generateReport?: boolean;
+                    generateReport?: boolean | 'basic' | 'detailed';
                     impactStyling?: Record<string, { icon: string; style: string }>;
                     includedImpacts?: string[];
                     onlyWarnImpacts?: string[];
