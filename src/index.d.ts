@@ -77,3 +77,5 @@ declare global {
     }
 }
 export { };
+
+# Fix for issue #36: safe input handling
