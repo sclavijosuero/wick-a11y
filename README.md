@@ -799,13 +799,24 @@ Thank you for your support!
 
 ## CHANGELOG
 
+
+### v3.0.2
+
+- Adding typescript typings for the `generateReport` config option (contribution by [Sofia Oliveira](https://github.com/sofiaoleaeuropaea "Sofia Oliveira")).
+
+
+### v3.0.1
+
+- Support of environment variables `generateReport` and `enableAccessibilityVoice` as non-exposed as well as exposed.
+
+
 ### v3.0.0
 
 - Added support for the new environment variable handling in v15.10+ (`cy.env` and `Cypress.expose`).
 - Major release due a breaking change that will be introduced in the Cypress v16 release:
   - `Cypress.env` deprecated in Cypress v15.10.0 and no loger supported in Cypress v16.0.0.
 - **wick-a11y v3.0.0 is not supported on versions earlier than v15.10.0**.
-- Adding typescript typings for the onlyWarnImpacts config option (contribution by [Robby Fletcher](https://github.com/robbyfletcher "Robby Fletcher")).
+- Adding typescript typings for the `onlyWarnImpacts` config option (contribution by [Robby Fletcher](https://github.com/robbyfletcher "Robby Fletcher")).
 
 
 ### v2.5.0
