@@ -345,25 +345,13 @@ const recordViolations_Report = (violations) => {
 const getFailureSummaryTooltipScreen = (summary) => {
     // return summary.split('\n').join('<br>&nbsp;&nbsp;&nbsp;- ')
 
-    return summary.split('\n').map((line, index) => {
+    return summary.split('\n').map((line, _index) => {
         if (/^Fix/.test(line)) {
             return line;
         }
         return `  • ${line}`
     }).join('\n')
 }
-
-
-/**
- * Checks if the given object is a NodeList.
- *
- * @param {Object} obj - The object to be checked.
- * @returns {boolean} - Returns true if the object is a NodeList, false otherwise.
- */
-const isNodeList = (obj) => {
-    return Object.prototype.toString.call(obj) === '[object NodeList]';
-}
-
 
 /**
  * Highlights a violation by creating a div element with an SVG rectangle inside it.
@@ -420,12 +408,11 @@ const flagViolationOnPage = (doc, elem, violation, node) => {
     }
 
     const tooltip = document.createElementNS(namespaceURI, 'title');
-    const tooltipMessage = getTooltipViolation(tooltipInfo)
-    tooltip.innerHTML = tooltipMessage
+    tooltip.innerHTML = getTooltipViolation(tooltipInfo)
 
     if (mustEnableVoice()) {
         const messageToRead = accessibilityVoice.obtainDomElementViolationVoice(tooltipInfo)
-        rect.addEventListener("click", (e) => {
+        rect.addEventListener("click", (_e) => {
             accessibilityVoice.readTooltipViolation(messageToRead)
         });
     }
@@ -559,7 +546,7 @@ before(() => {
 /**
  * Before each test start to run it cancels any voice message that might still being played and resets the test results for the next test to run
  */
-Cypress.on('test:before:run', (testAttr, test) => {
+Cypress.on('test:before:run', (_testAttr, _test) => {
     if (mustEnableVoice()) {
         accessibilityVoice.cancelVoice()
         testResults = {}
