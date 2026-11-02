@@ -1,7 +1,6 @@
 /// <reference types="cypress" />
 
 
-import 'cypress-axe'
 import { logViolations, logViolationsAndGenerateReport } from './accessibility-log'
 
 
@@ -20,22 +19,113 @@ const defaultOptions = {
 
 const defaultGenerateReport = 'detailed'
 
+const isReportDisabled = (value) => value === false || value === 'false' || value === 'none'
+
+
+const injectAxe = () => {
+    cy.readFile('node_modules/axe-core/axe.min.js').then(source =>
+        cy.window({ log: false }).then(win => {
+            if (!win.axe) win.eval(source)
+        })
+    )
+}
+
+const configureAxe = (configuration) => {
+    cy.window({ log: false }).then((win) => {
+        win.axe.configure(configuration)
+    })
+}
+
+const checkA11y = (context, options = {}, violationCallback, skipFailures = false) => {
+    const {
+        includedImpacts = ['critical', 'serious'],
+        retries = 0,
+        interval = 1000,
+        ...axeOptions
+    } = options
+
+    if (Array.isArray(axeOptions.runOnly)) {
+        axeOptions.runOnly = { type: 'tag', values: axeOptions.runOnly }
+    }
+
+    cy.window({ log: false }).then((win) => {
+        const run = (remainingRetries) => new Cypress.Promise((resolve, reject) => {
+            win.axe.run(context || win.document, axeOptions, (error, results) => {
+                if (error) {
+                    reject(error)
+                    return
+                }
+
+                const violations = includedImpacts.length > 0
+                    ? results.violations.filter(({ impact }) => includedImpacts.includes(impact))
+                    : results.violations
+
+                if (violations.length > 0 && remainingRetries > 0) {
+                    setTimeout(() => {
+                        run(remainingRetries - 1).then(resolve).catch(reject)
+                    }, interval)
+                    return
+                }
+
+                resolve(violations)
+            })
+        })
+
+        return run(retries).then((violations) => {
+            if (violationCallback) violationCallback(violations)
+
+            if (!skipFailures && violations.length > 0) {
+                throw new Error(`${violations.length} accessibility violation(s) found`)
+            }
+        })
+    })
+}
+
+Cypress.Commands.add('injectAxe', injectAxe)
+Cypress.Commands.add('configureAxe', configureAxe)
+Cypress.Commands.add('checkA11y', checkA11y)
+
+/**
+ * Normalizes the configured report mode.
+ *
+ * @param {Object} options - The accessibility command options.
+ * @returns {string} The normalized report mode.
+ */
+const normalizeGenerateReport = (options) => {
+    const resolveGenerateReport = (value) => {
+        if (value === false || value === 'false' || value === 'none') return 'none';
+        if (value === true || value === 'true' || value === 'detailed') return 'detailed';
+        if (value === 'basic') return 'basic';
+        return undefined;
+    };
+
+    // First, check options.generateReport
+    let normalized = resolveGenerateReport(options.generateReport);
+    if (normalized !== undefined) return normalized;
+
+    // Fallback to Cypress.expose('generateReport')
+    normalized = resolveGenerateReport(Cypress.expose('generateReport'));
+    if (normalized !== undefined) return normalized;
+
+    // Fallback to defaultGenerateReport
+    return defaultGenerateReport;
+};
 
 /**
  * Cypress custom commant to check the accessibility of a given context using Cypress and Axe. Only consider DOM elements that are visible on the screen.
  * For more details regarding parameters and options refer to https://www.deque.com/axe/core-documentation/api-documentation/, https://github.com/dequelabs/axe-core and https://www.npmjs.com/package/cypress-axe.
  * @public
- * 
+ *
  * @param {string | Element | NodeList | Object} [context] - (optional) Axe-core® plugin parameter - Defines the scope of the analysis - the part of the DOM that you would like to analyze. This will typically be a CSS Selector, and DOM Element such as returned by document.getElementById("content"), a NodeList such as returned by document.querySelectorAll, or an Object.
  *        By default the analysis will be done for the full document.
- * @param {Object} [context.exclude] - (optional) Axe-core® plugin option - An object with exclude properties to specify elements that should not be tested. 
+ * @param {Object} [context.exclude] - (optional) Axe-core® plugin option - An object with exclude properties to specify elements that should not be tested.
  *        E.g. { exclude: ['button'] }.
- * @param {Object} [context.include] - (optional) Axe-core® plugin option - An object with include properties to specify elements that should be tested. 
+ * @param {Object} [context.include] - (optional) Axe-core® plugin option - An object with include properties to specify elements that should be tested.
  *        E.g. { include: ['button'] }.
  * @param {Object} [context.fromFrames] - (optional) Axe-core® plugin option - An object with a fromFrames property to specify frames that should be tested.
  * @param {Object} [context.fromShadowDom] - (optional) Axe-core® plugin option - An object with a fromShadowDom property to specify shadow DOM elements that should be tested.
  * @param {Object} [options] - (optional) Axe-core® plugin parameter - Object with options to configure the accessibility check.
- * @param {boolean} [options.generateReport=true] - (optional) WICK-A11Y plugin option - Whether to generate a report for accessibility violations.
+ * @param {boolean|string} [options.generateReport=true] - (optional) WICK-A11Y plugin option - Whether to generate a report for accessibility violations.
  *        By default true.
  *        Options:
  *          - `true` or `'detailed'`: Generate a detailed html report with Cards design.
@@ -70,61 +160,40 @@ const defaultGenerateReport = 'detailed'
  *            minor:    { icon: '🟦', style: 'fill: #4598FF; fill-opacity: 0; stroke: #4598FF; stroke-width: 10;' },
  *            fixme:    { icon: '🛠️'}
  *        }
- * @param {integer} [options.retries=0] - (optional) CYPRESS-AXE plugin option - Number of times to retry the check if there are initial findings. 
+ * @param {integer} [options.retries=0] - (optional) CYPRESS-AXE plugin option - Number of times to retry the check if there are initial findings.
  *        By default 0.
- * @param {integer} [options.interval=1000] - (optional) CYPRESS-AXE plugin option - Number of milliseconds to wait between retries. 
+ * @param {integer} [options.interval=1000] - (optional) CYPRESS-AXE plugin option - Number of milliseconds to wait between retries.
  *        By default 1000 (1 second)
- * @param {string[]} [options.runOnly=['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice']] - (optional) Axe-core® plugin option - Limit which rules are executed, based on names or tags. 
+ * @param {string[]} [options.runOnly=['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice']] - (optional) Axe-core® plugin option - Limit which rules are executed, based on names or tags.
  *        By default { runOnly: ['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'] }.
- * @param {Object} [options.rules] - (optional) Axe-core® plugin option - Enable or disable rules using the enabled property. 
+ * @param {Object} [options.rules] - (optional) Axe-core® plugin option - Enable or disable rules using the enabled property.
  *        E.g. { rules: { 'color-contrast': { enabled: false }, 'valid-lang': { enabled: false } }}.
- * @param {string} [options.reporter] - (optional) Axe-core® plugin option - Which reporter to use. 
+ * @param {string} [options.reporter] - (optional) Axe-core® plugin option - Which reporter to use.
  *        E.g. { reporter: 'v2'}.
  * @param {string[]} [options.resultTypes] - (optional) Axe-core® plugin option - Limit which result types are processed and aggregated. This can be useful for improving performance on very large or complicated pages when you are only interested in certain types of results.
  *        E.g. { resultTypes: ['violations', 'incomplete', 'inapplicable'] }.
- * @param {boolean} [options.selectors=true] - (optional) Axe-core® plugin option - Return CSS selector for elements, optimized for readability. 
+ * @param {boolean} [options.selectors=true] - (optional) Axe-core® plugin option - Return CSS selector for elements, optimized for readability.
  *        By default true.
- * @param {boolean} [options.ancestry=false] - (optional) Axe-core® plugin option - Return CSS selector for elements, with all the element's ancestors. 
+ * @param {boolean} [options.ancestry=false] - (optional) Axe-core® plugin option - Return CSS selector for elements, with all the element's ancestors.
  *        By default false.
  * @param {boolean} [options.xpath=false] - (optional) Axe-core® plugin option - Return xpath selectors for elements.
  *        By default false.
  * @param {boolean} [options.absolutePaths=false] - (optional) Axe-core® plugin option - Use absolute paths when creating element selectors.
  *        By default false.
- * @param {boolean} [options.iframes=true] - (optional) Axe-core® plugin option - Tell axe to run inside iframes. 
+ * @param {boolean} [options.iframes=true] - (optional) Axe-core® plugin option - Tell axe to run inside iframes.
  *        By default true.
- * @param {boolean} [options.elementRef=false] - (optional) Axe-core® plugin option - Return element references in addition to the target. 
+ * @param {boolean} [options.elementRef=false] - (optional) Axe-core® plugin option - Return element references in addition to the target.
  *        By default false.
- * @param {number} [options.frameWaitTime=60000] - (optional) Axe-core® plugin option - How long (in milliseconds) axe waits for a response from embedded frames before timing out. 
+ * @param {number} [options.frameWaitTime=60000] - (optional) Axe-core® plugin option - How long (in milliseconds) axe waits for a response from embedded frames before timing out.
  *        By default 60000 (60 seconds).
- * @param {boolean} [options.preload=true] - (optional) Axe-core® option plugin - Any additional assets (eg: cssom) to preload before running rules. 
+ * @param {boolean} [options.preload=true] - (optional) Axe-core® option plugin - Any additional assets (eg: cssom) to preload before running rules.
  *        By default true.
- * @param {boolean} [options.performanceTimer=false] - (optional) Axe-core® plugin option - Log rule performance metrics to the console. 
+ * @param {boolean} [options.performanceTimer=false] - (optional) Axe-core® plugin option - Log rule performance metrics to the console.
  *        By default false.
- * @param {number} [options.pingWaitTime=500] - (optional) Axe-core® option plugin - Time in milliseconds before axe-core® considers a frame unresponsive. 
+ * @param {number} [options.pingWaitTime=500] - (optional) Axe-core® option plugin - Time in milliseconds before axe-core® considers a frame unresponsive.
  *        By default 500 (0.5 seconds).
  * @returns {void}
  */
-
-const normalizeGenerateReport = (options) => {
-    const resolveGenerateReport = (value) => {
-        if (value === false || value === 'false' || value === 'none') return 'none';
-        if (value === true || value === 'true' || value === 'detailed') return 'detailed';
-        if (value === 'basic') return 'basic';
-        return undefined;
-    };
-
-    // First, check options.generateReport
-    let normalized = resolveGenerateReport(options.generateReport);
-    if (normalized !== undefined) return normalized;
-
-    // Fallback to Cypress.expose('generateReport')
-    normalized = resolveGenerateReport(Cypress.expose('generateReport'));
-    if (normalized !== undefined) return normalized;
-
-    // Fallback to defaultGenerateReport
-    return defaultGenerateReport;
-};
-
 const checkAccessibility = (context, options) => {
 
     cy.env(['generateReport']).then(({ generateReport = Cypress.expose('generateReport') }) => {
@@ -137,7 +206,9 @@ const checkAccessibility = (context, options) => {
         options.onlyWarnImpacts = options.onlyWarnImpacts.filter(impact => !options.includedImpacts.includes(impact))
 
         // Normalize generateReport
-        options.generateReport = options.generateReport || generateReport
+            options.generateReport = options.generateReport !== undefined
+            ? options.generateReport
+            : generateReport
         options.generateReport = normalizeGenerateReport(options)
 
 
@@ -155,7 +226,7 @@ const checkAccessibility = (context, options) => {
         cy.checkA11y(
             context,
             cypressAxeOptions,
-            options.generateReport === false || options.generateReport === 'false' || options.generateReport === 'none' ? logViolations : logViolationsAndGenerateReport,
+            isReportDisabled(options.generateReport) ? logViolations : logViolationsAndGenerateReport,
             true // skipFailures = true (wick-a11y will handle the failures based in the configuration: includedImpacts and onlyWarnImpacts)
         )
     })

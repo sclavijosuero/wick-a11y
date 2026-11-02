@@ -1,7 +1,7 @@
 {
   "name": "wick-a11y",
-  "version": "3.0.2",
-  "description": "A Cypress plugin for configurable accessibility analysis supporting WCAG 2.2 (A-AAA). It provides a detailed list of violations in the Cypress log, visual feedback directly in the Cypress runner as well as voice feedback, and generates a comprehensive, severity-based HTML report that includes per-violation details, fix guidance, and a screenshot with interactive elements for each accessibility issue. The plugin uses axe-core and cypress-axe to deliver comprehensive accessibility testing.",
+  "version": "4.0.0",
+  "description": "A Cypress plugin for configurable accessibility analysis supporting WCAG 2.2 (A-AAA). It provides a detailed list of violations in the Cypress log, visual feedback directly in the Cypress runner as well as voice feedback, and generates a comprehensive, severity-based HTML report that includes per-violation details, fix guidance, and a screenshot with interactive elements for each accessibility issue. The plugin uses axe-core for comprehensive accessibility testing.",
   "main": "src/index.js",
   "types": "src/index.d.ts",
   "scripts": {
@@ -32,16 +32,14 @@
     "url": "https://github.com/sclavijosuero/wick-a11y/issues"
   },
   "homepage": "https://github.com/sclavijosuero/wick-a11y#readme",
-  "peerDependencies": {
-    "cypress-axe": "^1.7.0"
-  },
   "devDependencies": {
-    "cypress": "^15.20.1",
+    "cypress": "^16.2.1",
     "eslint": "^8.53.0",
     "eslint-plugin-cypress": "^2.15.1",
     "eslint-plugin-no-only-tests": "^3.1.0"
   },
   "dependencies": {
+    "axe-core": "^4.11.0",
     "fs-extra": "^11.1.1"
   }
 }

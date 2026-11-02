@@ -5,7 +5,6 @@ const addAccessibilityTasks  = require('./src/accessibility-tasks');
 
 module.exports = defineConfig({
 
-  allowCypressEnv: false,
   // Both configurations work (env or expose) but env will override expose
   // env: {
   //   enableAccessibilityVoice: true,

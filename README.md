@@ -1,7 +1,7 @@
 # wick-a11y
 
 **wick-a11y** is a Cypress plugin for configurable accessibility analysis supporting WCAG 2.2 (A–AAA).
-It provides a detailed list of violations in the Cypress log, visual feedback directly in the Cypress runner as well as voice feedback, and generates a comprehensive, severity-based HTML report that includes per-violation details, fix guidance, and a screenshot with interactive elements for each accessibility issue. The plugin uses axe-core and cypress-axe to deliver comprehensive accessibility testing.
+It provides a detailed list of violations in the Cypress log, visual feedback directly in the Cypress runner as well as voice feedback, and generates a comprehensive, severity-based HTML report that includes per-violation details, fix guidance, and a screenshot with interactive elements for each accessibility issue. The plugin uses axe-core directly to deliver comprehensive accessibility testing.
 
 ![wick-a11y Overview](/images/full-overview.gif)
 
@@ -18,7 +18,7 @@ Or the videos:
 
 ## MAIN FEATURES
 
-- **Comprehensive Accessibility Analysis**: Leverages axe-core® and cypress-axe plugin for thorough accessibility checks. Axe-core® <https://github.com/dequelabs/axe-core> is a trademark of Deque Systems, Inc. <https://www.deque.com/> in the US and other countries.
+- **Comprehensive Accessibility Analysis**: Leverages axe-core® directly for thorough accessibility checks. Axe-core® <https://github.com/dequelabs/axe-core> is a trademark of Deque Systems, Inc. <https://www.deque.com/> in the US and other countries.
   
 - **Cypress Command**: Use the custom command `cy.checkAccessibility()` to run checks smoothly.
 
@@ -52,7 +52,7 @@ Or the videos:
 
 - **Voice Support**: Provides audible information for accessibility issues at the suite level, test level, violation type level, and DOM element level, helping users identify issues through voice feedback.
 
-- **Cypress v15+ Support**:  Fully supported in Cypress v15.0.0 or greater **_(NEW in v2.2.0)_**.
+- **Cypress v15.10+ Support**: Fully supported in Cypress v15.10.0 and Cypress v16 **_(updated for Cypress v16)_**.
 
 > ✔️ **Before launching the accessibility analysis, ensure what you want to analyze is fully rendered on the page.**
 > 
@@ -66,7 +66,7 @@ Or the videos:
 - [TABLE OF CONTENT](#table-of-content)
 - [INSTALATION](#instalation)
 - [COMPATIBILITY](#compatibility)
-  - [Cypress v15+](#cypress-v15)
+  - [Cypress v15.10.0+ (including Cypress v16)](#cypress-v151000-including-cypress-v16)
   - [Cypress v14](#cypress-v14)
   - [Cypress v12 and v13](#cypress-v12-and-v13)
 - [CONFIGURATION](#configuration)
@@ -106,30 +106,34 @@ Or the videos:
 npm install wick-a11y --save-dev
 ```
 
+`wick-a11y` includes `axe-core` as a runtime dependency and integrates the required Cypress commands directly. No separate `cypress-axe` installation is required.
+
 
 ## COMPATIBILITY 
 
-### Cypress v15.10.0+
+### Cypress v15.10.0+ (including Cypress v16)
 
-- Use wick-a11y *v*3.0.0 or greater
+- Use wick-a11y *v*4.0.0 or greater
 - Use of `cy.env` and `Cypress.expose` (https://docs.cypress.io/app/references/migration-guide#Migrating-away-from-Cypressenv)
+
+When upgrading from wick-a11y v3.x, remove any direct `cypress-axe` dependency from your project. The required `injectAxe`, `configureAxe`, and `checkA11y` commands are now provided by wick-a11y and are backed directly by `axe-core`.
 
 ### Cypress v15.0.0 - v15.9.0
 
 - Use wick-a11y *v*2.2.0 or greater
-- Relies on cypress-axe (≥ 1.7.0) and axe-core® for accessibility analysis.
+- Uses axe-core® directly for accessibility analysis.
 
 ### Cypress v14
 
 - Use wick-a11y *v*2.0.0
-- Relies on cypress-axe (≥ 1.5.0) and axe-core® for accessibility analysis.
+- Uses axe-core® directly for accessibility analysis.
 -  ⚠️ **Not officially tested** with Cypress *v*14.0.0 to *v*14.0.2 (but should work).
 
 
 ### Cypress v12 and v13
 
 - Use  wick-a11y *v*1.4.0 or earlier
-- Relies on cypress-axe (≥ 1.5.0) and axe-core® for accessibility analysis.
+- Uses axe-core® directly for accessibility analysis.
 - If you want to install wick-a11y *v*1.4.0 or earlier in a Cypress 14.0.3 project you will need to use the `--force` option:
    ```sh
    npm install wick-a11y --save-dev --force
@@ -163,6 +167,12 @@ module.exports = defineConfig({
 ```javascript
 import 'wick-a11y';
 ```
+
+The package provides the following axe-core commands directly, so importing `cypress-axe` separately is not necessary:
+
+- `cy.injectAxe()` – injects axe-core into the current document.
+- `cy.configureAxe(configuration)` – configures axe-core for the current document.
+- `cy.checkA11y(context, options, violationCallback, skipFailures)` – runs an axe-core check.
 
 3. 👉 Accessibility HTML reports will be generated in the folder **`cypress/accessibility`** by default. This folder can be changed by including the configuration parameter **`accessibilityFolder`** in **`cypress.config.js`**.
 
@@ -244,7 +254,7 @@ Option B: Set it as an exposed Cypress env var in two different ways:
 
 ### cy.checkAccessibility(context, options)
 
-Cypress custom command to check the accessibility of a given context using axe-core®. Only considers DOM elements that are visible on the screen. For details on parameters and options, refer to [Axe-core® Documentation](https://www.deque.com/axe/core-documentation/api-documentation/), [Axe-core® GitHub](https://github.com/dequelabs/axe-core), and [cypress-axe NPM](https://www.npmjs.com/package/cypress-axe).
+Cypress custom command to check the accessibility of a given context using axe-core®. Only considers DOM elements that are visible on the screen. For details on parameters and options, refer to [Axe-core® Documentation](https://www.deque.com/axe/core-documentation/api-documentation/) and [Axe-core® GitHub](https://github.com/dequelabs/axe-core).
 
 - **`context`**: (optional) Defines the scope of the analysis. Can be a CSS Selector, a DOM Element, or an Object.
   When **context** is an Object, it could have the properties:
@@ -274,7 +284,7 @@ Cypress custom command to check the accessibility of a given context using axe-c
 
     **⚠️ IMPORTANT**: If the `checkAccessibility()` command includes the **`generateReport` option**, it will override the value of the **`generateReport` environment variable**.
 
-  - **`includedImpacts`**: (optional) *From CYPRESS-AXE* - List of impact levels to include in the accessibility analysis that would make the analysis to fail. Map to impact levels in violations, where possible impact level values are "critical", "serious", "moderate", or "minor".
+  - **`includedImpacts`**: (optional) *From wick-a11y* - List of impact levels to include in the accessibility analysis that would make the analysis to fail. Map to impact levels in violations, where possible impact level values are "critical", "serious", "moderate", or "minor".
   
     Default: `['critical', 'serious']`.
 
@@ -308,11 +318,11 @@ Cypress custom command to check the accessibility of a given context using axe-c
      }
      ```
    
-  - **`retries`**: (optional) *From CYPRESS-AXE* - Number of times to retry the check if there are initial findings.
+  - **`retries`**: (optional) *From wick-a11y* - Number of times to retry the check if there are initial findings.
   
     Default: `0`.
    
-  - **`interval`**: (optional) *From CYPRESS-AXE* - Number of milliseconds to wait between retries.
+  - **`interval`**: (optional) *From wick-a11y* - Number of milliseconds to wait between retries.
   
     Default: `1000`.
    
@@ -798,6 +808,12 @@ Thank you for your support!
 
 
 ## CHANGELOG
+
+
+### v4.0.0
+
+- Removed the `cypress-axe` dependency and integrated the required wrapper functionality directly with `axe-core`.
+- This is a major release because removing the dependency changes the package integration requirements.
 
 
 ### v3.0.2

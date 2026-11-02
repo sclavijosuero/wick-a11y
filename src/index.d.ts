@@ -1,12 +1,44 @@
 /// <reference types="cypress" />
 
+import axe = require('axe-core')
+
+type AccessibilityImpact = Exclude<axe.ImpactValue, null>
+
+interface AccessibilityOptions extends axe.RunOptions {
+    generateReport?: boolean | 'false' | 'none' | 'basic' | 'detailed'
+    impactStyling?: Record<string, { icon: string; style?: string }>
+    includedImpacts?: AccessibilityImpact[]
+    onlyWarnImpacts?: AccessibilityImpact[]
+    retries?: number
+    interval?: number
+}
+
+type AccessibilityViolationCallback = (violations: axe.Result[]) => void
+
 declare global {
     namespace Cypress {
         interface Chainable {
+            /** Injects the axe-core browser bundle into the current document. */
+            injectAxe(): Chainable<void>
+
+            /** Configures axe-core for the current document. */
+            configureAxe(configuration: axe.Spec): Chainable<void>
+
+            /** Runs axe-core directly with the supplied options. */
+            checkA11y(
+                context?: axe.ElementContext,
+                options?: axe.RunOptions & {
+                    includedImpacts?: AccessibilityImpact[]
+                    retries?: number
+                    interval?: number
+                },
+                violationCallback?: AccessibilityViolationCallback,
+                skipFailures?: boolean
+            ): Chainable<void>
             /**
              * Cypress custom command to check the accessibility of a given context using Cypress and Axe.
              * Only considers DOM elements that are visible on the screen.
-             * For details on parameters and options, refer to Axe-core® documentation and the cypress-axe package.
+             * For details on parameters and options, refer to the Axe-core® documentation.
              *
              * @param {string | Element | NodeList | Object} [context] - (optional) Defines the scope of the analysis.
              *   Can be a CSS Selector, DOM Element, NodeList, or Object, where object properties include:
@@ -44,35 +76,9 @@ declare global {
              * cy.checkAccessibility(null, { includedImpacts: ['critical'], runOnly: ['wcag2aa'] });
              */
             checkAccessibility(
-                context?: string | HTMLElement | NodeList | {
-                    exclude?: string[];
-                    include?: string[];
-                    fromFrames?: object;
-                    fromShadowDom?: object;
-                },
-                options?: {
-                    generateReport?: boolean | 'basic' | 'detailed';
-                    impactStyling?: Record<string, { icon: string; style: string }>;
-                    includedImpacts?: string[];
-                    onlyWarnImpacts?: string[];
-                    retries?: number;
-                    interval?: number;
-                    runOnly?: string[];
-                    rules?: Record<string, { enabled: boolean }>;
-                    reporter?: string;
-                    resultTypes?: string[];
-                    selectors?: boolean;
-                    ancestry?: boolean;
-                    xpath?: boolean;
-                    absolutePaths?: boolean;
-                    iframes?: boolean;
-                    elementRef?: boolean;
-                    frameWaitTime?: number;
-                    preload?: boolean;
-                    performanceTimer?: boolean;
-                    pingWaitTime?: number;
-                }
-            ): void;
+                context?: axe.ElementContext,
+                options?: AccessibilityOptions
+            ): Chainable<void>;
         }
     }
 }

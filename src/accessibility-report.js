@@ -29,6 +29,10 @@ let reportIdGlobal = ''
  */
 export const recordReportViolations = (reportInfo) => {
 
+    if (reportInfo.accessibilityOptions.generateReport === 'none'
+        || reportInfo.accessibilityOptions.generateReport === false
+        || reportInfo.accessibilityOptions.generateReport === 'false') return
+
     cy.url({ log: false }).then(url => {
         const day = new Date()
         const reportGeneratedOn = day.toString()
