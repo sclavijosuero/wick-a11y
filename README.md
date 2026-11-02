@@ -106,6 +106,8 @@ Or the videos:
 npm install wick-a11y --save-dev
 ```
 
+`wick-a11y` includes `axe-core` as a runtime dependency and integrates the required Cypress commands directly. No separate `cypress-axe` installation is required.
+
 
 ## COMPATIBILITY 
 
@@ -113,6 +115,8 @@ npm install wick-a11y --save-dev
 
 - Use wick-a11y *v*4.0.0 or greater
 - Use of `cy.env` and `Cypress.expose` (https://docs.cypress.io/app/references/migration-guide#Migrating-away-from-Cypressenv)
+
+When upgrading from wick-a11y v3.x, remove any direct `cypress-axe` dependency from your project. The required `injectAxe`, `configureAxe`, and `checkA11y` commands are now provided by wick-a11y and are backed directly by `axe-core`.
 
 ### Cypress v15.0.0 - v15.9.0
 
@@ -163,6 +167,12 @@ module.exports = defineConfig({
 ```javascript
 import 'wick-a11y';
 ```
+
+The package provides the following axe-core commands directly, so importing `cypress-axe` separately is not necessary:
+
+- `cy.injectAxe()` – injects axe-core into the current document.
+- `cy.configureAxe(configuration)` – configures axe-core for the current document.
+- `cy.checkA11y(context, options, violationCallback, skipFailures)` – runs an axe-core check.
 
 3. 👉 Accessibility HTML reports will be generated in the folder **`cypress/accessibility`** by default. This folder can be changed by including the configuration parameter **`accessibilityFolder`** in **`cypress.config.js`**.
 
@@ -244,7 +254,7 @@ Option B: Set it as an exposed Cypress env var in two different ways:
 
 ### cy.checkAccessibility(context, options)
 
-Cypress custom command to check the accessibility of a given context using axe-core®. Only considers DOM elements that are visible on the screen. For details on parameters and options, refer to [Axe-core® Documentation](https://www.deque.com/axe/core-documentation/api-documentation/), [Axe-core® GitHub](https://github.com/dequelabs/axe-core), and [cypress-axe NPM](https://www.npmjs.com/package/cypress-axe).
+Cypress custom command to check the accessibility of a given context using axe-core®. Only considers DOM elements that are visible on the screen. For details on parameters and options, refer to [Axe-core® Documentation](https://www.deque.com/axe/core-documentation/api-documentation/) and [Axe-core® GitHub](https://github.com/dequelabs/axe-core).
 
 - **`context`**: (optional) Defines the scope of the analysis. Can be a CSS Selector, a DOM Element, or an Object.
   When **context** is an Object, it could have the properties:
@@ -274,7 +284,7 @@ Cypress custom command to check the accessibility of a given context using axe-c
 
     **⚠️ IMPORTANT**: If the `checkAccessibility()` command includes the **`generateReport` option**, it will override the value of the **`generateReport` environment variable**.
 
-  - **`includedImpacts`**: (optional) *From CYPRESS-AXE* - List of impact levels to include in the accessibility analysis that would make the analysis to fail. Map to impact levels in violations, where possible impact level values are "critical", "serious", "moderate", or "minor".
+  - **`includedImpacts`**: (optional) *From wick-a11y* - List of impact levels to include in the accessibility analysis that would make the analysis to fail. Map to impact levels in violations, where possible impact level values are "critical", "serious", "moderate", or "minor".
   
     Default: `['critical', 'serious']`.
 
@@ -308,11 +318,11 @@ Cypress custom command to check the accessibility of a given context using axe-c
      }
      ```
    
-  - **`retries`**: (optional) *From CYPRESS-AXE* - Number of times to retry the check if there are initial findings.
+  - **`retries`**: (optional) *From wick-a11y* - Number of times to retry the check if there are initial findings.
   
     Default: `0`.
    
-  - **`interval`**: (optional) *From CYPRESS-AXE* - Number of milliseconds to wait between retries.
+  - **`interval`**: (optional) *From wick-a11y* - Number of milliseconds to wait between retries.
   
     Default: `1000`.
    
